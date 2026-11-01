@@ -204,7 +204,7 @@ python "<目前 SKILL.md 所在目錄>/scripts/build_notes.py" "<notes_path 的�
 ### 3. 環境自適應雙軌交付
 
 產出後提供相容、可直接點擊的路徑呈現：
-- **環境內可點擊預覽連結**：依宿主支援提供 Markdown 絕對路徑或工作區連結；Codex 使用絕對路徑（例如 `[預覽核心筆記](learning-notes/<主題>.md)` 與 `[開啟互動手冊](learning-notes/<主題>-Interactive-Notes.html)`）。
+- **宿主環境支援的可點擊預覽連結**：依當前宿主環境的支援能力提供 Markdown 相對路徑或工作區可點擊連結（例如 `[預覽核心筆記](learning-notes/<主題>.md)` 與 `[開啟互動手冊](learning-notes/<主題>-Interactive-Notes.html)`；若宿主環境僅支援特定協議或絕對路徑，則依其規範動態轉換）。
 - **本機直接開啟絕對路徑**：附上原生實體絕對路徑字串（例如 `C:\...\learning-notes\<主題>-Interactive-Notes.html`），方便使用者直接雙擊離線開啟或列印為 PDF。
 
 ---

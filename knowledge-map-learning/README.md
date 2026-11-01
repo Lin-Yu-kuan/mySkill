@@ -2,7 +2,7 @@
 
 > 以「由上而下（Top-Down）」的大師級視角，引導 AI 系統化帶領你深度掌握任何全新知識領域。
 
-[![Antigravity Skill](https://img.shields.io/badge/Antigravity-Skill-blue.svg)](https://github.com/Lin-Yu-kuan/mySkill)
+[![Agent Skill](https://img.shields.io/badge/Agent-Skill-blue.svg)](https://github.com/Lin-Yu-kuan/mySkill)
 [![Language](https://img.shields.io/badge/Language-繁體中文-brightgreen.svg)]()
 [![Zero External Dependencies](https://img.shields.io/badge/Dependencies-Python%20Standard%20Lib-success.svg)]()
 
@@ -42,7 +42,7 @@
    結課匯出時，由內建 Python 腳本（標準庫、零外部依賴）自動讀取磁碟筆記注入自包含現代化 HTML 模板，**AI 無需重複手寫輸出**，徹底杜絕截斷死檔問題。
 
 6. **🛡️ 檔案防覆蓋與環境自適應雙軌交付**  
-   支援續學智慧偵測、檔名安全過濾與時間戳防覆蓋機制；產出時同時提供工作區相對連結與本機實體絕對路徑。
+   支援續學智慧偵測、檔名安全過濾與時間戳防覆蓋機制；產出時同時提供宿主支援之可點擊預覽連結與本機實體絕對路徑。
 
 ---
 
@@ -69,7 +69,7 @@
 │ 階段三：自動編譯與雙軌交付 (Auto-Build Notes)                │
 │ • 執行匯出前強制補存                                        │
 │ • 調用 build_notes.py 自動編譯自包含 HTML 互動手冊          │
-│ • 交付 Markdown 筆記預覽連結與本機實體檔案路徑               │
+│ • 交付宿主支援之可點擊預覽連結與本機實體檔案路徑             │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -169,22 +169,32 @@ knowledge-map-learning/
 
 ---
 
-## 📥 安裝與啟用
+## 📥 安裝與環境自適應
 
-### 在 Google Antigravity 中使用
+本技能遵循標準通用 Agent Skill 規範（標準 `SKILL.md` 結構），具備高度可移植性，可無縫載入於任何支援 Agent Skills 的 AI 宿主環境中。
 
-#### 方法 1：安裝為全域技能（推薦）
-將此 `knowledge-map-learning` 資料夾複製到全域技能目錄：
-```powershell
-# Windows
-Copy-Item -Path "knowledge-map-learning" -Destination "$HOME\.gemini\config\skills\knowledge-map-learning" -Recurse
+### 1. 專案工作區安裝（Workspace Scope）
+將 `knowledge-map-learning` 資料夾置於當前工作專案的技能目錄下，僅在該專案中生效：
+```bash
+# 複製至當前專案之技能目錄（依宿主環境常見結構）
+cp -r knowledge-map-learning <專案目錄>/<宿主技能目錄>/knowledge-map-learning
 ```
 
-#### 方法 2：在單一專案中使用
-將此資料夾複製到你專案目錄的 `.gemini\skills\` 下：
-```powershell
-Copy-Item -Path "knowledge-map-learning" -Destination "<你的專案路徑>\.gemini\skills\knowledge-map-learning" -Recurse
-```
+### 2. 全域安裝（Global Scope，推薦）
+將此資料夾複製到個人使用者家目錄的全域技能目錄下，所有對話工作區皆可隨時調用：
+- **Windows (PowerShell)**：
+  ```powershell
+  # 複製至您的 AI 宿主全域技能目錄：
+  Copy-Item -Path "knowledge-map-learning" -Destination "$HOME\<宿主全域設定目錄>\skills\knowledge-map-learning" -Recurse
+  ```
+- **macOS / Linux**：
+  ```bash
+  cp -r knowledge-map-learning "$HOME/<宿主全域設定目錄>/skills/knowledge-map-learning"
+  ```
+
+> [!TIP]
+> **動態路徑自適應**：  
+> 技能內部採用環境自適應路徑機制，執行編譯時會自動以「當前 `SKILL.md` 所在目錄」為基準定位組裝腳本；交付產物時，會自動依據當前宿主環境的介面能力，提供**宿主支援的可點擊預覽連結**（相對路徑、工作區連結或協議連結）與**本機實體絕對路徑**雙軌呈現，無需手動修改路徑配置。
 
 ---
 
