@@ -1,0 +1,22 @@
+{
+  "name": "knowledge-map-learning",
+  "displayName": "知識地圖主題學習法",
+  "version": "1.0.0",
+  "description": "以由上而下的系統化視角帶領深度主題自學，具備四層認識論精講、逐回合筆記落盤與免截斷 HTML 互動手冊匯出。",
+  "author": {
+    "name": "Lin-Yu-kuan",
+    "url": "https://github.com/Lin-Yu-kuan"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Lin-Yu-kuan/mySkill"
+  },
+  "homepage": "https://github.com/Lin-Yu-kuan/mySkill",
+  "keywords": [
+    "learning",
+    "knowledge-map",
+    "education",
+    "notes",
+    "top-down"
+  ]
+}

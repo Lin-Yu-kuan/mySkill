@@ -2,13 +2,14 @@
 
 > 以「由上而下（Top-Down）」的大師級視角，引導 AI 系統化帶領你深度掌握任何全新知識領域。
 
+[![Antigravity Plugin](https://img.shields.io/badge/Antigravity-Plugin-purple.svg)](https://github.com/Lin-Yu-kuan/mySkill)
 [![Agent Skill](https://img.shields.io/badge/Agent-Skill-blue.svg)](https://github.com/Lin-Yu-kuan/mySkill)
 [![Language](https://img.shields.io/badge/Language-繁體中文-brightgreen.svg)]()
 [![Zero External Dependencies](https://img.shields.io/badge/Dependencies-Python%20Standard%20Lib-success.svg)]()
 
 ---
 
-## 💡 為什麼需要這個 Skill？
+## 💡 為什麼需要這個外掛？
 
 許多人在請 AI 教學一個陌生領域時，常遇到以下痛點：
 - **迷失在細節中**：AI 一開口就丟出一大堆專有名詞與片段細節，缺乏全域脈絡。
@@ -16,7 +17,7 @@
 - **長對話遺忘與截斷**：多輪對話後，前面學過的重點因 Context Compaction 被壓縮淡忘；匯出講義時模型更常因輸出長度截斷死檔。
 
 **Knowledge Map Learning** 徹底解決了這些問題：
-摒棄花拳繡腿的繪圖包袱與生硬字數配額，**以「清楚、具體、可推理」的講義品質規格把關教學深度**。先給你清晰的演化故事大綱（見森林），再帶你走過每個核心節點（見樹木），並透過**逐回合實體落盤**與**模板腳本編譯**，打造堅不可摧的長對話沉浸學習體驗。
+摒棄花拳繡腿的繪圖包袱與生硬字數配額，**以「清楚、具體、可推理」的講義品質規格把關教學深度**。先給你清晰的演化故事大綱（見森林），再帶你走過每個核心節點（見樹木），並透過**逐回合實體落盤**與**雙軌模板編譯**，打造堅不可摧的長對話沉浸學習體驗。
 
 ---
 
@@ -41,8 +42,8 @@
 5. **💾 逐回合即時落盤（Per-Turn Flush，抗上下文壓縮）**  
    講義回合存講義、問答回合存師生 Q&A 心流。以本地磁碟實體 Markdown 為**唯一資料來源（Single Source of Truth）**，降低長對話上下文壓縮造成的遺失風險。
 
-6. **⚡ 固定模板＋腳本編譯（免除 Token 截斷）**  
-   結課匯出時，由內建 Python 腳本（標準庫、零外部依賴）自動讀取磁碟筆記注入自包含現代化 HTML 模板，**AI 無需重複手寫輸出**，避免重輸整份 HTML 造成的截斷問題。
+6. **⚡ 模板組裝編譯 ＆ 雙軌降級容錯（零 Token 截斷）**  
+   結課匯出時，預設由內建 Python 腳本（標準庫、零外部依賴）自動讀取磁碟筆記注入自包含現代化 HTML 模板；**若環境無 Python 則自動切換 Agent 直出降級**，完全杜絕長文截斷死檔風險。
 
 7. **🛡️ 檔案防覆蓋與環境自適應雙軌交付**  
    支援續學智慧偵測、檔名安全過濾與時間戳防覆蓋機制；產出時同時提供宿主支援之可點擊預覽連結與本機實體絕對路徑。
@@ -90,7 +91,7 @@
 ┌─────────────────────────────────────────────────────────────┐
 │ 階段三：自動編譯與雙軌交付 (Auto-Build Notes)                │
 │ • 執行匯出前強制補存                                        │
-│ • 調用 build_notes.py 自動編譯自包含 HTML 互動手冊          │
+│ • 調用 build_notes.py（或無 Python 時自動降級生成手冊）      │
 │ • 交付宿主支援之可點擊預覽連結與本機實體檔案路徑             │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -165,7 +166,7 @@ Linux 容器並非獨立的虛擬機器，而是受兩項核心機制約束的�
 
 ## 🖥️ 第三階段：編譯 HTML 互動手冊
 
-完成學習後，系統將自動調用技能內建的 Python 組裝編譯器：
+完成學習後，系統將自動調用外掛內建的 Python 組裝編譯器（或無 Python 時自動降級）：
 ```bash
 python "<目前 SKILL.md 所在目錄>/scripts/build_notes.py" "<notes_path 的實際絕對路徑>"
 ```
@@ -179,45 +180,40 @@ python "<目前 SKILL.md 所在目錄>/scripts/build_notes.py" "<notes_path 的�
 
 ---
 
-## 📂 專案檔案結構
+## 📂 外掛檔案結構
 
-```
+```text
 knowledge-map-learning/
-├── SKILL.md                 # 核心技能定義與完整提示詞
-├── README.md                # 技能說明與使用指南
-└── scripts/
-    ├── build_notes.py       # 零相依 Python HTML 組裝編譯入口腳本
-    └── notes_markdown.py    # 筆記專用 Markdown 安全解析模組
+├── plugin.json                 # 外掛 Manifest 清單（名稱、版本、作者）
+├── README.md                   # 外掛說明文件
+└── skills/
+    └── knowledge-map-learning/ # 封裝之核心技能目錄
+        ├── SKILL.md            # 技能提示詞定義（含雙軌降級機制）
+        └── scripts/
+            ├── build_notes.py  # 零相依 HTML 組裝編譯入口腳本
+            └── notes_markdown.py # 筆記專用 Markdown 安全解析模組
 ```
 
 ---
 
-## 📥 安裝與環境自適應
+## 📥 安裝與啟用
 
-本技能遵循標準通用 Agent Skill 規範（標準 `SKILL.md` 結構），具備高度可移植性，可無縫載入於任何支援 Agent Skills 的 AI 宿主環境中。
-
-### 1. 專案工作區安裝（Workspace Scope）
-將 `knowledge-map-learning` 資料夾置於當前工作專案的技能目錄下，僅在該專案中生效：
-```bash
-# 複製至當前專案之技能目錄（依宿主環境常見結構）
-cp -r knowledge-map-learning <專案目錄>/<宿主技能目錄>/knowledge-map-learning
-```
-
-### 2. 全域安裝（Global Scope，推薦）
-將此資料夾複製到個人使用者家目錄的全域技能目錄下，所有對話工作區皆可隨時調用：
+### 1. 安裝為 Antigravity 外掛（推薦，享受完整生命週期管理）
+將此 `knowledge-map-learning` 外掛資料夾複製到 Antigravity 全域外掛目錄：
 - **Windows (PowerShell)**：
   ```powershell
-  # 複製至您的 AI 宿主全域技能目錄：
-  Copy-Item -Path "knowledge-map-learning" -Destination "$HOME\<宿主全域設定目錄>\skills\knowledge-map-learning" -Recurse
+  Copy-Item -Path "knowledge-map-learning" -Destination "$HOME\.gemini\config\plugins\knowledge-map-learning" -Recurse -Force
   ```
 - **macOS / Linux**：
   ```bash
-  cp -r knowledge-map-learning "$HOME/<宿主全域設定目錄>/skills/knowledge-map-learning"
+  cp -r knowledge-map-learning "$HOME/.gemini/config/plugins/knowledge-map-learning"
   ```
+安裝完成後，在 Antigravity 插件面板（或重啟後）即可看到此插件，並支援隨時啟用與停用。
 
-> [!TIP]
-> **動態路徑自適應**：  
-> 技能內部採用環境自適應路徑機制，執行編譯時會自動以「當前 `SKILL.md` 所在目錄」為基準定位組裝腳本；交付產物時，會自動依據當前宿主環境的介面能力，提供**宿主支援的可點擊預覽連結**與**本機實體絕對路徑**雙軌呈現，無需手動修改路徑配置。
+### 2. 通用 Agent Skill 安裝（相容其他 AI 宿主）
+若在未支援插件系統的環境中使用，亦可將 `skills/knowledge-map-learning` 子目錄直接作為標準 Agent 技能安裝：
+- 專案工作區：複製至 `<專案目錄>/<宿主技能目錄>/knowledge-map-learning`
+- 全域環境：複製至 `$HOME/<宿主全域設定目錄>/skills/knowledge-map-learning`
 
 ---
 

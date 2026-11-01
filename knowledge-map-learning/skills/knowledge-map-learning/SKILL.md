@@ -207,8 +207,8 @@ Markdown 是課程的唯一資料來源，初始化時保存大綱與進度表�
 ### 1. 匯出前強制補存（Pre-Export Flush）
 進入本階段時，先依回合 ID 核對尚未保存的內容，去重補存至 `notes_path`，同步最新狀態。未學節點保留原狀，不補造講義；發現資料缺漏則明示。
 
-### 2. 執行模板腳本編譯 HTML（免除 Token 截斷）
-**嚴禁由模型重新手寫全量 HTML**！
+### 2. 執行模板腳本編譯 HTML（雙軌相容機制）
+**主軌道（Python 環境）**：
 直接調用技能內建之組裝編譯腳本，由 Python 從磁碟讀取 Markdown 注入自包含 HTML 模板：
 ```bash
 python "<目前 SKILL.md 所在目錄>/scripts/build_notes.py" "<notes_path 的實際絕對路徑>"
@@ -217,7 +217,10 @@ python "<目前 SKILL.md 所在目錄>/scripts/build_notes.py" "<notes_path 的�
 
 腳本將自動產生單一自包含 HTML（內建 DOM TreeWalker 即時搜尋、Scrollspy 滾動監聽、🌓 深淺色主題、@media print 列印/PDF 排版）。
 
-確認腳本退出成功、輸出檔案存在，並核對節點目錄、表格、程式碼與最後一回合內容；有瀏覽器工具時檢查搜尋、清除、目錄與主題切換。HTML 失敗仍交付已保存 Markdown，說明錯誤。
+確認腳本退出成功、輸出檔案存在，並核對節點目錄、表格、程式碼與最後一回合內容；有瀏覽器工具時檢查搜尋、清除、目錄與主題切換。
+
+**備用降級軌道（無 Python 環境時自動切換）**：
+若環境未安裝 Python（指令報錯 command not found）或權限受限，AI 絕不報錯中斷，而是自動啟動優雅降級：直接調用內建檔案工具將 Markdown 內容套入 HTML 模板寫出 <主題>-Interactive-Notes.html，確保任何環境下皆能成功交付。
 
 ### 3. 環境自適應雙軌交付
 
