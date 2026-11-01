@@ -1,0 +1,12 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local test scripts
+test_*.py
+scripts/test_*.py
+
+# Environment / OS
+.DS_Store
+Thumbs.db
