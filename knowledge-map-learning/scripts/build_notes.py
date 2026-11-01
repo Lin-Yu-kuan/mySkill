@@ -18,83 +18,9 @@ if hasattr(sys.stdout, 'reconfigure'):
 if hasattr(sys.stderr, 'reconfigure'):
     sys.stderr.reconfigure(encoding='utf-8', errors='replace')
 
-def parse_markdown_to_sections(md_text):
-    """
-    輕量解析 Markdown 結構，提取章節標題、模組與內文，供 Sidebar 目錄與主內容渲染。
-    """
-    lines = md_text.splitlines()
-    title = "主題研讀手冊"
-    for line in lines:
-        if line.startswith("# "):
-            title = line[2:].strip()
-            break
+from notes_markdown import render as parse_markdown_to_sections
 
-    # 將 Markdown 簡易轉為 HTML（標準語法轉換）
-    def md_to_html(text):
-        # 程式碼區塊
-        code_blocks = []
-        def save_code_block(match):
-            lang = match.group(1) or ""
-            code = html.escape(match.group(2))
-            idx = len(code_blocks)
-            code_blocks.append(f'<pre><code class="language-{lang}">{code}</code></pre>')
-            return f'___CODE_BLOCK_{idx}___'
-        
-        text = re.sub(r'```([a-zA-Z0-9_\-]*)\n([\s\S]*?)```', save_code_block, text)
-
-        # 標題
-        text = re.sub(r'^#### (.*?)$', r'<h4>\1</h4>', text, flags=re.MULTILINE)
-        text = re.sub(r'^### (.*?)$', r'<h3 id="\1">\1</h3>', text, flags=re.MULTILINE)
-        text = re.sub(r'^## (.*?)$', r'<h2>\1</h2>', text, flags=re.MULTILINE)
-        text = re.sub(r'^# (.*?)$', r'<h1>\1</h1>', text, flags=re.MULTILINE)
-
-        # 引用
-        text = re.sub(r'^> (.*?)$', r'<blockquote>\1</blockquote>', text, flags=re.MULTILINE)
-
-        # 粗體與行內程式碼
-        text = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', text)
-        text = re.sub(r'`(.*?)`', r'<code>\1</code>', text)
-
-        # 清單
-        text = re.sub(r'^- (.*?)$', r'<li>\1</li>', text, flags=re.MULTILINE)
-
-        # 段落換行
-        paragraphs = text.split('\n\n')
-        processed_p = []
-        for p in paragraphs:
-            p_strip = p.strip()
-            if not p_strip:
-                continue
-            if p_strip.startswith('<h') or p_strip.startswith('<pre') or p_strip.startswith('<blockquote') or p_strip.startswith('<li>'):
-                processed_p.append(p_strip)
-            elif '___CODE_BLOCK_' in p_strip:
-                processed_p.append(p_strip)
-            else:
-                p_html = p_strip.replace('\n', '<br>')
-                processed_p.append(f'<p>{p_html}</p>')
-
-        final_html = '\n'.join(processed_p)
-
-        # 還原程式碼區塊
-        for idx, block in enumerate(code_blocks):
-            final_html = final_html.replace(f'___CODE_BLOCK_{idx}___', block)
-
-        return final_html
-
-    body_html = md_to_html(md_text)
-
-    # 提取目錄項目 (H3 節點標題，如 M1-1 節點名稱)
-    headings = []
-    for line in lines:
-        if line.startswith("### "):
-            h_text = line[4:].strip()
-            # 建立 slug id
-            slug = re.sub(r'[^\w\-一-龥]', '-', h_text)
-            headings.append({"title": h_text, "id": slug})
-
-    return title, headings, body_html
-
-HTML_TEMPLATE = """<!DOCTYPE html>
+HTML_TEMPLATE = r"""<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
@@ -280,6 +206,16 @@ mark.search-match {{
     h1, h2, h3, h4 {{ page-break-after: avoid; }}
     pre, blockquote {{ page-break-inside: avoid; }}
 }}
+mark.current {{ background: #fb923c; color: #111; }}
+.table-wrap {{ overflow-x: auto; }}
+table {{ border-collapse: collapse; width: 100%; margin: 16px 0; }}
+th, td {{ border: 1px solid var(--border); padding: 8px; text-align: left; }}
+ol {{ padding-left: 24px; }}
+@media (max-width: 760px) {{
+    body {{ display: block; }}
+    #sidebar {{ position: static; width: 100%; max-height: 40vh; }}
+    #main-content {{ margin-left: 0; padding: 20px; min-width: 0; }}
+}}
 </style>
 </head>
 <body>
@@ -292,6 +228,9 @@ mark.search-match {{
     </div>
     <div class="search-box">
         <input type="text" id="search-input" placeholder="內文即時搜尋..." oninput="handleSearch(this.value)">
+        <div><button type="button" onclick="selectMatch(-1)" aria-label="上一個結果">▲</button>
+        <output id="search-count" aria-live="polite">0 / 0</output>
+        <button type="button" onclick="selectMatch(1)" aria-label="下一個結果">▼</button></div>
     </div>
     <nav class="nav-tree" id="nav-tree">
         {NAV_ITEMS}
@@ -310,45 +249,78 @@ window.addEventListener('scroll', () => {{
     document.getElementById('reading-progress').style.width = progress + '%';
 }});
 
-// 深淺色主題
+// Theme storage may be unavailable for local files.
 function toggleTheme() {{
-    const current = document.documentElement.getAttribute('data-theme');
-    const target = current === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', target);
-    localStorage.setItem('theme', target);
+    const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    try {{ localStorage.setItem('theme', next); }} catch (_) {{}}
 }}
-if (localStorage.getItem('theme') === 'dark') {{
-    document.documentElement.setAttribute('data-theme', 'dark');
-}}
+let theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+try {{ theme = localStorage.getItem('theme') || theme; }} catch (_) {{}}
+document.documentElement.dataset.theme = theme;
 
-// 簡易內文高亮搜尋
-function handleSearch(query) {{
-    query = query.trim().toLowerCase();
-    const content = document.getElementById('main-content');
-    // 清除舊標記
-    const marks = content.querySelectorAll('mark.search-match');
-    marks.forEach(m => {{
-        m.replaceWith(document.createTextNode(m.textContent));
-    }});
-    if (!query) return;
-
-    function walk(node) {{
-        if (node.nodeType === 3) {{
-            const val = node.nodeValue;
-            const idx = val.toLowerCase().indexOf(query);
-            if (idx >= 0) {{
-                const span = document.createElement('span');
-                span.innerHTML = val.substring(0, idx) + 
-                    '<mark class="search-match">' + val.substring(idx, idx + query.length) + '</mark>' + 
-                    val.substring(idx + query.length);
-                node.parentNode.replaceChild(span, node);
-            }}
-        }} else if (node.nodeType === 1 && node.childNodes && !['SCRIPT','STYLE','PRE'].includes(node.tagName)) {{
-            Array.from(node.childNodes).forEach(walk);
-        }}
+const content = document.getElementById('main-content');
+let matches = [], current = -1;
+function selectMatch(step) {{
+    if (!matches.length) return;
+    if (current >= 0) matches[current].classList.remove('current');
+    current = (current + step + matches.length) % matches.length;
+    const target = matches[current];
+    target.classList.add('current');
+    for (let parent = target.parentElement; parent; parent = parent.parentElement) {{
+        if (parent.tagName === 'DETAILS') parent.open = true;
     }}
-    walk(content);
+    target.scrollIntoView({{block:'center', behavior:'smooth'}});
+    document.getElementById('search-count').textContent = `${{current + 1}} / ${{matches.length}}`;
 }}
+function handleSearch(query) {{
+    content.querySelectorAll('mark.search-match').forEach(mark => mark.replaceWith(document.createTextNode(mark.textContent)));
+    content.normalize();
+    matches = []; current = -1;
+    document.getElementById('search-count').textContent = '0 / 0';
+    if (!query.trim()) return;
+    const escaped = query.trim().replace(/[.*+?^${{}}()|[\]\\]/g, '\\$&');
+    const pattern = new RegExp(escaped, 'giu');
+    const walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT, {{
+        acceptNode(node) {{ return node.parentElement.closest('script,style,button') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT; }}
+    }});
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    for (const node of nodes) {{
+        const text = node.nodeValue;
+        const hits = [...text.matchAll(pattern)];
+        if (!hits.length) continue;
+        const fragment = document.createDocumentFragment();
+        let end = 0;
+        for (const hit of hits) {{
+            fragment.append(document.createTextNode(text.slice(end, hit.index)));
+            const mark = document.createElement('mark');
+            mark.className = 'search-match'; mark.textContent = hit[0];
+            fragment.append(mark); matches.push(mark);
+            end = hit.index + hit[0].length;
+        }}
+        fragment.append(document.createTextNode(text.slice(end)));
+        node.replaceWith(fragment);
+    }}
+    selectMatch(1);
+}}
+document.getElementById('search-input').addEventListener('keydown', event => {{
+    if (event.key === 'Enter') {{ event.preventDefault(); selectMatch(event.shiftKey ? -1 : 1); }}
+    if (event.key === 'Escape') {{ event.target.value = ''; handleSearch(''); }}
+}});
+const sections = [...content.querySelectorAll('h3[id]')];
+const links = [...document.querySelectorAll('.nav-item')];
+function updateNavigation() {{
+    let active = sections[0];
+    for (const heading of sections) {{ if (heading.getBoundingClientRect().top <= 100) active = heading; }}
+    links.forEach(link => {{
+        const selected = !!active && link.getAttribute('href') === '#' + active.id;
+        link.classList.toggle('active', selected);
+        if (selected) link.setAttribute('aria-current', 'location'); else link.removeAttribute('aria-current');
+    }});
+}}
+window.addEventListener('scroll', updateNavigation, {{passive:true}});
+updateNavigation();
 </script>
 </body>
 </html>
@@ -373,7 +345,7 @@ def build_notes(md_file_path, output_html_path=None):
     # 建立目錄連結
     nav_links = []
     for h in headings:
-        nav_links.append(f'<a href="#{html.escape(h["title"])}" class="nav-item">{html.escape(h["title"])}</a>')
+        nav_links.append(f'<a href="#{h["id"]}" class="nav-item">{html.escape(h["title"])}</a>')
     nav_html = '\n'.join(nav_links)
 
     # 注入模板
@@ -383,7 +355,18 @@ def build_notes(md_file_path, output_html_path=None):
         BODY_CONTENT=body_html
     )
 
-    output_html_path.write_text(full_html, encoding="utf-8")
+    if Path(output_html_path).resolve() == md_path:
+        raise ValueError("輸出路徑不可覆蓋來源 Markdown")
+    import tempfile
+    temp_path = None
+    try:
+        with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=output_html_path.parent, suffix=".tmp", delete=False) as stream:
+            temp_path = Path(stream.name)
+            stream.write(full_html)
+        os.replace(temp_path, output_html_path)
+    finally:
+        if temp_path is not None:
+            temp_path.unlink(missing_ok=True)
     file_size_kb = output_html_path.stat().st_size / 1024
     print(f"[OK] HTML 手冊組裝完成！")
     print(f"檔案路徑: {output_html_path}")
@@ -396,5 +379,9 @@ if __name__ == "__main__":
         sys.exit(1)
     in_file = sys.argv[1]
     out_file = sys.argv[2] if len(sys.argv) > 2 else None
-    success = build_notes(in_file, out_file)
+    try:
+        success = build_notes(in_file, out_file)
+    except (OSError, ValueError) as error:
+        print(f"匯出失敗：{error}；來源 Markdown 保留。", file=sys.stderr)
+        sys.exit(1)
     sys.exit(0 if success else 1)
