@@ -2,14 +2,14 @@
 
 > 以「由上而下（Top-Down）」的大師級視角，引導 AI 系統化帶領你深度掌握任何全新知識領域。
 
-[![Antigravity Plugin](https://img.shields.io/badge/Antigravity-Plugin-purple.svg)](https://github.com/Lin-Yu-kuan/mySkill)
 [![Agent Skill](https://img.shields.io/badge/Agent-Skill-blue.svg)](https://github.com/Lin-Yu-kuan/mySkill)
+[![Antigravity Compatible](https://img.shields.io/badge/Antigravity-Compatible-purple.svg)](https://github.com/Lin-Yu-kuan/mySkill)
 [![Language](https://img.shields.io/badge/Language-繁體中文-brightgreen.svg)]()
 [![Zero External Dependencies](https://img.shields.io/badge/Dependencies-Python%20Standard%20Lib-success.svg)]()
 
 ---
 
-## 💡 為什麼需要這個外掛？
+## 💡 為什麼需要這個 Skill？
 
 許多人在請 AI 教學一個陌生領域時，常遇到以下痛點：
 - **迷失在細節中**：AI 一開口就丟出一大堆專有名詞與片段細節，缺乏全域脈絡。
@@ -166,7 +166,7 @@ Linux 容器並非獨立的虛擬機器，而是受兩項核心機制約束的�
 
 ## 🖥️ 第三階段：編譯 HTML 互動手冊
 
-完成學習後，系統將自動調用外掛內建的 Python 組裝編譯器（或無 Python 時自動降級）：
+完成學習後，系統將自動調用內建的 Python 組裝編譯器（或無 Python 時自動降級）：
 ```bash
 python "<目前 SKILL.md 所在目錄>/scripts/build_notes.py" "<notes_path 的實際絕對路徑>"
 ```
@@ -180,45 +180,33 @@ python "<目前 SKILL.md 所在目錄>/scripts/build_notes.py" "<notes_path 的�
 
 ---
 
-## 📂 外掛檔案結構
+## 📂 技能檔案結構
 
 ```text
 knowledge-map-learning/
-├── plugin.json                 # 外掛 Manifest 清單（名稱、版本、作者）
-├── README.md                   # 外掛說明文件
-└── skills/
-    └── knowledge-map-learning/ # 封裝之核心技能目錄
-        ├── SKILL.md            # 技能提示詞定義（含雙軌降級機制）
-        └── scripts/
-            ├── build_notes.py  # 零相依 HTML 組裝編譯入口腳本
-            └── notes_markdown.py # 筆記專用 Markdown 安全解析模組
+├── SKILL.md                 # 核心技能定義與提示詞（含雙軌降級機制）
+├── README.md                # 技能說明文件
+├── plugin.json              # 插件清單定義（相容外掛生態）
+└── scripts/
+    ├── build_notes.py       # 零相依 HTML 組裝編譯入口腳本
+    └── notes_markdown.py    # 筆記專用 Markdown 安全解析模組
 ```
 
 ---
 
-## 📥 安裝與啟用
+## 📥 安裝指南
 
-### 1. 安裝為 Antigravity 外掛（推薦，享受完整生命週期管理）
-請先開啟終端機進入下載/clone 的 `mySkill` 倉庫目錄，再執行複製：
+### 在 Antigravity 中使用（推薦）
+將此 `knowledge-map-learning` 資料夾直接複製到 Antigravity 全域技能目錄：
 - **Windows (PowerShell)**：
   ```powershell
-  # 請先切換至 mySkill 儲存庫目錄（例如 cd D:\develop\AI\mySkill）
-  Copy-Item -Path "knowledge-map-learning" -Destination "$HOME\.gemini\config\plugins\knowledge-map-learning" -Recurse -Force
-  ```
-  *或者直接使用完整絕對路徑複製：*
-  ```powershell
-  Copy-Item -Path "D:\develop\AI\mySkill\knowledge-map-learning" -Destination "$HOME\.gemini\config\plugins\knowledge-map-learning" -Recurse -Force
+  Copy-Item -Path "D:\develop\AI\mySkill\knowledge-map-learning" -Destination "$HOME\.gemini\config\skills\knowledge-map-learning" -Recurse -Force
   ```
 - **macOS / Linux**：
   ```bash
-  cp -r knowledge-map-learning "$HOME/.gemini/config/plugins/knowledge-map-learning"
+  cp -r knowledge-map-learning "$HOME/.gemini/config/skills/knowledge-map-learning"
   ```
-安裝完成後，在 Antigravity 插件面板（或重啟後）即可看到此插件，並支援隨時啟用與停用。
-
-### 2. 通用 Agent Skill 安裝（相容其他 AI 宿主）
-若在未支援插件系統的環境中使用，亦可將 `skills/knowledge-map-learning` 子目錄直接作為標準 Agent 技能安裝：
-- 專案工作區：複製至 `<專案目錄>/<宿主技能目錄>/knowledge-map-learning`
-- 全域環境：複製至 `$HOME/<宿主全域設定目錄>/skills/knowledge-map-learning`
+複製完成後，Antigravity 將**即刻自動偵測並啟用**本技能！
 
 ---
 
