@@ -12,6 +12,7 @@
 |---|---|---|---|
 | [knowledge-map-learning](./knowledge-map-learning) | 由上而下脈絡全景圖、四層認識論深度精講、逐回合即時落盤與自包含 HTML 互動手冊匯出 | 學習 / 思考 | [查看說明文件](./knowledge-map-learning/README.md) |
 | [frontend-ui-annotator](./frontend-ui-annotator) | 前端介面生成與視覺標註專家，支援 IDE 內建預覽、跨瀏覽器 Bookmarklet、DOM 麵包屑切換與一鍵反饋迭代 | 前端 / UI 設計 | [查看說明文件](./frontend-ui-annotator/README.md) |
+| [essay-solver](./essay-solver) | 臺灣國家考試、國營事業與專技申論題擬答，考場手寫實戰架構、標準四板塊輸出與嚴謹法條裁判查證 | 公職 / 考試 | [查看說明文件](./essay-solver/README.md) |
 
 *(未來若有新增其他 Skill，會陸續擴充於此)*
 
@@ -39,6 +40,9 @@
 ```text
 mySkill/
 ├── README.md                      # 技能庫總覽首頁（當前檔案）
+├── essay-solver/                  # 臺灣國考申論題解題專家
+│   ├── SKILL.md                   # 核心技能定義（含考場準則與四區塊規範）
+│   └── README.md                  # 技能說明與免下載一鍵安裝指南
 ├── knowledge-map-learning/        # 知識地圖主題學習法
 │   ├── SKILL.md                   # 核心技能定義（含雙軌降級機制）
 │   ├── README.md                  # 技能說明文件
