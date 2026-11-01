@@ -199,10 +199,15 @@ knowledge-map-learning/
 ## 📥 安裝與啟用
 
 ### 1. 安裝為 Antigravity 外掛（推薦，享受完整生命週期管理）
-將此 `knowledge-map-learning` 外掛資料夾複製到 Antigravity 全域外掛目錄：
+請先開啟終端機進入下載/clone 的 `mySkill` 倉庫目錄，再執行複製：
 - **Windows (PowerShell)**：
   ```powershell
+  # 請先切換至 mySkill 儲存庫目錄（例如 cd D:\develop\AI\mySkill）
   Copy-Item -Path "knowledge-map-learning" -Destination "$HOME\.gemini\config\plugins\knowledge-map-learning" -Recurse -Force
+  ```
+  *或者直接使用完整絕對路徑複製：*
+  ```powershell
+  Copy-Item -Path "D:\develop\AI\mySkill\knowledge-map-learning" -Destination "$HOME\.gemini\config\plugins\knowledge-map-learning" -Recurse -Force
   ```
 - **macOS / Linux**：
   ```bash

@@ -19,9 +19,14 @@
 ## 🚀 安裝指南
 
 ### 1. 安裝為 Antigravity 外掛（推薦，享受完整生命週期管理）
-複製至全域外掛目錄：
+請切換至本倉庫目錄（或使用完整來源路徑）執行複製：
 ```powershell
+# 在 mySkill 倉庫目錄下執行：
 Copy-Item -Path "knowledge-map-learning" -Destination "$HOME\.gemini\config\plugins\knowledge-map-learning" -Recurse -Force
+```
+*或者直接指定絕對路徑：*
+```powershell
+Copy-Item -Path "D:\develop\AI\mySkill\knowledge-map-learning" -Destination "$HOME\.gemini\config\plugins\knowledge-map-learning" -Recurse -Force
 ```
 
 ### 2. 通用 Agent Skill 安裝（相容其他 AI 宿主環境）
