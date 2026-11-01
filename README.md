@@ -11,7 +11,7 @@
 | 名稱 | 簡介 | 類別 | 詳細說明 |
 |---|---|---|---|
 | [knowledge-map-learning](./knowledge-map-learning) | 由上而下脈絡全景圖、四層認識論深度精講、逐回合即時落盤與自包含 HTML 互動手冊匯出 | 學習 / 思考 | [查看說明文件](./knowledge-map-learning/README.md) |
-| [frontend-ui-annotator](./frontend-ui-annotator) | 前端介面生成與視覺標註專家，支援 IDE 內建預覽、跨瀏覽器 Bookmarklet、DOM 麵包屑切換與一鍵反饋迭代 | 前端 / UI 設計 | [查看說明文件](./frontend-ui-annotator/README.md) |
+| [frontend-ui-annotator](./frontend-ui-annotator) | 前端介面生成、全域自由便條紙標註與全頁風格萃取專家，支援任意位置隨手貼紙、外站全頁 Design Tokens 萃取、雙軌環境智慧辨識與一鍵迭代 | 前端 / UI 設計 | [查看說明文件](./frontend-ui-annotator/README.md) |
 | [essay-solver](./essay-solver) | 臺灣國家考試、國營事業與專技申論題擬答，考場手寫實戰架構、標準四板塊輸出與嚴謹法條裁判查證 | 公職 / 考試 | [查看說明文件](./essay-solver/README.md) |
 
 *(未來若有新增其他 Skill，會陸續擴充於此)*
@@ -48,11 +48,11 @@ mySkill/
 │   ├── README.md                  # 技能說明文件
 │   ├── plugin.json                # 外掛 Manifest 清單
 │   └── scripts/                   # HTML 編譯腳本與安全 Markdown 解析模組
-└── frontend-ui-annotator/         # 前端介面生成與視覺標註專家
+└── frontend-ui-annotator/         # 前端介面生成、自由便條紙標註與全站風格萃取專家
     ├── SKILL.md                   # 核心技能定義
     ├── README.md                  # 技能說明文件
     ├── plugin.json                # 外掛 Manifest 清單
-    └── resources/                 # 標註器原生腳本與 Bookmarklet 安裝頁面
+    └── resources/                 # 便條紙與風格萃取原生腳本、Bookmarklet 安裝頁面
 ```
 
 ---
