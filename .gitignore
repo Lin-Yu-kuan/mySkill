@@ -1,13 +1,42 @@
-# Python cache
+# ==========================================
+# 1. Skill 執行產物（個人學習筆記與匯出手冊）
+# ==========================================
+learning-notes/
+*-Interactive-Notes.html
+*.tmp
+*.bak
+*.swp
+
+# ==========================================
+# 2. 本地測試腳本與測試暫存目錄
+# ==========================================
+test_*.py
+*_test.py
+**/scripts/test_*.py
+**/scripts/tmp*/
+tmp*/
+.pytest_cache/
+.coverage
+
+# ==========================================
+# 3. Python 快取與環境
+# ==========================================
 __pycache__/
 *.py[cod]
 *$py.class
+.venv/
+venv/
+env/
 
-# Local test scripts
-test_*.py
-scripts/test_*.py
-
-# Environment / OS
+# ==========================================
+# 4. 編輯器、AI 宿主本地配置與作業系統雜訊
+# ==========================================
+.vscode/
+.idea/
+.gemini/
+.claude/
+.cursor/
+.agent/
 .DS_Store
 Thumbs.db
-
+Desktop.ini
