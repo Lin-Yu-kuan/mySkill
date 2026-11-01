@@ -22,6 +22,59 @@
 
 ---
 
+## 🚀 Antigravity 一鍵安裝方式
+
+使用者**完全不需要事先手動下載或解壓縮整個 GitHub 專案**！請根據您的情境選擇最方便的安裝方式：
+
+### 🌐 方式一：免下載！Windows (PowerShell) 雲端一行直裝（推薦）
+開啟 PowerShell，複製貼上以下單行指令並按 Enter，即可直接從 GitHub 雲端安裝本技能及其標註器腳本資源至 Antigravity 全域目錄：
+
+```powershell
+$u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $t="$env:TEMP\myskill.zip"; $d="$HOME\.gemini\config\skills\frontend-ui-annotator"; if (!(Test-Path $d)) { New-Item -ItemType Directory -Path $d -Force }; Invoke-WebRequest $u -OutFile $t; Expand-Archive $t "$env:TEMP\myskill-temp" -Force; Copy-Item "$env:TEMP\myskill-temp\mySkill-main\frontend-ui-annotator\*" $d -Recurse -Force; Remove-Item $t,"$env:TEMP\myskill-temp" -Recurse -Force; Write-Host "✅ frontend-ui-annotator 技能套件已成功安裝至 Antigravity！" -ForegroundColor Green
+```
+
+---
+
+### 🍎 方式二：免下載！macOS / Linux 雲端一行直裝
+開啟終端機（Terminal），貼上以下指令直接提取安裝：
+
+```bash
+mkdir -p "$HOME/.gemini/config/skills/frontend-ui-annotator" && curl -sSL "https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.tar.gz" | tar -xz -C "$HOME/.gemini/config/skills/frontend-ui-annotator" --strip-components=2 "mySkill-main/frontend-ui-annotator/" && echo "✅ frontend-ui-annotator 技能套件已成功安裝！"
+```
+
+---
+
+### 💬 方式三：免開終端機！Antigravity 聊天框「自然語言安裝」
+在 Antigravity 聊天對話框中，直接將以下提示詞複製貼上交給 Agent：
+
+> 「請幫我從 GitHub 倉庫 (`https://github.com/Lin-Yu-kuan/mySkill`) 將 `frontend-ui-annotator` 技能資料夾（含 SKILL.md 及 resources 目錄）下載並安裝到我的 Antigravity 全域技能目錄 (`~/.gemini/config/skills/frontend-ui-annotator`)。」
+
+---
+
+### 💻 方式四：本機開發者軟連結（Symlink，修改即時生效）
+如果您已將 `mySkill` 倉庫 Clone 至本機並進行開發維護，推薦建立符號連結。日後在原目錄修改標註器腳本或提示詞，Antigravity 會**即刻同步生效**：
+
+```powershell
+# 請在 mySkill/frontend-ui-annotator 目錄下執行（需管理員權限或開啟 Windows 開發人員模式）
+New-Item -ItemType SymbolicLink -Path "$HOME\.gemini\config\skills\frontend-ui-annotator" -Target (Get-Location).Path -Force
+```
+
+---
+
+### 📁 方式五：已 Clone 完整倉庫者的本地安裝
+如果您已經將整個 `mySkill` 倉庫 Clone 到本機，亦可直接以本地檔案複製安裝：
+
+- **Windows (PowerShell)**：
+  ```powershell
+  Copy-Item -Path ".\frontend-ui-annotator" -Destination "$HOME\.gemini\config\skills\frontend-ui-annotator" -Recurse -Force
+  ```
+- **macOS / Linux**：
+  ```bash
+  cp -r ./frontend-ui-annotator "$HOME/.gemini/config/skills/frontend-ui-annotator"
+  ```
+
+---
+
 ## 🚀 使用指南
 
 ### 1. 在 Antigravity IDE 內建預覽中使用
