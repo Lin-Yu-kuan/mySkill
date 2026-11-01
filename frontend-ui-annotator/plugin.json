@@ -1,0 +1,24 @@
+{
+  "name": "frontend-ui-annotator",
+  "displayName": "前端介面生成與視覺標註專家",
+  "version": "2.1.0",
+  "description": "專為 Antigravity IDE 與外部真實瀏覽器設計的前端視覺標註與迭代工具。支援 DOM 階層麵包屑切換、跨瀏覽器 Bookmarklet 書籤小工具與一鍵複製反饋指令。",
+  "author": {
+    "name": "Lin-Yu-kuan",
+    "url": "https://github.com/Lin-Yu-kuan"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Lin-Yu-kuan/mySkill"
+  },
+  "homepage": "https://github.com/Lin-Yu-kuan/mySkill",
+  "keywords": [
+    "frontend",
+    "ui-design",
+    "visual-feedback",
+    "annotation",
+    "bookmarklet",
+    "tailwind",
+    "antigravity-skill"
+  ]
+}

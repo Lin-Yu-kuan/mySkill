@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Antigravity 網頁標註小工具安裝中心</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    .glow-hover:hover {
+      box-shadow: 0 0 25px rgba(59, 130, 246, 0.6);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between p-6 antialiased selection:bg-blue-600 selection:text-white">
+
+  <!-- 頂部 Header -->
+  <div class="max-w-4xl mx-auto w-full pt-8 pb-4 text-center">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold mb-4">
+      <span>🚀</span> Antigravity IDE 專屬前端輔助套件 v2.0
+    </div>
+    <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-3">
+      跨瀏覽器視覺標註小工具 (Bookmarklet)
+    </h1>
+    <p class="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto">
+      無需安裝任何 Chrome 擴充套件，只要將下方按鈕拖移到瀏覽器書籤列，就能在任何真實網站（Localhost、本地 HTML 或線上產品）點擊標註並一鍵回傳給 Antigravity。
+    </p>
+  </div>
+
+  <!-- 核心安裝按鈕區 -->
+  <div class="max-w-xl mx-auto w-full my-8 bg-slate-900/90 border border-slate-800 rounded-2xl p-8 shadow-2xl backdrop-blur-xl text-center relative overflow-hidden">
+    <div class="absolute -top-24 -left-24 w-48 h-48 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-purple-600/20 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-3">步驟一：將此按鈕拖曳到書籤列</div>
+    
+    <div class="py-4">
+      <a href="javascript:(function%20()%20%7B%20if%20(window.__AGY_ANNOTATOR_LOADED__)%20%7B%20const%20toggle%20%3D%20document.getElementById('agy-toggle-btn')%3B%20if%20(toggle)%20toggle.click()%3B%20return%3B%20%7D%20window.__AGY_ANNOTATOR_LOADED__%20%3D%20true%3B%20let%20isAnnotating%20%3D%20false%3B%20let%20annotations%20%3D%20%5B%5D%3B%20let%20currentTarget%20%3D%20null%3B%20let%20ancestorsList%20%3D%20%5B%5D%3B%20const%20fixedRoot%20%3D%20document.createElement('div')%3B%20fixedRoot.id%20%3D%20'agy-fixed-root'%3B%20fixedRoot.style.cssText%20%3D%20'position%3Afixed%3Btop%3A0%3Bleft%3A0%3Bwidth%3A100%25%3Bheight%3A100%25%3Bpointer-events%3Anone%3Bz-index%3A9999999%3Bfont-family%3Asystem-ui%2C-apple-system%2CBlinkMacSystemFont%2C%22Segoe%20UI%22%2CRoboto%2Csans-serif%3B'%3B%20document.body.appendChild(fixedRoot)%3B%20const%20scrollRoot%20%3D%20document.createElement('div')%3B%20scrollRoot.id%20%3D%20'agy-scroll-root'%3B%20scrollRoot.style.cssText%20%3D%20'position%3Aabsolute%3Btop%3A0%3Bleft%3A0%3Bwidth%3A100%25%3Bmin-height%3A100%25%3Bpointer-events%3Anone%3Bz-index%3A9999990%3B'%3B%20document.body.appendChild(scrollRoot)%3B%20const%20hoverBox%20%3D%20document.createElement('div')%3B%20hoverBox.style.cssText%20%3D%20'position%3Afixed%3Bpointer-events%3Anone%3Bborder%3A2px%20dashed%20%232563eb%3Bbackground%3Argba(37%2C99%2C235%2C0.12)%3Bdisplay%3Anone%3Bz-index%3A10000000%3Bborder-radius%3A4px%3Bbox-sizing%3Aborder-box%3Btransition%3Atop%200.04s%20ease%2C%20left%200.04s%20ease%2C%20width%200.04s%20ease%2C%20height%200.04s%20ease%3B'%3B%20fixedRoot.appendChild(hoverBox)%3B%20const%20toolbar%20%3D%20document.createElement('div')%3B%20toolbar.style.cssText%20%3D%20%60%20position%3A%20fixed%3B%20bottom%3A%2024px%3B%20right%3A%2024px%3B%20display%3A%20flex%3B%20align-items%3A%20center%3B%20gap%3A%208px%3B%20background%3A%20rgba(15%2C%2023%2C%2042%2C%200.94)%3B%20backdrop-filter%3A%20blur(12px)%3B%20-webkit-backdrop-filter%3A%20blur(12px)%3B%20border%3A%201px%20solid%20rgba(255%2C%20255%2C%20255%2C%200.18)%3B%20padding%3A%207px%2012px%3B%20border-radius%3A%209999px%3B%20box-shadow%3A%200%2010px%2030px%20rgba(0%2C0%2C0%2C0.5)%3B%20pointer-events%3A%20auto%3B%20z-index%3A%2010000005%3B%20user-select%3A%20none%3B%20transition%3A%20transform%200.2s%20ease%3B%20%60%3B%20toolbar.innerHTML%20%3D%20%60%20%3Cbutton%20id%3D%22agy-toggle-btn%22%20style%3D%22%20background%3A%20%232563eb%3B%20color%3A%20white%3B%20border%3A%20none%3B%20padding%3A%207px%2015px%3B%20border-radius%3A%209999px%3B%20font-size%3A%2013px%3B%20font-weight%3A%20600%3B%20cursor%3A%20pointer%3B%20display%3A%20flex%3B%20align-items%3A%20center%3B%20gap%3A%206px%3B%20box-shadow%3A%200%202px%208px%20rgba(37%2C99%2C235%2C0.4)%3B%20outline%3A%20none%3B%20%22%3E%20%3Cspan%3E%F0%9F%8E%AF%3C%2Fspan%3E%20%3Cspan%20id%3D%22agy-btn-text%22%3E%E9%96%8B%E5%95%9F%E6%A8%99%E8%A8%BB%E6%A8%A1%E5%BC%8F%3C%2Fspan%3E%20%3C%2Fbutton%3E%20%3Cbutton%20id%3D%22agy-copy-btn%22%20style%3D%22%20background%3A%20rgba(255%2C255%2C255%2C0.12)%3B%20color%3A%20%23f8fafc%3B%20border%3A%201px%20solid%20rgba(255%2C255%2C255%2C0.2)%3B%20padding%3A%207px%2013px%3B%20border-radius%3A%209999px%3B%20font-size%3A%2013px%3B%20font-weight%3A%20500%3B%20cursor%3A%20pointer%3B%20display%3A%20flex%3B%20align-items%3A%20center%3B%20gap%3A%205px%3B%20outline%3A%20none%3B%20%22%3E%20%3Cspan%3E%F0%9F%93%8B%3C%2Fspan%3E%20%E8%A4%87%E8%A3%BD%E9%9C%80%E6%B1%82%20(%3Cspan%20id%3D%22agy-count%22%3E0%3C%2Fspan%3E)%20%3C%2Fbutton%3E%20%3Cbutton%20id%3D%22agy-exit-btn%22%20title%3D%22%E5%AE%8C%E5%85%A8%E9%97%9C%E9%96%89%E4%B8%A6%E9%9B%A2%E9%96%8B%E6%A8%99%E8%A8%BB%E5%B7%A5%E5%85%B7%22%20style%3D%22%20background%3A%20rgba(255%2C255%2C255%2C0.08)%3B%20color%3A%20%2394a3b8%3B%20border%3A%201px%20solid%20rgba(255%2C255%2C255%2C0.12)%3B%20width%3A%2028px%3B%20height%3A%2028px%3B%20border-radius%3A%2050%25%3B%20font-size%3A%2013px%3B%20font-weight%3A%20bold%3B%20cursor%3A%20pointer%3B%20display%3A%20flex%3B%20align-items%3A%20center%3B%20justify-content%3A%20center%3B%20margin-left%3A%202px%3B%20outline%3A%20none%3B%20transition%3A%20all%200.15s%20ease%3B%20%22%3E%E2%9C%95%3C%2Fbutton%3E%20%60%3B%20fixedRoot.appendChild(toolbar)%3B%20const%20toast%20%3D%20document.createElement('div')%3B%20toast.style.cssText%20%3D%20%60%20position%3A%20fixed%3B%20top%3A%2024px%3B%20left%3A%2050%25%3B%20transform%3A%20translateX(-50%25)%3B%20background%3A%20%23059669%3B%20color%3A%20white%3B%20font-size%3A%2013px%3B%20font-weight%3A%20600%3B%20padding%3A%209px%2020px%3B%20border-radius%3A%209999px%3B%20box-shadow%3A%200%204px%2020px%20rgba(0%2C0%2C0%2C0.35)%3B%20pointer-events%3A%20none%3B%20opacity%3A%200%3B%20transition%3A%20opacity%200.25s%20ease%2C%20transform%200.25s%20ease%3B%20z-index%3A%2010000020%3B%20%60%3B%20fixedRoot.appendChild(toast)%3B%20let%20toastTimer%20%3D%20null%3B%20function%20showToast(msg%2C%20bg%20%3D%20'%23059669')%20%7B%20clearTimeout(toastTimer)%3B%20toast.innerText%20%3D%20msg%3B%20toast.style.background%20%3D%20bg%3B%20toast.style.opacity%20%3D%20'1'%3B%20toast.style.transform%20%3D%20'translateX(-50%25)%20translateY(4px)'%3B%20toastTimer%20%3D%20setTimeout(()%20%3D%3E%20%7B%20toast.style.opacity%20%3D%20'0'%3B%20toast.style.transform%20%3D%20'translateX(-50%25)%20translateY(0)'%3B%20%7D%2C%202400)%3B%20%7D%20const%20toggleBtn%20%3D%20toolbar.querySelector('%23agy-toggle-btn')%3B%20const%20btnText%20%3D%20toolbar.querySelector('%23agy-btn-text')%3B%20const%20copyBtn%20%3D%20toolbar.querySelector('%23agy-copy-btn')%3B%20const%20countSpan%20%3D%20toolbar.querySelector('%23agy-count')%3B%20const%20exitBtn%20%3D%20toolbar.querySelector('%23agy-exit-btn')%3B%20exitBtn.addEventListener('mouseenter'%2C%20()%20%3D%3E%20%7B%20exitBtn.style.background%20%3D%20'%23dc2626'%3B%20exitBtn.style.color%20%3D%20'%23ffffff'%3B%20exitBtn.style.borderColor%20%3D%20'%23ef4444'%3B%20%7D)%3B%20exitBtn.addEventListener('mouseleave'%2C%20()%20%3D%3E%20%7B%20exitBtn.style.background%20%3D%20'rgba(255%2C255%2C255%2C0.08)'%3B%20exitBtn.style.color%20%3D%20'%2394a3b8'%3B%20exitBtn.style.borderColor%20%3D%20'rgba(255%2C255%2C255%2C0.12)'%3B%20%7D)%3B%20exitBtn.addEventListener('click'%2C%20()%20%3D%3E%20%7B%20if%20(annotations.length%20%3E%200)%20%7B%20if%20(!confirm(%60%E7%9B%AE%E5%89%8D%E7%95%AB%E9%9D%A2%E4%B8%8A%E9%82%84%E6%9C%89%20%24%7Bannotations.length%7D%20%E5%80%8B%E6%A8%99%E8%A8%BB%E5%B0%9A%E6%9C%AA%E8%A4%87%E8%A3%BD%EF%BC%8C%E7%A2%BA%E5%AE%9A%E8%A6%81%E5%AE%8C%E5%85%A8%E9%97%9C%E9%96%89%E6%A8%99%E8%A8%BB%E5%B7%A5%E5%85%B7%E5%97%8E%EF%BC%9F%60))%20%7B%20return%3B%20%7D%20%7D%20closeDialog()%3B%20fixedRoot.remove()%3B%20scrollRoot.remove()%3B%20document.body.style.cursor%20%3D%20''%3B%20window.__AGY_ANNOTATOR_LOADED__%20%3D%20false%3B%20%7D)%3B%20toggleBtn.addEventListener('click'%2C%20()%20%3D%3E%20%7B%20isAnnotating%20%3D%20!isAnnotating%3B%20if%20(isAnnotating)%20%7B%20toggleBtn.style.background%20%3D%20'%23dc2626'%3B%20toggleBtn.style.boxShadow%20%3D%20'0%202px%208px%20rgba(220%2C38%2C38%2C0.4)'%3B%20btnText.innerText%20%3D%20'%E9%80%80%E5%87%BA%E6%A8%99%E8%A8%BB%E6%A8%A1%E5%BC%8F'%3B%20document.body.style.cursor%20%3D%20'crosshair'%3B%20showToast('%F0%9F%8E%AF%20%E6%A8%99%E8%A8%BB%E6%A8%A1%E5%BC%8F%E5%B7%B2%E9%96%8B%E5%95%9F%EF%BC%9A%E9%BB%9E%E9%81%B8%E7%95%AB%E9%9D%A2%E4%B8%8A%E4%BB%BB%E4%BD%95%E5%85%83%E4%BB%B6%E5%8D%B3%E5%8F%AF%E7%95%99%E8%A8%80')%3B%20%7D%20else%20%7B%20toggleBtn.style.background%20%3D%20'%232563eb'%3B%20toggleBtn.style.boxShadow%20%3D%20'0%202px%208px%20rgba(37%2C99%2C235%2C0.4)'%3B%20btnText.innerText%20%3D%20'%E9%96%8B%E5%95%9F%E6%A8%99%E8%A8%BB%E6%A8%A1%E5%BC%8F'%3B%20document.body.style.cursor%20%3D%20''%3B%20hoverBox.style.display%20%3D%20'none'%3B%20closeDialog()%3B%20%7D%20%7D)%3B%20function%20updateHoverBox(el)%20%7B%20if%20(!el%20%7C%7C%20!isAnnotating)%20%7B%20hoverBox.style.display%20%3D%20'none'%3B%20return%3B%20%7D%20const%20rect%20%3D%20el.getBoundingClientRect()%3B%20if%20(rect.width%20%3D%3D%3D%200%20%26%26%20rect.height%20%3D%3D%3D%200)%20%7B%20hoverBox.style.display%20%3D%20'none'%3B%20return%3B%20%7D%20hoverBox.style.display%20%3D%20'block'%3B%20hoverBox.style.top%20%3D%20rect.top%20%2B%20'px'%3B%20hoverBox.style.left%20%3D%20rect.left%20%2B%20'px'%3B%20hoverBox.style.width%20%3D%20rect.width%20%2B%20'px'%3B%20hoverBox.style.height%20%3D%20rect.height%20%2B%20'px'%3B%20%7D%20document.addEventListener('mousemove'%2C%20(e)%20%3D%3E%20%7B%20if%20(!isAnnotating)%20return%3B%20if%20(fixedRoot.contains(e.target)%20%7C%7C%20scrollRoot.contains(e.target))%20%7B%20return%3B%20%7D%20const%20target%20%3D%20e.target%3B%20if%20(target%20%3D%3D%3D%20document.body%20%7C%7C%20target%20%3D%3D%3D%20document.documentElement)%20%7B%20hoverBox.style.display%20%3D%20'none'%3B%20return%3B%20%7D%20updateHoverBox(target)%3B%20%7D%2C%20true)%3B%20window.addEventListener('scroll'%2C%20()%20%3D%3E%20%7B%20if%20(!isAnnotating)%20return%3B%20if%20(currentTarget)%20updateHoverBox(currentTarget)%3B%20%7D%2C%20%7B%20passive%3A%20true%20%7D)%3B%20function%20getSafeClassName(el)%20%7B%20if%20(!el)%20return%20''%3B%20if%20(typeof%20el.className%20%3D%3D%3D%20'string')%20%7B%20return%20el.className.trim()%3B%20%7D%20if%20(el.className%20%26%26%20typeof%20el.className.baseVal%20%3D%3D%3D%20'string')%20%7B%20return%20el.className.baseVal.trim()%3B%20%7D%20return%20''%3B%20%7D%20function%20getReadableSelector(el)%20%7B%20if%20(!el)%20return%20''%3B%20const%20tag%20%3D%20el.tagName.toLowerCase()%3B%20const%20id%20%3D%20el.id%20%3F%20%60%23%24%7Bel.id%7D%60%20%3A%20''%3B%20let%20classSnippet%20%3D%20''%3B%20const%20rawClass%20%3D%20getSafeClassName(el)%3B%20if%20(rawClass)%20%7B%20const%20parts%20%3D%20rawClass.split(%2F%5Cs%2B%2F).filter(c%20%3D%3E%20!c.startsWith('agy-')%20%26%26%20c.length%20%3C%2030).slice(0%2C%202)%3B%20if%20(parts.length%20%3E%200)%20classSnippet%20%3D%20'.'%20%2B%20parts.join('.')%3B%20%7D%20const%20textSnippet%20%3D%20el.innerText%20%26%26%20el.innerText.trim()%20%3F%20%60%20%22%24%7Bel.innerText.trim().slice(0%2C%2014)%7D%22%60%20%3A%20''%3B%20return%20%60%3C%24%7Btag%7D%24%7Bid%7D%24%7BclassSnippet%7D%3E%24%7BtextSnippet%7D%60%3B%20%7D%20function%20getAncestors(el)%20%7B%20const%20list%20%3D%20%5B%5D%3B%20let%20cur%20%3D%20el%3B%20while%20(cur%20%26%26%20cur%20!%3D%3D%20document.body%20%26%26%20cur%20!%3D%3D%20document.documentElement%20%26%26%20list.length%20%3C%205)%20%7B%20if%20(!fixedRoot.contains(cur)%20%26%26%20!scrollRoot.contains(cur))%20%7B%20list.push(cur)%3B%20%7D%20cur%20%3D%20cur.parentElement%3B%20%7D%20return%20list%3B%20%7D%20document.addEventListener('click'%2C%20(e)%20%3D%3E%20%7B%20if%20(!isAnnotating)%20return%3B%20if%20(fixedRoot.contains(e.target)%20%7C%7C%20scrollRoot.contains(e.target))%20return%3B%20e.preventDefault()%3B%20e.stopPropagation()%3B%20currentTarget%20%3D%20e.target%3B%20ancestorsList%20%3D%20getAncestors(currentTarget)%3B%20const%20clickPageX%20%3D%20e.pageX%3B%20const%20clickPageY%20%3D%20e.pageY%3B%20const%20clickClientX%20%3D%20e.clientX%3B%20const%20clickClientY%20%3D%20e.clientY%3B%20openCommentDialog(currentTarget%2C%20clickPageX%2C%20clickPageY%2C%20clickClientX%2C%20clickClientY)%3B%20%7D%2C%20true)%3B%20function%20closeDialog()%20%7B%20const%20existing%20%3D%20document.getElementById('agy-active-dialog')%3B%20if%20(existing)%20existing.remove()%3B%20%7D%20function%20openCommentDialog(target%2C%20pageX%2C%20pageY%2C%20clientX%2C%20clientY)%20%7B%20closeDialog()%3B%20currentTarget%20%3D%20target%3B%20updateHoverBox(currentTarget)%3B%20const%20dialog%20%3D%20document.createElement('div')%3B%20dialog.id%20%3D%20'agy-active-dialog'%3B%20let%20top%20%3D%20clientY%20%2B%2012%3B%20let%20left%20%3D%20clientX%20%2B%2012%3B%20if%20(left%20%2B%20320%20%3E%20window.innerWidth)%20left%20%3D%20window.innerWidth%20-%20330%3B%20if%20(top%20%2B%20260%20%3E%20window.innerHeight)%20top%20%3D%20clientY%20-%20260%3B%20if%20(top%20%3C%2010)%20top%20%3D%2010%3B%20if%20(left%20%3C%2010)%20left%20%3D%2010%3B%20dialog.style.cssText%20%3D%20%60%20position%3A%20fixed%3B%20top%3A%20%24%7Btop%7Dpx%3B%20left%3A%20%24%7Bleft%7Dpx%3B%20width%3A%20310px%3B%20background%3A%20%230f172a%3B%20color%3A%20%23f8fafc%3B%20border%3A%201px%20solid%20%23334155%3B%20border-radius%3A%2012px%3B%20padding%3A%2014px%3B%20box-shadow%3A%200%2020px%2040px%20rgba(0%2C0%2C0%2C0.6)%3B%20pointer-events%3A%20auto%3B%20z-index%3A%2010000010%3B%20font-size%3A%2013px%3B%20%60%3B%20const%20breadcrumbsHtml%20%3D%20ancestorsList.map((node%2C%20index)%20%3D%3E%20%7B%20const%20isSelected%20%3D%20node%20%3D%3D%3D%20currentTarget%3B%20const%20tag%20%3D%20node.tagName.toLowerCase()%3B%20const%20rawClass%20%3D%20getSafeClassName(node)%3B%20const%20firstClass%20%3D%20rawClass%20%3F%20'.'%20%2B%20rawClass.split(%2F%5Cs%2B%2F)%5B0%5D%20%3A%20''%3B%20const%20label%20%3D%20%60%24%7Btag%7D%24%7BfirstClass%7D%60%3B%20return%20%60%20%3Cbutton%20class%3D%22agy-crumb-btn%22%20data-index%3D%22%24%7Bindex%7D%22%20style%3D%22%20background%3A%20%24%7BisSelected%20%3F%20'%232563eb'%20%3A%20'%231e293b'%7D%3B%20color%3A%20%24%7BisSelected%20%3F%20'white'%20%3A%20'%2394a3b8'%7D%3B%20border%3A%201px%20solid%20%24%7BisSelected%20%3F%20'%233b82f6'%20%3A%20'%23334155'%7D%3B%20border-radius%3A%204px%3B%20padding%3A%202px%206px%3B%20font-size%3A%2011px%3B%20cursor%3A%20pointer%3B%20max-width%3A%2090px%3B%20overflow%3A%20hidden%3B%20text-overflow%3A%20ellipsis%3B%20white-space%3A%20nowrap%3B%20outline%3A%20none%3B%20%22%3E%24%7Blabel%7D%3C%2Fbutton%3E%20%60%3B%20%7D).reverse().join('%3Cspan%20style%3D%22color%3A%2364748b%3Bfont-size%3A10px%3B%22%3E%E2%9E%94%3C%2Fspan%3E')%3B%20dialog.innerHTML%20%3D%20%60%20%3Cdiv%20style%3D%22font-size%3A11px%3Bfont-weight%3A600%3Bcolor%3A%2394a3b8%3Bmargin-bottom%3A6px%3B%22%3E%20%F0%9F%8E%AF%20%E7%9B%AE%E6%A8%99%E5%B1%A4%E7%B4%9A%E9%81%B8%E5%8F%96%20(%E9%BB%9E%E6%93%8A%E5%8F%AF%E5%88%87%E6%8F%9B%E5%A4%96%E5%B1%A4%E5%AE%B9%E5%99%A8)%EF%BC%9A%20%3C%2Fdiv%3E%20%3Cdiv%20id%3D%22agy-crumbs%22%20style%3D%22display%3Aflex%3Balign-items%3Acenter%3Bgap%3A4px%3Bflex-wrap%3Awrap%3Bmargin-bottom%3A10px%3B%22%3E%20%24%7BbreadcrumbsHtml%7D%20%3C%2Fdiv%3E%20%3Cdiv%20style%3D%22font-size%3A11px%3Bcolor%3A%23cbd5e1%3Bmargin-bottom%3A8px%3Bbackground%3A%231e293b%3Bpadding%3A5px%208px%3Bborder-radius%3A6px%3Bword-break%3Abreak-all%3B%22%3E%20%E5%B7%B2%E9%81%B8%E5%AE%9A%EF%BC%9A%3Cspan%20id%3D%22agy-selected-tag%22%20style%3D%22color%3A%2360a5fa%3Bfont-family%3Amonospace%3Bfont-weight%3A600%3B%22%3E%24%7BgetReadableSelector(currentTarget)%7D%3C%2Fspan%3E%20%3C%2Fdiv%3E%20%3Ctextarea%20id%3D%22agy-note-input%22%20placeholder%3D%22%E8%AB%8B%E5%A1%AB%E5%AF%AB%E6%AD%A4%E8%99%95%E7%9A%84%E4%BF%AE%E6%94%B9%E6%84%8F%E8%A6%8B%EF%BC%88%E4%BE%8B%E5%A6%82%EF%BC%9A%E6%8C%89%E9%88%95%E9%A1%8F%E8%89%B2%E6%94%B9%E6%B7%B1%E8%97%8D%E3%80%81%E5%8A%A0%E5%A4%A7%E9%82%8A%E6%A1%86%E5%9C%93%E8%A7%92...%EF%BC%89%22%20style%3D%22%20width%3A%20100%25%3B%20box-sizing%3A%20border-box%3B%20height%3A%2075px%3B%20background%3A%20%23020617%3B%20color%3A%20white%3B%20border%3A%201px%20solid%20%23334155%3B%20border-radius%3A%206px%3B%20padding%3A%208px%2010px%3B%20font-size%3A%2013px%3B%20line-height%3A%201.4%3B%20resize%3A%20none%3B%20outline%3A%20none%3B%20%22%3E%3C%2Ftextarea%3E%20%3Cdiv%20style%3D%22display%3Aflex%3Bjustify-content%3Aflex-end%3Bgap%3A8px%3Bmargin-top%3A10px%3B%22%3E%20%3Cbutton%20id%3D%22agy-cancel-btn%22%20style%3D%22background%3Atransparent%3Bcolor%3A%2394a3b8%3Bborder%3Anone%3Bfont-size%3A12px%3Bcursor%3Apointer%3Bpadding%3A5px%2010px%3B%22%3E%E5%8F%96%E6%B6%88%3C%2Fbutton%3E%20%3Cbutton%20id%3D%22agy-save-btn%22%20style%3D%22background%3A%232563eb%3Bcolor%3Awhite%3Bborder%3Anone%3Bborder-radius%3A6px%3Bfont-size%3A12px%3Bfont-weight%3A600%3Bpadding%3A6px%2014px%3Bcursor%3Apointer%3B%22%3E%E5%84%B2%E5%AD%98%E6%A8%99%E8%A8%BB%3C%2Fbutton%3E%20%3C%2Fdiv%3E%20%60%3B%20fixedRoot.appendChild(dialog)%3B%20const%20textarea%20%3D%20dialog.querySelector('%23agy-note-input')%3B%20textarea.focus()%3B%20const%20crumbBtns%20%3D%20dialog.querySelectorAll('.agy-crumb-btn')%3B%20crumbBtns.forEach(btn%20%3D%3E%20%7B%20btn.addEventListener('click'%2C%20()%20%3D%3E%20%7B%20const%20idx%20%3D%20parseInt(btn.getAttribute('data-index')%2C%2010)%3B%20currentTarget%20%3D%20ancestorsList%5Bidx%5D%3B%20dialog.querySelector('%23agy-selected-tag').innerText%20%3D%20getReadableSelector(currentTarget)%3B%20updateHoverBox(currentTarget)%3B%20crumbBtns.forEach(b%20%3D%3E%20%7B%20const%20isThis%20%3D%20b%20%3D%3D%3D%20btn%3B%20b.style.background%20%3D%20isThis%20%3F%20'%232563eb'%20%3A%20'%231e293b'%3B%20b.style.color%20%3D%20isThis%20%3F%20'white'%20%3A%20'%2394a3b8'%3B%20b.style.borderColor%20%3D%20isThis%20%3F%20'%233b82f6'%20%3A%20'%23334155'%3B%20%7D)%3B%20%7D)%3B%20%7D)%3B%20dialog.querySelector('%23agy-cancel-btn').addEventListener('click'%2C%20closeDialog)%3B%20dialog.querySelector('%23agy-save-btn').addEventListener('click'%2C%20()%20%3D%3E%20%7B%20const%20note%20%3D%20textarea.value.trim()%3B%20if%20(!note)%20%7B%20showToast('%E8%AB%8B%E8%BC%B8%E5%85%A5%E4%BF%AE%E6%94%B9%E9%9C%80%E6%B1%82'%2C%20'%23d97706')%3B%20return%3B%20%7D%20createPin(currentTarget%2C%20getReadableSelector(currentTarget)%2C%20note%2C%20pageX%2C%20pageY)%3B%20closeDialog()%3B%20%7D)%3B%20%7D%20function%20createPin(target%2C%20selector%2C%20note%2C%20pageX%2C%20pageY)%20%7B%20const%20id%20%3D%20annotations.length%20%2B%201%3B%20const%20pin%20%3D%20document.createElement('div')%3B%20pin.style.cssText%20%3D%20%60%20position%3A%20absolute%3B%20top%3A%20%24%7BpageY%20-%2014%7Dpx%3B%20left%3A%20%24%7BpageX%20-%2014%7Dpx%3B%20width%3A%2028px%3B%20height%3A%2028px%3B%20background%3A%20%23dc2626%3B%20color%3A%20white%3B%20border%3A%202px%20solid%20white%3B%20border-radius%3A%2050%25%3B%20display%3A%20flex%3B%20align-items%3A%20center%3B%20justify-content%3A%20center%3B%20font-size%3A%2012px%3B%20font-weight%3A%20700%3B%20box-shadow%3A%200%204px%2012px%20rgba(0%2C0%2C0%2C0.4)%3B%20pointer-events%3A%20auto%3B%20cursor%3A%20pointer%3B%20z-index%3A%2010000002%3B%20animation%3A%20agy-pop%200.2s%20ease-out%3B%20%60%3B%20pin.innerText%20%3D%20id%3B%20pin.title%20%3D%20%60%5B%E6%A8%99%E8%A8%BB%20%23%24%7Bid%7D%5D%20%24%7Bnote%7D%20(%E9%BB%9E%E6%93%8A%E5%8F%AF%E6%9F%A5%E7%9C%8B%E6%88%96%E5%88%AA%E9%99%A4)%60%3B%20const%20item%20%3D%20%7B%20id%2C%20target%2C%20selector%2C%20note%2C%20pageX%2C%20pageY%2C%20pinEl%3A%20pin%20%7D%3B%20annotations.push(item)%3B%20countSpan.innerText%20%3D%20annotations.length%3B%20pin.addEventListener('click'%2C%20(e)%20%3D%3E%20%7B%20e.stopPropagation()%3B%20if%20(confirm(%60%E6%A8%99%E8%A8%BB%20%23%24%7Bid%7D%EF%BC%9A%5Cn%E3%80%8C%24%7Bnote%7D%E3%80%8D%5Cn%5Cn%E6%98%AF%E5%90%A6%E5%88%AA%E9%99%A4%E6%AD%A4%E6%A8%99%E8%A8%BB%EF%BC%9F%60))%20%7B%20pin.remove()%3B%20annotations%20%3D%20annotations.filter(a%20%3D%3E%20a.id%20!%3D%3D%20id)%3B%20countSpan.innerText%20%3D%20annotations.length%3B%20%7D%20%7D)%3B%20scrollRoot.appendChild(pin)%3B%20showToast(%60%E2%9C%85%20%E5%B7%B2%E6%96%B0%E5%A2%9E%E6%A8%99%E8%A8%BB%20%23%24%7Bid%7D%60)%3B%20%7D%20copyBtn.addEventListener('click'%2C%20()%20%3D%3E%20%7B%20if%20(annotations.length%20%3D%3D%3D%200)%20%7B%20showToast('%E7%9B%AE%E5%89%8D%E5%B0%9A%E7%84%A1%E6%A8%99%E8%A8%BB%EF%BC%8C%E8%AB%8B%E5%85%88%E5%9C%A8%E7%95%AB%E9%9D%A2%E4%B8%8A%E9%BB%9E%E6%93%8A%E7%95%99%E4%B8%8B%E7%AD%86%E8%A8%98%EF%BC%81'%2C%20'%23d97706')%3B%20return%3B%20%7D%20let%20text%20%3D%20%60%E8%AB%8B%E6%A0%B9%E6%93%9A%E4%BB%A5%E4%B8%8B%E7%95%AB%E9%9D%A2%E4%B8%8A%E7%9A%84%E8%A6%96%E8%A6%BA%E6%A8%99%E8%A8%BB%E9%80%B2%E8%A1%8C%E4%BF%AE%E6%94%B9%EF%BC%9A%5Cn%5Cn%60%3B%20annotations.forEach((item%2C%20index)%20%3D%3E%20%7B%20text%20%2B%3D%20%60-%20**%5B%E6%A8%99%E8%A8%BB%20%23%24%7Bindex%20%2B%201%7D%5D**%20%E7%9B%AE%E6%A8%99%E5%85%83%E7%B4%A0%EF%BC%9A%5C%60%24%7Bitem.selector%7D%5C%60%5Cn%20-%20**%E4%BF%AE%E6%94%B9%E8%A6%81%E6%B1%82**%EF%BC%9A%24%7Bitem.note%7D%5Cn%60%3B%20%7D)%3B%20text%20%2B%3D%20%60%5Cn%E8%AB%8B%E4%BF%9D%E6%8C%81%E5%85%B6%E9%A4%98%E7%89%88%E9%9D%A2%E8%A8%AD%E8%A8%88%E8%A6%8F%E7%AF%84%E4%B8%80%E8%87%B4%EF%BC%8C%E7%9B%B4%E6%8E%A5%E6%9B%B4%E6%96%B0%E7%A8%8B%E5%BC%8F%E7%A2%BC%E3%80%82%60%3B%20navigator.clipboard.writeText(text).then(()%20%3D%3E%20%7B%20showToast('%F0%9F%93%8B%20%E5%B7%B2%E8%A4%87%E8%A3%BD%E4%BF%AE%E6%94%B9%E9%9C%80%E6%B1%82%EF%BC%81%E8%AB%8B%E5%9C%A8%20Antigravity%20%E5%B0%8D%E8%A9%B1%E6%A1%86%20Ctrl%2BV%20%E7%99%BC%E9%80%81')%3B%20%7D).catch(()%20%3D%3E%20%7B%20prompt('%E8%AB%8B%E6%89%8B%E5%8B%95%E8%A4%87%E8%A3%BD%E4%BB%A5%E4%B8%8B%E4%BF%AE%E6%94%B9%E9%9C%80%E6%B1%82%EF%BC%9A'%2C%20text)%3B%20%7D)%3B%20%7D)%3B%20const%20style%20%3D%20document.createElement('style')%3B%20style.innerText%20%3D%20%60%20%40keyframes%20agy-pop%20%7B%200%25%20%7B%20transform%3A%20scale(0.4)%3B%20opacity%3A%200%3B%20%7D%20100%25%20%7B%20transform%3A%20scale(1)%3B%20opacity%3A%201%3B%20%7D%20%7D%20%60%3B%20document.head.appendChild(style)%3B%20%7D)()%3B" 
+         class="inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-lg shadow-lg hover:from-blue-500 hover:to-indigo-500 transition-all transform hover:-translate-y-0.5 cursor-grab active:cursor-grabbing glow-hover border border-white/20 select-none">
+        <span class="text-2xl">🎯</span>
+        <span>Antigravity 網頁標註器</span>
+      </a>
+    </div>
+
+    <p class="text-xs text-slate-500 mt-2">
+      💡 提示：若瀏覽器未顯示書籤列，請按快捷鍵 <kbd class="px-2 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300">Ctrl + Shift + B</kbd> (Mac 為 Cmd + Shift + B) 開啟。
+    </p>
+
+    <!-- 備用手動複製 -->
+    <div class="mt-8 pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <span class="text-xs text-slate-400">無法拖曳？您也可以一鍵複製代碼手動建立書籤：</span>
+      <button id="copyCodeBtn" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 transition-colors flex items-center gap-2 whitespace-nowrap">
+        <span>📋</span> 複製 Bookmarklet 程式碼
+      </button>
+    </div>
+  </div>
+
+  <!-- 使用說明與流程卡片 -->
+  <div class="max-w-4xl mx-auto w-full grid grid-cols-1 md:grid-cols-3 gap-5 my-6">
+    <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-5">
+      <div class="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-sm mb-3">1</div>
+      <h3 class="font-bold text-white text-base mb-1">打開任一網頁</h3>
+      <p class="text-slate-400 text-xs leading-relaxed">
+        在外部 Chrome / Edge 打開您的本機網站（如 <code class="text-blue-300 bg-slate-800 px-1 rounded">localhost:3000</code> 或本地 HTML）或任何線上頁面。
+      </p>
+    </div>
+
+    <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-5">
+      <div class="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-sm mb-3">2</div>
+      <h3 class="font-bold text-white text-base mb-1">點擊書籤 & 標註</h3>
+      <p class="text-slate-400 text-xs leading-relaxed">
+        點擊書籤列上的「🎯 Antigravity 網頁標註器」，畫面上會出現標註工具列，點擊任何按鈕或元件即可留下修改意見！支援 DOM 麵包屑切換外層。
+      </p>
+    </div>
+
+    <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-5">
+      <div class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm mb-3">3</div>
+      <h3 class="font-bold text-white text-base mb-1">一鍵貼回 AI 修改</h3>
+      <p class="text-slate-400 text-xs leading-relaxed">
+        點擊工具列「📋 複製修改需求」，回到 Antigravity 對話框按下 <kbd class="text-slate-200 bg-slate-800 px-1 rounded">Ctrl + V</kbd>，AI 就會直接更新您的程式碼！
+      </p>
+    </div>
+  </div>
+
+  <!-- 在此頁面即時測試區 -->
+  <div class="max-w-4xl mx-auto w-full my-6 bg-slate-900/40 border border-dashed border-slate-800 rounded-xl p-6 text-center">
+    <div class="text-sm font-semibold text-slate-300 mb-2">🧪 您可以在此頁面直接體驗標註功能</div>
+    <p class="text-xs text-slate-400 mb-4">點選下方按鈕或本頁面的任何文字，試試看階層麵包屑切換與打點：</p>
+    <div class="flex flex-wrap justify-center gap-3">
+      <button class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold">範例主按鈕 (Primary Button)</button>
+      <button class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-semibold border border-slate-700">次要按鈕 (Secondary)</button>
+      <div class="px-4 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-300 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> 狀態指示卡片
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center text-xs text-slate-600 py-4">
+    Antigravity IDE &copy; 2026 視覺標註反饋系統
+  </footer>
+
+  <!-- 複製按鈕腳本 -->
+  <script>
+    const bookmarkletCode = `javascript:(function%20()%20%7B%20if%20(window.__AGY_ANNOTATOR_LOADED__)%20%7B%20const%20toggle%20%3D%20document.getElementById('agy-toggle-btn')%3B%20if%20(toggle)%20toggle.click()%3B%20return%3B%20%7D%20window.__AGY_ANNOTATOR_LOADED__%20%3D%20true%3B%20let%20isAnnotating%20%3D%20false%3B%20let%20annotations%20%3D%20%5B%5D%3B%20let%20currentTarget%20%3D%20null%3B%20let%20ancestorsList%20%3D%20%5B%5D%3B%20const%20fixedRoot%20%3D%20document.createElement('div')%3B%20fixedRoot.id%20%3D%20'agy-fixed-root'%3B%20fixedRoot.style.cssText%20%3D%20'position%3Afixed%3Btop%3A0%3Bleft%3A0%3Bwidth%3A100%25%3Bheight%3A100%25%3Bpointer-events%3Anone%3Bz-index%3A9999999%3Bfont-family%3Asystem-ui%2C-apple-system%2CBlinkMacSystemFont%2C%22Segoe%20UI%22%2CRoboto%2Csans-serif%3B'%3B%20document.body.appendChild(fixedRoot)%3B%20const%20scrollRoot%20%3D%20document.createElement('div')%3B%20scrollRoot.id%20%3D%20'agy-scroll-root'%3B%20scrollRoot.style.cssText%20%3D%20'position%3Aabsolute%3Btop%3A0%3Bleft%3A0%3Bwidth%3A100%25%3Bmin-height%3A100%25%3Bpointer-events%3Anone%3Bz-index%3A9999990%3B'%3B%20document.body.appendChild(scrollRoot)%3B%20const%20hoverBox%20%3D%20document.createElement('div')%3B%20hoverBox.style.cssText%20%3D%20'position%3Afixed%3Bpointer-events%3Anone%3Bborder%3A2px%20dashed%20%232563eb%3Bbackground%3Argba(37%2C99%2C235%2C0.12)%3Bdisplay%3Anone%3Bz-index%3A10000000%3Bborder-radius%3A4px%3Bbox-sizing%3Aborder-box%3Btransition%3Atop%200.04s%20ease%2C%20left%200.04s%20ease%2C%20width%200.04s%20ease%2C%20height%200.04s%20ease%3B'%3B%20fixedRoot.appendChild(hoverBox)%3B%20const%20toolbar%20%3D%20document.createElement('div')%3B%20toolbar.style.cssText%20%3D%20%60%20position%3A%20fixed%3B%20bottom%3A%2024px%3B%20right%3A%2024px%3B%20display%3A%20flex%3B%20align-items%3A%20center%3B%20gap%3A%208px%3B%20background%3A%20rgba(15%2C%2023%2C%2042%2C%200.94)%3B%20backdrop-filter%3A%20blur(12px)%3B%20-webkit-backdrop-filter%3A%20blur(12px)%3B%20border%3A%201px%20solid%20rgba(255%2C%20255%2C%20255%2C%200.18)%3B%20padding%3A%207px%2012px%3B%20border-radius%3A%209999px%3B%20box-shadow%3A%200%2010px%2030px%20rgba(0%2C0%2C0%2C0.5)%3B%20pointer-events%3A%20auto%3B%20z-index%3A%2010000005%3B%20user-select%3A%20none%3B%20transition%3A%20transform%200.2s%20ease%3B%20%60%3B%20toolbar.innerHTML%20%3D%20%60%20%3Cbutton%20id%3D%22agy-toggle-btn%22%20style%3D%22%20background%3A%20%232563eb%3B%20color%3A%20white%3B%20border%3A%20none%3B%20padding%3A%207px%2015px%3B%20border-radius%3A%209999px%3B%20font-size%3A%2013px%3B%20font-weight%3A%20600%3B%20cursor%3A%20pointer%3B%20display%3A%20flex%3B%20align-items%3A%20center%3B%20gap%3A%206px%3B%20box-shadow%3A%200%202px%208px%20rgba(37%2C99%2C235%2C0.4)%3B%20outline%3A%20none%3B%20%22%3E%20%3Cspan%3E%F0%9F%8E%AF%3C%2Fspan%3E%20%3Cspan%20id%3D%22agy-btn-text%22%3E%E9%96%8B%E5%95%9F%E6%A8%99%E8%A8%BB%E6%A8%A1%E5%BC%8F%3C%2Fspan%3E%20%3C%2Fbutton%3E%20%3Cbutton%20id%3D%22agy-copy-btn%22%20style%3D%22%20background%3A%20rgba(255%2C255%2C255%2C0.12)%3B%20color%3A%20%23f8fafc%3B%20border%3A%201px%20solid%20rgba(255%2C255%2C255%2C0.2)%3B%20padding%3A%207px%2013px%3B%20border-radius%3A%209999px%3B%20font-size%3A%2013px%3B%20font-weight%3A%20500%3B%20cursor%3A%20pointer%3B%20display%3A%20flex%3B%20align-items%3A%20center%3B%20gap%3A%205px%3B%20outline%3A%20none%3B%20%22%3E%20%3Cspan%3E%F0%9F%93%8B%3C%2Fspan%3E%20%E8%A4%87%E8%A3%BD%E9%9C%80%E6%B1%82%20(%3Cspan%20id%3D%22agy-count%22%3E0%3C%2Fspan%3E)%20%3C%2Fbutton%3E%20%3Cbutton%20id%3D%22agy-exit-btn%22%20title%3D%22%E5%AE%8C%E5%85%A8%E9%97%9C%E9%96%89%E4%B8%A6%E9%9B%A2%E9%96%8B%E6%A8%99%E8%A8%BB%E5%B7%A5%E5%85%B7%22%20style%3D%22%20background%3A%20rgba(255%2C255%2C255%2C0.08)%3B%20color%3A%20%2394a3b8%3B%20border%3A%201px%20solid%20rgba(255%2C255%2C255%2C0.12)%3B%20width%3A%2028px%3B%20height%3A%2028px%3B%20border-radius%3A%2050%25%3B%20font-size%3A%2013px%3B%20font-weight%3A%20bold%3B%20cursor%3A%20pointer%3B%20display%3A%20flex%3B%20align-items%3A%20center%3B%20justify-content%3A%20center%3B%20margin-left%3A%202px%3B%20outline%3A%20none%3B%20transition%3A%20all%200.15s%20ease%3B%20%22%3E%E2%9C%95%3C%2Fbutton%3E%20%60%3B%20fixedRoot.appendChild(toolbar)%3B%20const%20toast%20%3D%20document.createElement('div')%3B%20toast.style.cssText%20%3D%20%60%20position%3A%20fixed%3B%20top%3A%2024px%3B%20left%3A%2050%25%3B%20transform%3A%20translateX(-50%25)%3B%20background%3A%20%23059669%3B%20color%3A%20white%3B%20font-size%3A%2013px%3B%20font-weight%3A%20600%3B%20padding%3A%209px%2020px%3B%20border-radius%3A%209999px%3B%20box-shadow%3A%200%204px%2020px%20rgba(0%2C0%2C0%2C0.35)%3B%20pointer-events%3A%20none%3B%20opacity%3A%200%3B%20transition%3A%20opacity%200.25s%20ease%2C%20transform%200.25s%20ease%3B%20z-index%3A%2010000020%3B%20%60%3B%20fixedRoot.appendChild(toast)%3B%20let%20toastTimer%20%3D%20null%3B%20function%20showToast(msg%2C%20bg%20%3D%20'%23059669')%20%7B%20clearTimeout(toastTimer)%3B%20toast.innerText%20%3D%20msg%3B%20toast.style.background%20%3D%20bg%3B%20toast.style.opacity%20%3D%20'1'%3B%20toast.style.transform%20%3D%20'translateX(-50%25)%20translateY(4px)'%3B%20toastTimer%20%3D%20setTimeout(()%20%3D%3E%20%7B%20toast.style.opacity%20%3D%20'0'%3B%20toast.style.transform%20%3D%20'translateX(-50%25)%20translateY(0)'%3B%20%7D%2C%202400)%3B%20%7D%20const%20toggleBtn%20%3D%20toolbar.querySelector('%23agy-toggle-btn')%3B%20const%20btnText%20%3D%20toolbar.querySelector('%23agy-btn-text')%3B%20const%20copyBtn%20%3D%20toolbar.querySelector('%23agy-copy-btn')%3B%20const%20countSpan%20%3D%20toolbar.querySelector('%23agy-count')%3B%20const%20exitBtn%20%3D%20toolbar.querySelector('%23agy-exit-btn')%3B%20exitBtn.addEventListener('mouseenter'%2C%20()%20%3D%3E%20%7B%20exitBtn.style.background%20%3D%20'%23dc2626'%3B%20exitBtn.style.color%20%3D%20'%23ffffff'%3B%20exitBtn.style.borderColor%20%3D%20'%23ef4444'%3B%20%7D)%3B%20exitBtn.addEventListener('mouseleave'%2C%20()%20%3D%3E%20%7B%20exitBtn.style.background%20%3D%20'rgba(255%2C255%2C255%2C0.08)'%3B%20exitBtn.style.color%20%3D%20'%2394a3b8'%3B%20exitBtn.style.borderColor%20%3D%20'rgba(255%2C255%2C255%2C0.12)'%3B%20%7D)%3B%20exitBtn.addEventListener('click'%2C%20()%20%3D%3E%20%7B%20if%20(annotations.length%20%3E%200)%20%7B%20if%20(!confirm(%60%E7%9B%AE%E5%89%8D%E7%95%AB%E9%9D%A2%E4%B8%8A%E9%82%84%E6%9C%89%20%24%7Bannotations.length%7D%20%E5%80%8B%E6%A8%99%E8%A8%BB%E5%B0%9A%E6%9C%AA%E8%A4%87%E8%A3%BD%EF%BC%8C%E7%A2%BA%E5%AE%9A%E8%A6%81%E5%AE%8C%E5%85%A8%E9%97%9C%E9%96%89%E6%A8%99%E8%A8%BB%E5%B7%A5%E5%85%B7%E5%97%8E%EF%BC%9F%60))%20%7B%20return%3B%20%7D%20%7D%20closeDialog()%3B%20fixedRoot.remove()%3B%20scrollRoot.remove()%3B%20document.body.style.cursor%20%3D%20''%3B%20window.__AGY_ANNOTATOR_LOADED__%20%3D%20false%3B%20%7D)%3B%20toggleBtn.addEventListener('click'%2C%20()%20%3D%3E%20%7B%20isAnnotating%20%3D%20!isAnnotating%3B%20if%20(isAnnotating)%20%7B%20toggleBtn.style.background%20%3D%20'%23dc2626'%3B%20toggleBtn.style.boxShadow%20%3D%20'0%202px%208px%20rgba(220%2C38%2C38%2C0.4)'%3B%20btnText.innerText%20%3D%20'%E9%80%80%E5%87%BA%E6%A8%99%E8%A8%BB%E6%A8%A1%E5%BC%8F'%3B%20document.body.style.cursor%20%3D%20'crosshair'%3B%20showToast('%F0%9F%8E%AF%20%E6%A8%99%E8%A8%BB%E6%A8%A1%E5%BC%8F%E5%B7%B2%E9%96%8B%E5%95%9F%EF%BC%9A%E9%BB%9E%E9%81%B8%E7%95%AB%E9%9D%A2%E4%B8%8A%E4%BB%BB%E4%BD%95%E5%85%83%E4%BB%B6%E5%8D%B3%E5%8F%AF%E7%95%99%E8%A8%80')%3B%20%7D%20else%20%7B%20toggleBtn.style.background%20%3D%20'%232563eb'%3B%20toggleBtn.style.boxShadow%20%3D%20'0%202px%208px%20rgba(37%2C99%2C235%2C0.4)'%3B%20btnText.innerText%20%3D%20'%E9%96%8B%E5%95%9F%E6%A8%99%E8%A8%BB%E6%A8%A1%E5%BC%8F'%3B%20document.body.style.cursor%20%3D%20''%3B%20hoverBox.style.display%20%3D%20'none'%3B%20closeDialog()%3B%20%7D%20%7D)%3B%20function%20updateHoverBox(el)%20%7B%20if%20(!el%20%7C%7C%20!isAnnotating)%20%7B%20hoverBox.style.display%20%3D%20'none'%3B%20return%3B%20%7D%20const%20rect%20%3D%20el.getBoundingClientRect()%3B%20if%20(rect.width%20%3D%3D%3D%200%20%26%26%20rect.height%20%3D%3D%3D%200)%20%7B%20hoverBox.style.display%20%3D%20'none'%3B%20return%3B%20%7D%20hoverBox.style.display%20%3D%20'block'%3B%20hoverBox.style.top%20%3D%20rect.top%20%2B%20'px'%3B%20hoverBox.style.left%20%3D%20rect.left%20%2B%20'px'%3B%20hoverBox.style.width%20%3D%20rect.width%20%2B%20'px'%3B%20hoverBox.style.height%20%3D%20rect.height%20%2B%20'px'%3B%20%7D%20document.addEventListener('mousemove'%2C%20(e)%20%3D%3E%20%7B%20if%20(!isAnnotating)%20return%3B%20if%20(fixedRoot.contains(e.target)%20%7C%7C%20scrollRoot.contains(e.target))%20%7B%20return%3B%20%7D%20const%20target%20%3D%20e.target%3B%20if%20(target%20%3D%3D%3D%20document.body%20%7C%7C%20target%20%3D%3D%3D%20document.documentElement)%20%7B%20hoverBox.style.display%20%3D%20'none'%3B%20return%3B%20%7D%20updateHoverBox(target)%3B%20%7D%2C%20true)%3B%20window.addEventListener('scroll'%2C%20()%20%3D%3E%20%7B%20if%20(!isAnnotating)%20return%3B%20if%20(currentTarget)%20updateHoverBox(currentTarget)%3B%20%7D%2C%20%7B%20passive%3A%20true%20%7D)%3B%20function%20getSafeClassName(el)%20%7B%20if%20(!el)%20return%20''%3B%20if%20(typeof%20el.className%20%3D%3D%3D%20'string')%20%7B%20return%20el.className.trim()%3B%20%7D%20if%20(el.className%20%26%26%20typeof%20el.className.baseVal%20%3D%3D%3D%20'string')%20%7B%20return%20el.className.baseVal.trim()%3B%20%7D%20return%20''%3B%20%7D%20function%20getReadableSelector(el)%20%7B%20if%20(!el)%20return%20''%3B%20const%20tag%20%3D%20el.tagName.toLowerCase()%3B%20const%20id%20%3D%20el.id%20%3F%20%60%23%24%7Bel.id%7D%60%20%3A%20''%3B%20let%20classSnippet%20%3D%20''%3B%20const%20rawClass%20%3D%20getSafeClassName(el)%3B%20if%20(rawClass)%20%7B%20const%20parts%20%3D%20rawClass.split(%2F%5Cs%2B%2F).filter(c%20%3D%3E%20!c.startsWith('agy-')%20%26%26%20c.length%20%3C%2030).slice(0%2C%202)%3B%20if%20(parts.length%20%3E%200)%20classSnippet%20%3D%20'.'%20%2B%20parts.join('.')%3B%20%7D%20const%20textSnippet%20%3D%20el.innerText%20%26%26%20el.innerText.trim()%20%3F%20%60%20%22%24%7Bel.innerText.trim().slice(0%2C%2014)%7D%22%60%20%3A%20''%3B%20return%20%60%3C%24%7Btag%7D%24%7Bid%7D%24%7BclassSnippet%7D%3E%24%7BtextSnippet%7D%60%3B%20%7D%20function%20getAncestors(el)%20%7B%20const%20list%20%3D%20%5B%5D%3B%20let%20cur%20%3D%20el%3B%20while%20(cur%20%26%26%20cur%20!%3D%3D%20document.body%20%26%26%20cur%20!%3D%3D%20document.documentElement%20%26%26%20list.length%20%3C%205)%20%7B%20if%20(!fixedRoot.contains(cur)%20%26%26%20!scrollRoot.contains(cur))%20%7B%20list.push(cur)%3B%20%7D%20cur%20%3D%20cur.parentElement%3B%20%7D%20return%20list%3B%20%7D%20document.addEventListener('click'%2C%20(e)%20%3D%3E%20%7B%20if%20(!isAnnotating)%20return%3B%20if%20(fixedRoot.contains(e.target)%20%7C%7C%20scrollRoot.contains(e.target))%20return%3B%20e.preventDefault()%3B%20e.stopPropagation()%3B%20currentTarget%20%3D%20e.target%3B%20ancestorsList%20%3D%20getAncestors(currentTarget)%3B%20const%20clickPageX%20%3D%20e.pageX%3B%20const%20clickPageY%20%3D%20e.pageY%3B%20const%20clickClientX%20%3D%20e.clientX%3B%20const%20clickClientY%20%3D%20e.clientY%3B%20openCommentDialog(currentTarget%2C%20clickPageX%2C%20clickPageY%2C%20clickClientX%2C%20clickClientY)%3B%20%7D%2C%20true)%3B%20function%20closeDialog()%20%7B%20const%20existing%20%3D%20document.getElementById('agy-active-dialog')%3B%20if%20(existing)%20existing.remove()%3B%20%7D%20function%20openCommentDialog(target%2C%20pageX%2C%20pageY%2C%20clientX%2C%20clientY)%20%7B%20closeDialog()%3B%20currentTarget%20%3D%20target%3B%20updateHoverBox(currentTarget)%3B%20const%20dialog%20%3D%20document.createElement('div')%3B%20dialog.id%20%3D%20'agy-active-dialog'%3B%20let%20top%20%3D%20clientY%20%2B%2012%3B%20let%20left%20%3D%20clientX%20%2B%2012%3B%20if%20(left%20%2B%20320%20%3E%20window.innerWidth)%20left%20%3D%20window.innerWidth%20-%20330%3B%20if%20(top%20%2B%20260%20%3E%20window.innerHeight)%20top%20%3D%20clientY%20-%20260%3B%20if%20(top%20%3C%2010)%20top%20%3D%2010%3B%20if%20(left%20%3C%2010)%20left%20%3D%2010%3B%20dialog.style.cssText%20%3D%20%60%20position%3A%20fixed%3B%20top%3A%20%24%7Btop%7Dpx%3B%20left%3A%20%24%7Bleft%7Dpx%3B%20width%3A%20310px%3B%20background%3A%20%230f172a%3B%20color%3A%20%23f8fafc%3B%20border%3A%201px%20solid%20%23334155%3B%20border-radius%3A%2012px%3B%20padding%3A%2014px%3B%20box-shadow%3A%200%2020px%2040px%20rgba(0%2C0%2C0%2C0.6)%3B%20pointer-events%3A%20auto%3B%20z-index%3A%2010000010%3B%20font-size%3A%2013px%3B%20%60%3B%20const%20breadcrumbsHtml%20%3D%20ancestorsList.map((node%2C%20index)%20%3D%3E%20%7B%20const%20isSelected%20%3D%20node%20%3D%3D%3D%20currentTarget%3B%20const%20tag%20%3D%20node.tagName.toLowerCase()%3B%20const%20rawClass%20%3D%20getSafeClassName(node)%3B%20const%20firstClass%20%3D%20rawClass%20%3F%20'.'%20%2B%20rawClass.split(%2F%5Cs%2B%2F)%5B0%5D%20%3A%20''%3B%20const%20label%20%3D%20%60%24%7Btag%7D%24%7BfirstClass%7D%60%3B%20return%20%60%20%3Cbutton%20class%3D%22agy-crumb-btn%22%20data-index%3D%22%24%7Bindex%7D%22%20style%3D%22%20background%3A%20%24%7BisSelected%20%3F%20'%232563eb'%20%3A%20'%231e293b'%7D%3B%20color%3A%20%24%7BisSelected%20%3F%20'white'%20%3A%20'%2394a3b8'%7D%3B%20border%3A%201px%20solid%20%24%7BisSelected%20%3F%20'%233b82f6'%20%3A%20'%23334155'%7D%3B%20border-radius%3A%204px%3B%20padding%3A%202px%206px%3B%20font-size%3A%2011px%3B%20cursor%3A%20pointer%3B%20max-width%3A%2090px%3B%20overflow%3A%20hidden%3B%20text-overflow%3A%20ellipsis%3B%20white-space%3A%20nowrap%3B%20outline%3A%20none%3B%20%22%3E%24%7Blabel%7D%3C%2Fbutton%3E%20%60%3B%20%7D).reverse().join('%3Cspan%20style%3D%22color%3A%2364748b%3Bfont-size%3A10px%3B%22%3E%E2%9E%94%3C%2Fspan%3E')%3B%20dialog.innerHTML%20%3D%20%60%20%3Cdiv%20style%3D%22font-size%3A11px%3Bfont-weight%3A600%3Bcolor%3A%2394a3b8%3Bmargin-bottom%3A6px%3B%22%3E%20%F0%9F%8E%AF%20%E7%9B%AE%E6%A8%99%E5%B1%A4%E7%B4%9A%E9%81%B8%E5%8F%96%20(%E9%BB%9E%E6%93%8A%E5%8F%AF%E5%88%87%E6%8F%9B%E5%A4%96%E5%B1%A4%E5%AE%B9%E5%99%A8)%EF%BC%9A%20%3C%2Fdiv%3E%20%3Cdiv%20id%3D%22agy-crumbs%22%20style%3D%22display%3Aflex%3Balign-items%3Acenter%3Bgap%3A4px%3Bflex-wrap%3Awrap%3Bmargin-bottom%3A10px%3B%22%3E%20%24%7BbreadcrumbsHtml%7D%20%3C%2Fdiv%3E%20%3Cdiv%20style%3D%22font-size%3A11px%3Bcolor%3A%23cbd5e1%3Bmargin-bottom%3A8px%3Bbackground%3A%231e293b%3Bpadding%3A5px%208px%3Bborder-radius%3A6px%3Bword-break%3Abreak-all%3B%22%3E%20%E5%B7%B2%E9%81%B8%E5%AE%9A%EF%BC%9A%3Cspan%20id%3D%22agy-selected-tag%22%20style%3D%22color%3A%2360a5fa%3Bfont-family%3Amonospace%3Bfont-weight%3A600%3B%22%3E%24%7BgetReadableSelector(currentTarget)%7D%3C%2Fspan%3E%20%3C%2Fdiv%3E%20%3Ctextarea%20id%3D%22agy-note-input%22%20placeholder%3D%22%E8%AB%8B%E5%A1%AB%E5%AF%AB%E6%AD%A4%E8%99%95%E7%9A%84%E4%BF%AE%E6%94%B9%E6%84%8F%E8%A6%8B%EF%BC%88%E4%BE%8B%E5%A6%82%EF%BC%9A%E6%8C%89%E9%88%95%E9%A1%8F%E8%89%B2%E6%94%B9%E6%B7%B1%E8%97%8D%E3%80%81%E5%8A%A0%E5%A4%A7%E9%82%8A%E6%A1%86%E5%9C%93%E8%A7%92...%EF%BC%89%22%20style%3D%22%20width%3A%20100%25%3B%20box-sizing%3A%20border-box%3B%20height%3A%2075px%3B%20background%3A%20%23020617%3B%20color%3A%20white%3B%20border%3A%201px%20solid%20%23334155%3B%20border-radius%3A%206px%3B%20padding%3A%208px%2010px%3B%20font-size%3A%2013px%3B%20line-height%3A%201.4%3B%20resize%3A%20none%3B%20outline%3A%20none%3B%20%22%3E%3C%2Ftextarea%3E%20%3Cdiv%20style%3D%22display%3Aflex%3Bjustify-content%3Aflex-end%3Bgap%3A8px%3Bmargin-top%3A10px%3B%22%3E%20%3Cbutton%20id%3D%22agy-cancel-btn%22%20style%3D%22background%3Atransparent%3Bcolor%3A%2394a3b8%3Bborder%3Anone%3Bfont-size%3A12px%3Bcursor%3Apointer%3Bpadding%3A5px%2010px%3B%22%3E%E5%8F%96%E6%B6%88%3C%2Fbutton%3E%20%3Cbutton%20id%3D%22agy-save-btn%22%20style%3D%22background%3A%232563eb%3Bcolor%3Awhite%3Bborder%3Anone%3Bborder-radius%3A6px%3Bfont-size%3A12px%3Bfont-weight%3A600%3Bpadding%3A6px%2014px%3Bcursor%3Apointer%3B%22%3E%E5%84%B2%E5%AD%98%E6%A8%99%E8%A8%BB%3C%2Fbutton%3E%20%3C%2Fdiv%3E%20%60%3B%20fixedRoot.appendChild(dialog)%3B%20const%20textarea%20%3D%20dialog.querySelector('%23agy-note-input')%3B%20textarea.focus()%3B%20const%20crumbBtns%20%3D%20dialog.querySelectorAll('.agy-crumb-btn')%3B%20crumbBtns.forEach(btn%20%3D%3E%20%7B%20btn.addEventListener('click'%2C%20()%20%3D%3E%20%7B%20const%20idx%20%3D%20parseInt(btn.getAttribute('data-index')%2C%2010)%3B%20currentTarget%20%3D%20ancestorsList%5Bidx%5D%3B%20dialog.querySelector('%23agy-selected-tag').innerText%20%3D%20getReadableSelector(currentTarget)%3B%20updateHoverBox(currentTarget)%3B%20crumbBtns.forEach(b%20%3D%3E%20%7B%20const%20isThis%20%3D%20b%20%3D%3D%3D%20btn%3B%20b.style.background%20%3D%20isThis%20%3F%20'%232563eb'%20%3A%20'%231e293b'%3B%20b.style.color%20%3D%20isThis%20%3F%20'white'%20%3A%20'%2394a3b8'%3B%20b.style.borderColor%20%3D%20isThis%20%3F%20'%233b82f6'%20%3A%20'%23334155'%3B%20%7D)%3B%20%7D)%3B%20%7D)%3B%20dialog.querySelector('%23agy-cancel-btn').addEventListener('click'%2C%20closeDialog)%3B%20dialog.querySelector('%23agy-save-btn').addEventListener('click'%2C%20()%20%3D%3E%20%7B%20const%20note%20%3D%20textarea.value.trim()%3B%20if%20(!note)%20%7B%20showToast('%E8%AB%8B%E8%BC%B8%E5%85%A5%E4%BF%AE%E6%94%B9%E9%9C%80%E6%B1%82'%2C%20'%23d97706')%3B%20return%3B%20%7D%20createPin(currentTarget%2C%20getReadableSelector(currentTarget)%2C%20note%2C%20pageX%2C%20pageY)%3B%20closeDialog()%3B%20%7D)%3B%20%7D%20function%20createPin(target%2C%20selector%2C%20note%2C%20pageX%2C%20pageY)%20%7B%20const%20id%20%3D%20annotations.length%20%2B%201%3B%20const%20pin%20%3D%20document.createElement('div')%3B%20pin.style.cssText%20%3D%20%60%20position%3A%20absolute%3B%20top%3A%20%24%7BpageY%20-%2014%7Dpx%3B%20left%3A%20%24%7BpageX%20-%2014%7Dpx%3B%20width%3A%2028px%3B%20height%3A%2028px%3B%20background%3A%20%23dc2626%3B%20color%3A%20white%3B%20border%3A%202px%20solid%20white%3B%20border-radius%3A%2050%25%3B%20display%3A%20flex%3B%20align-items%3A%20center%3B%20justify-content%3A%20center%3B%20font-size%3A%2012px%3B%20font-weight%3A%20700%3B%20box-shadow%3A%200%204px%2012px%20rgba(0%2C0%2C0%2C0.4)%3B%20pointer-events%3A%20auto%3B%20cursor%3A%20pointer%3B%20z-index%3A%2010000002%3B%20animation%3A%20agy-pop%200.2s%20ease-out%3B%20%60%3B%20pin.innerText%20%3D%20id%3B%20pin.title%20%3D%20%60%5B%E6%A8%99%E8%A8%BB%20%23%24%7Bid%7D%5D%20%24%7Bnote%7D%20(%E9%BB%9E%E6%93%8A%E5%8F%AF%E6%9F%A5%E7%9C%8B%E6%88%96%E5%88%AA%E9%99%A4)%60%3B%20const%20item%20%3D%20%7B%20id%2C%20target%2C%20selector%2C%20note%2C%20pageX%2C%20pageY%2C%20pinEl%3A%20pin%20%7D%3B%20annotations.push(item)%3B%20countSpan.innerText%20%3D%20annotations.length%3B%20pin.addEventListener('click'%2C%20(e)%20%3D%3E%20%7B%20e.stopPropagation()%3B%20if%20(confirm(%60%E6%A8%99%E8%A8%BB%20%23%24%7Bid%7D%EF%BC%9A%5Cn%E3%80%8C%24%7Bnote%7D%E3%80%8D%5Cn%5Cn%E6%98%AF%E5%90%A6%E5%88%AA%E9%99%A4%E6%AD%A4%E6%A8%99%E8%A8%BB%EF%BC%9F%60))%20%7B%20pin.remove()%3B%20annotations%20%3D%20annotations.filter(a%20%3D%3E%20a.id%20!%3D%3D%20id)%3B%20countSpan.innerText%20%3D%20annotations.length%3B%20%7D%20%7D)%3B%20scrollRoot.appendChild(pin)%3B%20showToast(%60%E2%9C%85%20%E5%B7%B2%E6%96%B0%E5%A2%9E%E6%A8%99%E8%A8%BB%20%23%24%7Bid%7D%60)%3B%20%7D%20copyBtn.addEventListener('click'%2C%20()%20%3D%3E%20%7B%20if%20(annotations.length%20%3D%3D%3D%200)%20%7B%20showToast('%E7%9B%AE%E5%89%8D%E5%B0%9A%E7%84%A1%E6%A8%99%E8%A8%BB%EF%BC%8C%E8%AB%8B%E5%85%88%E5%9C%A8%E7%95%AB%E9%9D%A2%E4%B8%8A%E9%BB%9E%E6%93%8A%E7%95%99%E4%B8%8B%E7%AD%86%E8%A8%98%EF%BC%81'%2C%20'%23d97706')%3B%20return%3B%20%7D%20let%20text%20%3D%20%60%E8%AB%8B%E6%A0%B9%E6%93%9A%E4%BB%A5%E4%B8%8B%E7%95%AB%E9%9D%A2%E4%B8%8A%E7%9A%84%E8%A6%96%E8%A6%BA%E6%A8%99%E8%A8%BB%E9%80%B2%E8%A1%8C%E4%BF%AE%E6%94%B9%EF%BC%9A%5Cn%5Cn%60%3B%20annotations.forEach((item%2C%20index)%20%3D%3E%20%7B%20text%20%2B%3D%20%60-%20**%5B%E6%A8%99%E8%A8%BB%20%23%24%7Bindex%20%2B%201%7D%5D**%20%E7%9B%AE%E6%A8%99%E5%85%83%E7%B4%A0%EF%BC%9A%5C%60%24%7Bitem.selector%7D%5C%60%5Cn%20-%20**%E4%BF%AE%E6%94%B9%E8%A6%81%E6%B1%82**%EF%BC%9A%24%7Bitem.note%7D%5Cn%60%3B%20%7D)%3B%20text%20%2B%3D%20%60%5Cn%E8%AB%8B%E4%BF%9D%E6%8C%81%E5%85%B6%E9%A4%98%E7%89%88%E9%9D%A2%E8%A8%AD%E8%A8%88%E8%A6%8F%E7%AF%84%E4%B8%80%E8%87%B4%EF%BC%8C%E7%9B%B4%E6%8E%A5%E6%9B%B4%E6%96%B0%E7%A8%8B%E5%BC%8F%E7%A2%BC%E3%80%82%60%3B%20navigator.clipboard.writeText(text).then(()%20%3D%3E%20%7B%20showToast('%F0%9F%93%8B%20%E5%B7%B2%E8%A4%87%E8%A3%BD%E4%BF%AE%E6%94%B9%E9%9C%80%E6%B1%82%EF%BC%81%E8%AB%8B%E5%9C%A8%20Antigravity%20%E5%B0%8D%E8%A9%B1%E6%A1%86%20Ctrl%2BV%20%E7%99%BC%E9%80%81')%3B%20%7D).catch(()%20%3D%3E%20%7B%20prompt('%E8%AB%8B%E6%89%8B%E5%8B%95%E8%A4%87%E8%A3%BD%E4%BB%A5%E4%B8%8B%E4%BF%AE%E6%94%B9%E9%9C%80%E6%B1%82%EF%BC%9A'%2C%20text)%3B%20%7D)%3B%20%7D)%3B%20const%20style%20%3D%20document.createElement('style')%3B%20style.innerText%20%3D%20%60%20%40keyframes%20agy-pop%20%7B%200%25%20%7B%20transform%3A%20scale(0.4)%3B%20opacity%3A%200%3B%20%7D%20100%25%20%7B%20transform%3A%20scale(1)%3B%20opacity%3A%201%3B%20%7D%20%7D%20%60%3B%20document.head.appendChild(style)%3B%20%7D)()%3B`;
+    document.getElementById('copyCodeBtn').addEventListener('click', () => {
+      navigator.clipboard.writeText(bookmarkletCode).then(() => {
+        alert('✅ 已複製 Bookmarklet 程式碼！\n\n您可以手動新增瀏覽器書籤，並將網址欄位替換為這段代碼。');
+      }).catch(() => {
+        prompt('請手動複製以下代碼：', bookmarkletCode);
+      });
+    });
+  </script>
+
+  <!-- 頁面直接載入標註器供現場測試 -->
+  <script>
+
+(function () {
+  if (window.__AGY_ANNOTATOR_LOADED__) {
+    
+    const toggle = document.getElementById('agy-toggle-btn');
+    if (toggle) toggle.click();
+    return;
+  }
+  window.__AGY_ANNOTATOR_LOADED__ = true;
+
+  let isAnnotating = false;
+  let annotations = [];
+  let currentTarget = null;
+  let ancestorsList = [];
+
+  
+  
+  const fixedRoot = document.createElement('div');
+  fixedRoot.id = 'agy-fixed-root';
+  fixedRoot.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999999;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;';
+  document.body.appendChild(fixedRoot);
+
+  
+  const scrollRoot = document.createElement('div');
+  scrollRoot.id = 'agy-scroll-root';
+  scrollRoot.style.cssText = 'position:absolute;top:0;left:0;width:100%;min-height:100%;pointer-events:none;z-index:9999990;';
+  document.body.appendChild(scrollRoot);
+
+  
+  const hoverBox = document.createElement('div');
+  hoverBox.style.cssText = 'position:fixed;pointer-events:none;border:2px dashed #2563eb;background:rgba(37,99,235,0.12);display:none;z-index:10000000;border-radius:4px;box-sizing:border-box;transition:top 0.04s ease, left 0.04s ease, width 0.04s ease, height 0.04s ease;';
+  fixedRoot.appendChild(hoverBox);
+
+  
+  const toolbar = document.createElement('div');
+  toolbar.style.cssText = `
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(15, 23, 42, 0.94);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    padding: 7px 12px;
+    border-radius: 9999px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    pointer-events: auto;
+    z-index: 10000005;
+    user-select: none;
+    transition: transform 0.2s ease;
+  `;
+  toolbar.innerHTML = `
+    <button id="agy-toggle-btn" style="
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 7px 15px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 8px rgba(37,99,235,0.4);
+      outline: none;
+    ">
+      <span>🎯</span> <span id="agy-btn-text">開啟標註模式</span>
+    </button>
+    <button id="agy-copy-btn" style="
+      background: rgba(255,255,255,0.12);
+      color: #f8fafc;
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 7px 13px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      outline: none;
+    ">
+      <span>📋</span> 複製需求 (<span id="agy-count">0</span>)
+    </button>
+    <button id="agy-exit-btn" title="完全關閉並離開標註工具" style="
+      background: rgba(255,255,255,0.08);
+      color: #94a3b8;
+      border: 1px solid rgba(255,255,255,0.12);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 2px;
+      outline: none;
+      transition: all 0.15s ease;
+    ">✕</button>
+  `;
+  fixedRoot.appendChild(toolbar);
+
+  
+  const toast = document.createElement('div');
+  toast.style.cssText = `
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #059669;
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 9px 20px;
+    border-radius: 9999px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 10000020;
+  `;
+  fixedRoot.appendChild(toast);
+
+  let toastTimer = null;
+  function showToast(msg, bg = '#059669') {
+    clearTimeout(toastTimer);
+    toast.innerText = msg;
+    toast.style.background = bg;
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateX(-50%) translateY(4px)';
+    toastTimer = setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+    }, 2400);
+  }
+
+  const toggleBtn = toolbar.querySelector('#agy-toggle-btn');
+  const btnText = toolbar.querySelector('#agy-btn-text');
+  const copyBtn = toolbar.querySelector('#agy-copy-btn');
+  const countSpan = toolbar.querySelector('#agy-count');
+  const exitBtn = toolbar.querySelector('#agy-exit-btn');
+
+  exitBtn.addEventListener('mouseenter', () => {
+    exitBtn.style.background = '#dc2626';
+    exitBtn.style.color = '#ffffff';
+    exitBtn.style.borderColor = '#ef4444';
+  });
+  exitBtn.addEventListener('mouseleave', () => {
+    exitBtn.style.background = 'rgba(255,255,255,0.08)';
+    exitBtn.style.color = '#94a3b8';
+    exitBtn.style.borderColor = 'rgba(255,255,255,0.12)';
+  });
+
+  
+  exitBtn.addEventListener('click', () => {
+    if (annotations.length > 0) {
+      if (!confirm(`目前畫面上還有 ${annotations.length} 個標註尚未複製，確定要完全關閉標註工具嗎？`)) {
+        return;
+      }
+    }
+    
+    closeDialog();
+    fixedRoot.remove();
+    scrollRoot.remove();
+    document.body.style.cursor = '';
+    window.__AGY_ANNOTATOR_LOADED__ = false;
+  });
+
+  
+  toggleBtn.addEventListener('click', () => {
+    isAnnotating = !isAnnotating;
+    if (isAnnotating) {
+      toggleBtn.style.background = '#dc2626';
+      toggleBtn.style.boxShadow = '0 2px 8px rgba(220,38,38,0.4)';
+      btnText.innerText = '退出標註模式';
+      document.body.style.cursor = 'crosshair';
+      showToast('🎯 標註模式已開啟：點選畫面上任何元件即可留言');
+    } else {
+      toggleBtn.style.background = '#2563eb';
+      toggleBtn.style.boxShadow = '0 2px 8px rgba(37,99,235,0.4)';
+      btnText.innerText = '開啟標註模式';
+      document.body.style.cursor = '';
+      hoverBox.style.display = 'none';
+      closeDialog();
+    }
+  });
+
+  
+  function updateHoverBox(el) {
+    if (!el || !isAnnotating) {
+      hoverBox.style.display = 'none';
+      return;
+    }
+    const rect = el.getBoundingClientRect();
+    if (rect.width === 0 && rect.height === 0) {
+      hoverBox.style.display = 'none';
+      return;
+    }
+    hoverBox.style.display = 'block';
+    hoverBox.style.top = rect.top + 'px';
+    hoverBox.style.left = rect.left + 'px';
+    hoverBox.style.width = rect.width + 'px';
+    hoverBox.style.height = rect.height + 'px';
+  }
+
+  
+  document.addEventListener('mousemove', (e) => {
+    if (!isAnnotating) return;
+    if (fixedRoot.contains(e.target) || scrollRoot.contains(e.target)) {
+      return;
+    }
+    const target = e.target;
+    if (target === document.body || target === document.documentElement) {
+      hoverBox.style.display = 'none';
+      return;
+    }
+    updateHoverBox(target);
+  }, true);
+
+  
+  window.addEventListener('scroll', () => {
+    if (!isAnnotating) return;
+    if (currentTarget) updateHoverBox(currentTarget);
+  }, { passive: true });
+
+  
+  function getSafeClassName(el) {
+    if (!el) return '';
+    if (typeof el.className === 'string') {
+      return el.className.trim();
+    }
+    if (el.className && typeof el.className.baseVal === 'string') {
+      return el.className.baseVal.trim();
+    }
+    return '';
+  }
+
+  
+  function getReadableSelector(el) {
+    if (!el) return '';
+    const tag = el.tagName.toLowerCase();
+    const id = el.id ? `#${el.id}` : '';
+    let classSnippet = '';
+    const rawClass = getSafeClassName(el);
+    if (rawClass) {
+      const parts = rawClass.split(/\s+/).filter(c => !c.startsWith('agy-') && c.length < 30).slice(0, 2);
+      if (parts.length > 0) classSnippet = '.' + parts.join('.');
+    }
+    const textSnippet = el.innerText && el.innerText.trim() ? ` "${el.innerText.trim().slice(0, 14)}"` : '';
+    return `<${tag}${id}${classSnippet}>${textSnippet}`;
+  }
+
+  
+  function getAncestors(el) {
+    const list = [];
+    let cur = el;
+    while (cur && cur !== document.body && cur !== document.documentElement && list.length < 5) {
+      if (!fixedRoot.contains(cur) && !scrollRoot.contains(cur)) {
+        list.push(cur);
+      }
+      cur = cur.parentElement;
+    }
+    return list;
+  }
+
+  
+  document.addEventListener('click', (e) => {
+    if (!isAnnotating) return;
+    if (fixedRoot.contains(e.target) || scrollRoot.contains(e.target)) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    currentTarget = e.target;
+    ancestorsList = getAncestors(currentTarget);
+
+    const clickPageX = e.pageX;
+    const clickPageY = e.pageY;
+    const clickClientX = e.clientX;
+    const clickClientY = e.clientY;
+
+    openCommentDialog(currentTarget, clickPageX, clickPageY, clickClientX, clickClientY);
+  }, true);
+
+  function closeDialog() {
+    const existing = document.getElementById('agy-active-dialog');
+    if (existing) existing.remove();
+  }
+
+  
+  function openCommentDialog(target, pageX, pageY, clientX, clientY) {
+    closeDialog();
+    currentTarget = target;
+    updateHoverBox(currentTarget);
+
+    const dialog = document.createElement('div');
+    dialog.id = 'agy-active-dialog';
+
+    
+    let top = clientY + 12;
+    let left = clientX + 12;
+    if (left + 320 > window.innerWidth) left = window.innerWidth - 330;
+    if (top + 260 > window.innerHeight) top = clientY - 260;
+    if (top < 10) top = 10;
+    if (left < 10) left = 10;
+
+    dialog.style.cssText = `
+      position: fixed;
+      top: ${top}px;
+      left: ${left}px;
+      width: 310px;
+      background: #0f172a;
+      color: #f8fafc;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 14px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+      pointer-events: auto;
+      z-index: 10000010;
+      font-size: 13px;
+    `;
+
+    
+    const breadcrumbsHtml = ancestorsList.map((node, index) => {
+      const isSelected = node === currentTarget;
+      const tag = node.tagName.toLowerCase();
+      const rawClass = getSafeClassName(node);
+      const firstClass = rawClass ? '.' + rawClass.split(/\s+/)[0] : '';
+      const label = `${tag}${firstClass}`;
+      return `
+        <button class="agy-crumb-btn" data-index="${index}" style="
+          background: ${isSelected ? '#2563eb' : '#1e293b'};
+          color: ${isSelected ? 'white' : '#94a3b8'};
+          border: 1px solid ${isSelected ? '#3b82f6' : '#334155'};
+          border-radius: 4px;
+          padding: 2px 6px;
+          font-size: 11px;
+          cursor: pointer;
+          max-width: 90px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          outline: none;
+        ">${label}</button>
+      `;
+    }).reverse().join('<span style="color:#64748b;font-size:10px;">➔</span>');
+
+    dialog.innerHTML = `
+      <div style="font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:6px;">
+        🎯 目標層級選取 (點擊可切換外層容器)：
+      </div>
+      <div id="agy-crumbs" style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-bottom:10px;">
+        ${breadcrumbsHtml}
+      </div>
+      <div style="font-size:11px;color:#cbd5e1;margin-bottom:8px;background:#1e293b;padding:5px 8px;border-radius:6px;word-break:break-all;">
+        已選定：<span id="agy-selected-tag" style="color:#60a5fa;font-family:monospace;font-weight:600;">${getReadableSelector(currentTarget)}</span>
+      </div>
+      <textarea id="agy-note-input" placeholder="請填寫此處的修改意見（例如：按鈕顏色改深藍、加大邊框圓角...）" style="
+        width: 100%;
+        box-sizing: border-box;
+        height: 75px;
+        background: #020617;
+        color: white;
+        border: 1px solid #334155;
+        border-radius: 6px;
+        padding: 8px 10px;
+        font-size: 13px;
+        line-height: 1.4;
+        resize: none;
+        outline: none;
+      "></textarea>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px;">
+        <button id="agy-cancel-btn" style="background:transparent;color:#94a3b8;border:none;font-size:12px;cursor:pointer;padding:5px 10px;">取消</button>
+        <button id="agy-save-btn" style="background:#2563eb;color:white;border:none;border-radius:6px;font-size:12px;font-weight:600;padding:6px 14px;cursor:pointer;">儲存標註</button>
+      </div>
+    `;
+
+    fixedRoot.appendChild(dialog);
+
+    const textarea = dialog.querySelector('#agy-note-input');
+    textarea.focus();
+
+    
+    const crumbBtns = dialog.querySelectorAll('.agy-crumb-btn');
+    crumbBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.getAttribute('data-index'), 10);
+        currentTarget = ancestorsList[idx];
+        dialog.querySelector('#agy-selected-tag').innerText = getReadableSelector(currentTarget);
+        updateHoverBox(currentTarget);
+
+        crumbBtns.forEach(b => {
+          const isThis = b === btn;
+          b.style.background = isThis ? '#2563eb' : '#1e293b';
+          b.style.color = isThis ? 'white' : '#94a3b8';
+          b.style.borderColor = isThis ? '#3b82f6' : '#334155';
+        });
+      });
+    });
+
+    dialog.querySelector('#agy-cancel-btn').addEventListener('click', closeDialog);
+    dialog.querySelector('#agy-save-btn').addEventListener('click', () => {
+      const note = textarea.value.trim();
+      if (!note) {
+        showToast('請輸入修改需求', '#d97706');
+        return;
+      }
+      createPin(currentTarget, getReadableSelector(currentTarget), note, pageX, pageY);
+      closeDialog();
+    });
+  }
+
+  
+  function createPin(target, selector, note, pageX, pageY) {
+    const id = annotations.length + 1;
+    const pin = document.createElement('div');
+    pin.style.cssText = `
+      position: absolute;
+      top: ${pageY - 14}px;
+      left: ${pageX - 14}px;
+      width: 28px;
+      height: 28px;
+      background: #dc2626;
+      color: white;
+      border: 2px solid white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      pointer-events: auto;
+      cursor: pointer;
+      z-index: 10000002;
+      animation: agy-pop 0.2s ease-out;
+    `;
+    pin.innerText = id;
+    pin.title = `[標註 #${id}] ${note} (點擊可查看或刪除)`;
+
+    const item = { id, target, selector, note, pageX, pageY, pinEl: pin };
+    annotations.push(item);
+    countSpan.innerText = annotations.length;
+
+    pin.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (confirm(`標註 #${id}：\n「${note}」\n\n是否刪除此標註？`)) {
+        pin.remove();
+        annotations = annotations.filter(a => a.id !== id);
+        countSpan.innerText = annotations.length;
+      }
+    });
+
+    scrollRoot.appendChild(pin);
+    showToast(`✅ 已新增標註 #${id}`);
+  }
+
+  
+  copyBtn.addEventListener('click', () => {
+    if (annotations.length === 0) {
+      showToast('目前尚無標註，請先在畫面上點擊留下筆記！', '#d97706');
+      return;
+    }
+
+    let text = `請根據以下畫面上的視覺標註進行修改：\n\n`;
+    annotations.forEach((item, index) => {
+      text += `- **[標註 #${index + 1}]** 目標元素：\`${item.selector}\`\n  - **修改要求**：${item.note}\n`;
+    });
+    text += `\n請保持其餘版面設計規範一致，直接更新程式碼。`;
+
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('📋 已複製修改需求！請在 Antigravity 對話框 Ctrl+V 發送');
+    }).catch(() => {
+      prompt('請手動複製以下修改需求：', text);
+    });
+  });
+
+  
+  const style = document.createElement('style');
+  style.innerText = `
+    @keyframes agy-pop {
+      0% { transform: scale(0.4); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+  `;
+  document.head.appendChild(style);
+})();
+
+  </script>
+</body>
+</html>
