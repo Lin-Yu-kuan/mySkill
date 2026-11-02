@@ -4,8 +4,11 @@ description: >-
   以「由上而下（Top-Down）」方式系統化引導學習新主題：主題明確時同回合輸出結構化脈絡大綱與 M1-1 深度精講
   （貫穿核心問題、直覺模型、機制與證據、邊界限制，以清楚、具體、可推理之講義品質規格取代固定字數配額），具備「逐回合即時落盤」抗長對話上下文壓縮，
   並以遷移式開放思考題進行思維互動。最後透過內建模板腳本自動編譯 HTML 互動手冊與全量筆記。
+  亦支援在使用者要求「更新此技能 / 檢查最新版本」時自動調用以進行線上更新。
   適用於深度學習規劃、知識架構拆解、高質量自學、主題系統化研讀。
   不適用於單一名詞解釋或一次性問答。
+repository: https://github.com/Lin-Yu-kuan/mySkill
+update_url: https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/knowledge-map-learning/SKILL.md
 ---
 
 # 知識地圖主題學習法 (Knowledge Map Learning)
@@ -246,3 +249,26 @@ python "<目前 SKILL.md 所在目錄>/scripts/build_notes.py" "<notes_path 的�
 3. 是否在講義回合存講義、問答回合存 Q&A，落實**逐回合即時落盤**？
 4. 第三階段是否**透過 build_notes.py 腳本編譯 HTML**，杜絕模型輸出 Token 截斷？
 5. 交付連結是否**環境自適應**，並提供實體絕對路徑？
+
+---
+
+# 技能維護與自動更新指引 (Skill Maintenance & Auto-Update)
+
+當使用者要求「更新此技能」或「檢查最新版本」（例如：「幫我更新知識地圖技能」或「更新 knowledge-map-learning」）時：
+
+1. **快速核心更新（預設）**：
+   - 讀取上方 `update_url` 的最新內容。
+   - 將目前本機的 `SKILL.md` 覆蓋更新為最新版本。
+
+2. **完整套件更新（含腳本與模板）**：
+   - 若使用者要求「完整套件更新」或附屬腳本（`scripts/`）需要更新時，可直接執行原生免下載解壓指令刷新整個技能資料夾：
+   - **Windows (PowerShell)**：
+     ```powershell
+     $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $t="$env:TEMP\myskill.zip"; $d="$HOME\.gemini\config\skills\knowledge-map-learning"; if (!(Test-Path $d)) { New-Item -ItemType Directory -Path $d -Force }; Invoke-WebRequest $u -OutFile $t; Expand-Archive $t "$env:TEMP\myskill-temp" -Force; Copy-Item "$env:TEMP\myskill-temp\mySkill-main\knowledge-map-learning\*" $d -Recurse -Force; Remove-Item $t,"$env:TEMP\myskill-temp" -Recurse -Force; Write-Host "✅ knowledge-map-learning 技能套件已成功更新！" -ForegroundColor Green
+     ```
+   - **macOS / Linux**：
+     ```bash
+     mkdir -p "$HOME/.gemini/config/skills/knowledge-map-learning" && curl -sSL "https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.tar.gz" | tar -xz -C "$HOME/.gemini/config/skills/knowledge-map-learning" --strip-components=2 "mySkill-main/knowledge-map-learning/" && echo "✅ knowledge-map-learning 技能套件已成功更新！"
+     ```
+
+3. **回報完成**：簡短向使用者回報已成功更新至 GitHub 最新版本。

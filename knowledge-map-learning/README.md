@@ -247,11 +247,22 @@ New-Item -ItemType SymbolicLink -Path "$HOME\.gemini\config\skills\knowledge-map
 
 ---
 
+## 🔄 智慧無感自動更新（已安裝者）
+
+本技能遵循 `mySkill` 規範，已在 `SKILL.md` 開頭標記 GitHub 來源。安裝完成後，未來若想升級至最新版本，**不需要再次手動執行安裝指令**！
+
+只要在 Antigravity 對話框中說：
+> 「幫我更新知識地圖技能」或「更新 knowledge-map-learning 最新版本」
+
+Antigravity 會自動讀取本機設定並連線至 GitHub 覆蓋更新為最新版本！若附屬編譯腳本需要同步更新，亦可指示「請完整更新 knowledge-map-learning 套件」。
+
+---
+
 ## 💬 如何觸發使用？
 
 安裝完成後，在聊天對話中直接對 AI 說：
 * *「我想系統化學習 Kubernetes 底層架構，請用知識地圖學習法帶我。」*
-* *「用 top-down learning 的方式教我分散式系統的共識演算法。」*
+* *「用 top-down learning 的方式教我分散式系統的共析演算法。」*
 * *「我想理解現代密碼學原理，請幫我規劃學習脈絡並逐步深度教學。」*
 
 ---

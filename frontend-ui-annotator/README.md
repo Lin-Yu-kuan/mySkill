@@ -78,6 +78,17 @@ New-Item -ItemType SymbolicLink -Path "$HOME\.gemini\config\skills\frontend-ui-a
 
 ---
 
+## 🔄 智慧無感自動更新（已安裝者）
+
+本技能遵循 `mySkill` 規範，已在 `SKILL.md` 開頭標記 GitHub 來源。安裝完成後，未來若想升級至最新版本，**不需要再次手動執行安裝指令**！
+
+只要在 Antigravity 對話框中說：
+> 「幫我更新前端標註器技能」或「更新 frontend-ui-annotator 最新版本」
+
+Antigravity 會自動讀取本機設定並連線至 GitHub 覆蓋更新為最新版本！若附屬標註腳本或樣式需要同步更新，亦可指示「請完整更新 frontend-ui-annotator 套件」。
+
+---
+
 ## 🎯 使用指南
 
 ### 1. 修改自己的網頁（IDE 預覽視窗或 localhost）

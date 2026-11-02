@@ -5,6 +5,9 @@ description: >-
   或在「別人的網站」隨處貼便條紙借鏡靈感、一鍵萃取全站 Design Tokens 時使用。
   支援任意位置貼便條紙（不限修改、插入新元件、借鏡風格）、智慧環境雙軌辨識（本機專案直指檔案/路由 vs 外站自動帶入網址語境）、
   一秒掃描全頁調色盤與佈局骨架，並自動生成高水準 Tailwind CSS 介面。
+  亦支援在使用者要求「更新此技能 / 檢查最新版本」時自動調用以進行線上更新。
+repository: https://github.com/Lin-Yu-kuan/mySkill
+update_url: https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/frontend-ui-annotator/SKILL.md
 ---
 
 # 前端介面生成與自由便條紙視覺專家 (Frontend UI Annotator v3.0)
@@ -88,3 +91,26 @@ description: >-
 3. **保存為 Artifact**：
    - 使用 `write_file` 將單檔 HTML 儲存於 Artifact 目錄：`<appDataDir>\brain\<conversation-id>\<name>.html`。
    - `ArtifactMetadata` 設置 `UserFacing: true`。
+
+---
+
+# 技能維護與自動更新指引 (Skill Maintenance & Auto-Update)
+
+當使用者要求「更新此技能」或「檢查最新版本」（例如：「幫我更新前端標註器技能」或「更新 frontend-ui-annotator」）時：
+
+1. **快速核心更新（預設）**：
+   - 讀取上方 `update_url` 的最新內容。
+   - 將目前本機的 `SKILL.md` 覆蓋更新為最新版本。
+
+2. **完整套件更新（含 resources 腳本與樣式）**：
+   - 若使用者要求「完整套件更新」或附屬資源（`resources/`）需要更新時，可直接執行原生免下載解壓指令刷新整個技能資料夾：
+   - **Windows (PowerShell)**：
+     ```powershell
+     $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $t="$env:TEMP\myskill.zip"; $d="$HOME\.gemini\config\skills\frontend-ui-annotator"; if (!(Test-Path $d)) { New-Item -ItemType Directory -Path $d -Force }; Invoke-WebRequest $u -OutFile $t; Expand-Archive $t "$env:TEMP\myskill-temp" -Force; Copy-Item "$env:TEMP\myskill-temp\mySkill-main\frontend-ui-annotator\*" $d -Recurse -Force; Remove-Item $t,"$env:TEMP\myskill-temp" -Recurse -Force; Write-Host "✅ frontend-ui-annotator 技能套件已成功更新！" -ForegroundColor Green
+     ```
+   - **macOS / Linux**：
+     ```bash
+     mkdir -p "$HOME/.gemini/config/skills/frontend-ui-annotator" && curl -sSL "https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.tar.gz" | tar -xz -C "$HOME/.gemini/config/skills/frontend-ui-annotator" --strip-components=2 "mySkill-main/frontend-ui-annotator/" && echo "✅ frontend-ui-annotator 技能套件已成功更新！"
+     ```
+
+3. **回報完成**：簡短向使用者回報已成功更新至 GitHub 最新版本。

@@ -20,16 +20,30 @@
 
 ## 🚀 通用安裝指南
 
-### 在 Google Antigravity 中使用（所有專案皆可使用）
-將 Skill 資料夾複製到 Antigravity 全域技能目錄：
+每個技能目錄內均有詳細的安裝說明（支援 Windows PowerShell 一行直裝、macOS/Linux 一行直裝、對話框自然語言安裝與本機 Symlink）。
+
+### 本地複製安裝（所有專案皆可使用）
+將目標 Skill 資料夾複製到 Antigravity 全域技能目錄：
 - **Windows (PowerShell)**：
   ```powershell
-  Copy-Item -Path "D:\develop\AI\mySkill\knowledge-map-learning" -Destination "$HOME\.gemini\config\skills\knowledge-map-learning" -Recurse -Force
+  Copy-Item -Path ".\<skill-name>" -Destination "$HOME\.gemini\config\skills\<skill-name>" -Recurse -Force
   ```
 - **macOS / Linux**：
   ```bash
-  cp -r knowledge-map-learning "$HOME/.gemini/config/skills/knowledge-map-learning"
+  cp -r ./<skill-name> "$HOME/.gemini/config/skills/<skill-name>"
   ```
+
+---
+
+## 🔄 智慧無感自動更新（已安裝者）
+
+本倉庫所有技能的 `SKILL.md` 均內建 GitHub 來源網址標註（`repository` 與 `update_url`）及自動更新指引。
+
+一旦您安裝過任何技能，若想取得 GitHub 上的最新版本，**不需要手動重新下載或尋找目錄**！  
+只要在 Antigravity 對話框中說：
+> 「幫我更新 [技能名稱]」或「檢查 [技能名稱] 最新版本」
+
+Antigravity 會自動讀取本機技能設定，連線至 GitHub 下載最新版覆蓋更新，一句話無感完成！
 
 ---
 
@@ -39,17 +53,18 @@
 
 ```text
 mySkill/
+├── GEMINI.md                      # 本倉庫專屬開發規範（含零下載安裝與自動更新標準）
 ├── README.md                      # 技能庫總覽首頁（當前檔案）
 ├── essay-solver/                  # 臺灣國考申論題解題專家
-│   ├── SKILL.md                   # 核心技能定義（含考場準則與四區塊規範）
+│   ├── SKILL.md                   # 核心技能定義（含來源網址與自動更新指引）
 │   └── README.md                  # 技能說明與免下載一鍵安裝指南
 ├── knowledge-map-learning/        # 知識地圖主題學習法
-│   ├── SKILL.md                   # 核心技能定義（含雙軌降級機制）
+│   ├── SKILL.md                   # 核心技能定義（含來源網址與自動更新指引）
 │   ├── README.md                  # 技能說明文件
 │   ├── plugin.json                # 外掛 Manifest 清單
 │   └── scripts/                   # HTML 編譯腳本與安全 Markdown 解析模組
 └── frontend-ui-annotator/         # 前端介面生成、自由便條紙標註與全站風格萃取專家
-    ├── SKILL.md                   # 核心技能定義
+    ├── SKILL.md                   # 核心技能定義（含來源網址與自動更新指引）
     ├── README.md                  # 技能說明文件
     ├── plugin.json                # 外掛 Manifest 清單
     └── resources/                 # 便條紙與風格萃取原生腳本、Bookmarklet 安裝頁面

@@ -21,7 +21,7 @@
 - **特徵**：僅由 `SKILL.md` 組成，無附屬的 `scripts/` 或 `resources/` 資料夾（如 `essay-solver`）。
 - **PowerShell 語法**：
   ```powershell
-  $dir = "$HOME\.gemini\config\skills\<skill-name>"; if (!(Test-Path $dir)) { New-Item -ItemType Directory -Path $dir -Force }; Invoke-RestMethod -Uri "https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/<skill-name>/SKILL.md" | Out-File -FilePath "$dir\SKILL.md" -Encoding utf8; Write-Host "✅ <skill-name> 技能已成功安裝！" -ForegroundColor Green
+  $dir = "$HOME\.gemini\config\skills\<skill-name>"; if (!(Test-Path $dir)) { New-Item -ItemType Directory -Path $d -Force }; Invoke-RestMethod -Uri "https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/<skill-name>/SKILL.md" | Out-File -FilePath "$dir\SKILL.md" -Encoding utf8; Write-Host "✅ <skill-name> 技能已成功安裝！" -ForegroundColor Green
   ```
 - **macOS / Linux 語法**：
   ```bash
@@ -64,3 +64,28 @@
 1. **新增 Skill**：在「📦 Skills 目錄」表格中登記名稱、簡介、類別與連結，並更新「專案結構規範」目錄樹。
 2. **更新 Skill 定位或說明**：同步修正根目錄表格簡介。
 
+---
+
+## 五、SKILL.md 自動更新規範（Skill Auto-Update Standard）
+
+為實現使用者對 Antigravity 說「幫我更新 [技能名稱]」即可無感升級，每個 Skill 的 `SKILL.md` 必須遵循以下標準：
+
+### 1. Frontmatter 必備更新欄位
+```yaml
+---
+name: <skill-name>
+description: >-
+  [技能說明]
+  亦支援在使用者要求「更新此技能 / 檢查最新版本」時自動調用以進行線上更新。
+repository: https://github.com/Lin-Yu-kuan/mySkill
+update_url: https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/<skill-name>/SKILL.md
+---
+```
+- **`repository`**：統一指向 GitHub 倉庫根目錄。
+- **`update_url`**：指向該技能在 `main` 分支上的 Raw `SKILL.md` 連結。
+- **`description`**：必須提及更新觸發字眼，確保 Antigravity 在使用者發出更新請求時能依據 Progressive Disclosure 機制正確喚醒本技能。
+
+### 2. 結尾必備「技能維護與自動更新指引」章節
+在 `SKILL.md` 最末尾必須包含統一的更新指引：
+- **單檔案技能**：讀取 `update_url` 內容並直接覆蓋本地 `SKILL.md`。
+- **目錄套件型技能**：提供快速單檔覆蓋（`SKILL.md`）與全套件串流解壓更新指令雙軌機制。
