@@ -1,0 +1,6 @@
+interface:
+  display_name: "我的社群寫作"
+  short_description: "用你的自然口語寫文、改稿，並轉成適合各個社群平台的貼文版本"
+  default_prompt: "使用 $social-post-voice，依我的素材與語氣，幫我寫出適合指定社群平台的貼文。"
+policy:
+  allow_implicit_invocation: true
