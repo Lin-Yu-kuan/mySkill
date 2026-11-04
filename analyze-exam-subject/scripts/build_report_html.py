@@ -278,7 +278,19 @@ def _render_inline(text: str) -> str:
 
     text = re.sub(r"`([^`\n]+)`", repl_code, text)
 
-    # 2. Markdown 連結 [label](url)
+    # 2. 數學公式 $$...$$ 與 $...$（優先保護，防止被底線或星號破壞）
+    def repl_display_math(m: re.Match) -> str:
+        raw_math = html.escape(m.group(1).strip(), quote=False)
+        return save_ph(f'<span class="katex-math-display">$${raw_math}$$</span>')
+
+    def repl_inline_math(m: re.Match) -> str:
+        raw_math = html.escape(m.group(1).strip(), quote=False)
+        return save_ph(f'<span class="katex-math-inline">${raw_math}$</span>')
+
+    text = re.sub(r"\$\$([^\$\n]+?)\$\$", repl_display_math, text)
+    text = re.sub(r"(?<!\\)\$([^\$\n]+?)(?<!\\)\$", repl_inline_math, text)
+
+    # 3. Markdown 連結 [label](url)
     def repl_link(m: re.Match) -> str:
         raw_label = m.group(1)
         raw_url = m.group(2).strip()
@@ -1818,7 +1830,24 @@ body {
     .view-panel { display: block !important; }
     .topic-acc-body { display: block !important; }
 }
+
+/* 數學公式樣式（KaTeX 與離線優雅降級） */
+.katex-math-inline, .katex-math-display {
+    font-family: KaTeX_Math, 'Cambria Math', 'Times New Roman', serif;
+}
+.katex-math-inline {
+    display: inline-block;
+    padding: 0 2px;
+}
+.katex-math-display {
+    display: block;
+    margin: 8px 0;
+    text-align: center;
+}
 </style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 </head>
 <body>
 <div id="reading-progress"></div>
@@ -1840,11 +1869,11 @@ body {
     <nav class="nav-tree">
         <div class="nav-group-title">核心視圖</div>
         <button class="nav-item active" data-view="view-dashboard" onclick="switchView('view-dashboard')">
-            <span>📊 總覽與配分雷達</span>
+            <span>📊 總覽與配分</span>
             <span class="nav-badge" id="nav-badge-total">0</span>
         </button>
         <button class="nav-item" data-view="view-topics" onclick="switchView('view-topics')">
-            <span>🗂️ 主題考點手風琴</span>
+            <span>🗂️ 主題考點</span>
             <span class="nav-badge" id="nav-badge-topics">0</span>
         </button>
         <button class="nav-item" data-view="view-explorer" onclick="switchView('view-explorer')">
@@ -1855,7 +1884,7 @@ body {
             <span>📖 完整報告與備考策略</span>
         </button>
         <button class="nav-item" data-view="view-km" onclick="switchView('view-km')">
-            <span>🧭 知識地圖學習橋接</span>
+            <span>🧭 知識地圖學習銜接</span>
             <span class="nav-badge" style="background:var(--purple-light);color:var(--purple)">M1~M3</span>
         </button>
     </nav>
@@ -1885,7 +1914,7 @@ body {
     <!-- KPI 指標列 -->
     <section class="kpi-grid" id="kpi-container"></section>
 
-    <!-- 視圖 1：總覽與配分雷達 -->
+    <!-- 視圖 1：總覽與配分 -->
     <section class="view-panel active" id="view-dashboard">
         <div class="section-card">
             <div class="section-card-header">
@@ -1907,7 +1936,7 @@ body {
         </div>
     </section>
 
-    <!-- 視圖 2：11 大主題手風琴卡片 -->
+    <!-- 視圖 2：核心考點主題卡片 -->
     <section class="view-panel" id="view-topics">
         <div class="section-card" style="padding:18px 24px;margin-bottom:16px">
             <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
@@ -1988,11 +2017,11 @@ body {
         <div class="section-card md-content" id="full-report-container"></div>
     </section>
 
-    <!-- 視圖 5：/knowledge-map-learning 知識地圖橋接中心 -->
+    <!-- 視圖 5：/knowledge-map-learning 知識地圖銜接中心 -->
     <section class="view-panel" id="view-km">
         <div class="km-hero">
             <h2 style="font-size:1.35rem;font-weight:800;color:var(--purple);margin-bottom:8px">
-                🧭 `/knowledge-map-learning` 深度學習無縫橋接中心
+                🧭 `/knowledge-map-learning` 深度學習無縫銜接中心
             </h2>
             <p style="font-size:0.93rem;color:var(--text-primary);margin-bottom:14px">
                 本系統已根據目標考試配分權重，將考點自動劃分為 <strong>M1 核心奪分模組</strong>、<strong>M2 進階拉分模組</strong> 與 <strong>M3 學理防禦模組</strong>，並預先綁定本報告路徑與各主題之「子考點、必背法條、易混淆邊界與歷屆代表題」。請點選下方學習模式或於下方自訂勾選考點主題，複製指令貼入對話框即可<strong>零摩擦直接展開 M1-1 深度精講</strong>！
@@ -2260,6 +2289,24 @@ function formatTargetLabel(t) {
     return parts.join(' ／ ') || JSON.stringify(t);
 }
 
+function renderMath(targetEl) {
+    if (window.renderMathInElement) {
+        try {
+            renderMathInElement(targetEl || document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false},
+                    {left: '\\[', right: '\\]', display: true}
+                ],
+                throwOnError: false
+            });
+        } catch (e) {
+            console.warn('KaTeX render warning:', e);
+        }
+    }
+}
+
 function initApp() {
     document.getElementById('sidebar-subj-title').textContent = '📊 ' + DATA.study_subject;
     document.getElementById('main-title').textContent = '國考考古題深度分析：' + DATA.study_subject;
@@ -2278,6 +2325,10 @@ function initApp() {
     renderFullReport();
     renderKmBridge();
     applyQuestionFilters(1);
+
+    renderMath();
+    setTimeout(() => renderMath(), 200);
+    setTimeout(() => renderMath(), 800);
 
     // 主題切換
     document.getElementById('theme-toggle-btn').addEventListener('click', () => {
@@ -2308,6 +2359,8 @@ function switchView(viewId) {
     document.querySelectorAll('.view-panel').forEach(p => p.classList.toggle('active', p.id === viewId));
     document.querySelectorAll('.nav-item').forEach(btn => btn.classList.toggle('active', btn.dataset.view === viewId));
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    renderMath();
+    setTimeout(() => renderMath(), 60);
 }
 
 function renderScopeDependentViews() {
@@ -2466,17 +2519,26 @@ function renderScopeDependentViews() {
             </div>
         </div>`;
     }).join('');
+    renderMath(document.getElementById('topics-accordion-container'));
 }
 
 function toggleAccordion(tid) {
     const el = document.getElementById('acc-' + tid);
-    if (el) el.classList.toggle('open');
+    if (el) {
+        el.classList.toggle('open');
+        if (el.classList.contains('open')) {
+            renderMath(el);
+        }
+    }
 }
 
 function toggleAllTopics(open) {
     document.querySelectorAll('.topic-accordion').forEach(el => {
         el.classList.toggle('open', open);
     });
+    if (open) {
+        renderMath();
+    }
 }
 
 function openTopicDetail(tid) {
@@ -2726,6 +2788,7 @@ function renderFullReport() {
         </article>
     `).join('');
     document.getElementById('full-report-container').innerHTML = htmlStr;
+    renderMath(document.getElementById('full-report-container'));
 }
 
 function renderKmBridge() {
