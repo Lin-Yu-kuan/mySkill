@@ -137,4 +137,3 @@ vibe-coding-toolchain/
 ├── SKILL.md     # 技能定義核心檔案（含 5 階段安裝程序、規則範本與自動更新指引）
 └── README.md    # 說明文件與 Antigravity 零下載一鍵安裝指南
 ```
-

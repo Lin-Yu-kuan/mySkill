@@ -4,7 +4,7 @@ description: >-
   Antigravity IDE「Vibe Coding 黃金工具鏈」一鍵自動化環境配置、健康體檢與規則佈署專家。
   當使用者換電腦、初始化新開發環境、分享給朋友，或要求「配置黃金工具鏈」、「安裝 Vibe Coding 工具鏈」、
   「檢查工具鏈健康度」、「幫這個專案加上工具鏈局域規則 (.agents/rules/tooling.md)」時使用。
-  自動依作業系統安裝與掛載 RTK、ast-grep、CodeGraph、repomix、Context7 MCP，顯示 Marketplace 插件卡片，並以冪等方式寫入全域（Global）與專案局域（Workspace）規則。
+  自動依作業系統安裝與掛載 RTK、ast-grep、CodeGraph、repomix、Context7 MCP、UI/UX Pro Max，顯示 Marketplace 插件卡片，並以冪等方式寫入全域（Global）與專案局域（Workspace）規則。
   亦支援在使用者要求「更新此技能 / 檢查最新版本」時自動調用以進行線上更新。
 repository: https://github.com/Lin-Yu-kuan/mySkill
 update_url: https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/vibe-coding-toolchain/SKILL.md
@@ -25,7 +25,7 @@ update_url: https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/vibe-codi
 
 1. **辨識作業系統與套件管理器**：
    - 確認當前 OS 為 **Windows (PowerShell)**、**macOS** 或 **Linux**。
-   - 快速檢測終端機中是否已安裝：`rtk`、`ast-grep`（或 `sg`）、`codegraph`、`repomix`、`npm`，以及套件管理器（Windows 檢查 `winget`，macOS/Linux 檢查 `brew`）。
+   - 快速檢測終端機中是否已安裝：`rtk`、`ast-grep`（或 `sg`）、`codegraph`、`repomix`、`uipro`、`npm`，以及套件管理器（Windows 檢查 `winget`，macOS/Linux 檢查 `brew`）。同時檢查 `~/.gemini/config/skills/ui-ux-pro-max` 是否已就緒。
 2. **判斷執行模式**：
    - **完整配置模式（預設）**：當使用者說「幫我配置黃金工具鏈」、「初始化開發環境」時，依序執行 **第一步至第五步**。
    - **僅體檢模式**：當使用者說「檢查工具鏈狀態 / 驗收黃金工具鏈」時，直接執行預檢與 **第五步**，並列出缺漏項目詢問是否補齊。
@@ -71,6 +71,15 @@ update_url: https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/vibe-codi
 - **安裝指令**：
   ```bash
   npm install -g @colbymchenry/codegraph repomix @upstash/context7-mcp
+  ```
+
+## 4. 安裝 UI/UX 設計智慧工具 `UI/UX Pro Max`
+- **用途**：提供 79 種 UI 風格、192 組配色與推理 Profile、74 種字體搭配、119 項 UX/a11y 準則，引導 AI 遵循「設計系統優先 (Design System First)」產出高品質前端。
+- **安裝 CLI 與全域技能**：
+  ```bash
+  npm install -g ui-ux-pro-max-cli
+  # 若全域技能目錄尚未載入 ui-ux-pro-max 技能：
+  git clone https://github.com/nextlevelbuilder/ui-ux-pro-max-skill.git ~/.gemini/config/skills/ui-ux-pro-max
   ```
 
 ---
@@ -129,6 +138,7 @@ update_url: https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/vibe-codi
 - **語法樹搜尋與批次重構**：涉及跨檔案結構化程式碼搜尋或批次語法替換時，優先使用本機已安裝的 `ast-grep` (`sg`)，避免脆弱的正規表達式替換。
 - **第三方套件與框架文件**：使用框架、SDK 或不確定最新 API 語法時，優先呼叫 `context7` MCP 查詢最新官方文件，禁止依賴過時記憶盲猜。
 - **前端與網頁除錯**：需要檢查網頁渲染、DOM、網路請求、無障礙或效能問題時，優先使用 `chrome-devtools` 相關技能與工具進行實機驗證。
+- **前端視覺與 UI/UX 設計系統**：涉及介面視覺設計、配色調色盤、排版字體、動效微互動或元件重構時，優先調用 `ui-ux-pro-max` 技能進行設計系統推理（Design System First），遵循無障礙與高質感規範，嚴禁盲目產出陽春原型。
 - **專案脈絡打包**：需要將專案或子目錄匯出為單一 LLM 友善檔案時，使用本機已安裝的 `repomix`。
 ```
 
@@ -148,7 +158,8 @@ trigger: always_on
 2. **結構化重構 (ast-grep)**：跨檔案重構或批次修改語法結構時，優先使用 `ast-grep` (`sg`)。
 3. **文件查核 (Context7)**：引入新套件、升級框架或呼叫不熟悉的第三方 API 前，必須先透過 `context7` 查詢對應版本的最新文件。
 4. **瀏覽器實機驗證 (Chrome DevTools)**：前端 UI、路由或 API 串接修改完成後，優先使用 `chrome-devtools` 工具檢視實際渲染畫面與 Console/Network 狀態。
-5. **終端機輸出 (RTK)**：所有終端機指令已由 RTK 自動精簡以節省 Token，僅在輸出異常或明顯缺漏關鍵除錯資訊時才使用 `rtk bypass <cmd>`。
+5. **視覺與設計系統 (UI/UX Pro Max)**：前端介面設計、組件建立或視覺重構前，必須優先調用 `ui-ux-pro-max` 確立調色盤、字體層級與設計風格，杜絕未經設計推理的生硬介面。
+6. **終端機輸出 (RTK)**：所有終端機指令已由 RTK 自動精簡以節省 Token，僅在輸出異常或明顯缺漏關鍵除錯資訊時才使用 `rtk bypass <cmd>`。
 ```
 
 ---
@@ -160,10 +171,11 @@ trigger: always_on
 - `ast-grep --version`
 - `repomix --version`
 - `codegraph --version`
+- `uipro --version`
 
 最後向使用者輸出一份結構清晰的**「🎉 Vibe Coding 黃金工具鏈驗收報告」表格**，包含：
-1. **CLI 工具版本與狀態**（RTK、ast-grep、repomix、CodeGraph）。
-2. **全域掛載狀態**（RTK hook、CodeGraph MCP）。
+1. **CLI 工具版本與狀態**（RTK、ast-grep、repomix、CodeGraph、uipro）。
+2. **全域掛載與技能狀態**（RTK hook、CodeGraph MCP、UI/UX Pro Max 技能庫）。
 3. **Marketplace 插件狀態**（Context7、Chrome DevTools）。
 4. **規則檔寫入路徑與狀態**（Global `~/.gemini/GEMINI.md` 與 Workspace `.agents/rules/tooling.md`）。
 
@@ -175,4 +187,3 @@ trigger: always_on
 1. **讀取雲端最新版本**：使用可用之網路連線工具或命令讀取上方 `update_url`（`https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/vibe-coding-toolchain/SKILL.md`）的最新內容。
 2. **覆蓋本機檔案**：將目前本機的 `SKILL.md` 覆蓋更新為最新下載的內容。
 3. **回報完成**：簡短向使用者回報已成功更新至 GitHub 最新版本。
-
