@@ -598,21 +598,62 @@ def build_compact_payload(
     enriched_topics: list[dict[str, Any]] = []
     for t in topics_meta:
         tid = t["topic_id"]
+        t_label = t.get("label") or tid
         st = topic_stats.get(tid, {})
-        md_info = parsed_md["topic_details"].get(tid, {})
+        md_info = parsed_md["topic_details"].get(tid)
+
+        if not md_info or not md_info.get("html"):
+            print(f"⚠️ [WARNING] 主題 '{tid}' ({t_label}) 在 report.md 中缺少 '### {tid}' 深度解析區塊！已自動啟動智慧真題導讀補償。")
+            # 智慧真題補償機制：動態自題目索引聚合代表題與分佈
+            topic_qs = [q for q in index_data.get("questions", []) if tid in q.get("topic_ids", []) and q.get("countable", True)]
+            sample_lines = []
+            for q in topic_qs[:3]:
+                sref = q.get("source_refs", [{}])[0]
+                yr = sref.get("year", "")
+                ex_name = sref.get("exam_name", "")
+                q_num = q.get("question_number", "")
+                q_sum = q.get("summary") or q.get("evidence_excerpt") or "歷屆考點真題演練"
+                q_sum = q_sum.replace("\n", " ").strip()
+                if len(q_sum) > 80:
+                    q_sum = q_sum[:80] + "..."
+                prefix = f"{yr} 年 {ex_name} 第 {q_num} 題" if yr or ex_name else f"第 {q_num} 題"
+                sample_lines.append(f">   - **{prefix}**：{q_sum}")
+
+            samples_md = "\n".join(sample_lines) if sample_lines else ">   - 尚無代表題摘要"
+            subtopics_val = (md_info.get("subtopics") if md_info else "") or f"{t_label} 核心概念與演算法操作"
+            patterns_val = (md_info.get("patterns") if md_info else "") or f"申論題 ({st.get('all_essay', 0)} 題) / 測驗題 ({st.get('all_mcq', 0)} 題)"
+
+            fallback_md = (
+                f"> [!NOTE]\n"
+                f"> **💡 智慧考情導讀（自動聚合自歷屆真題庫）**\n"
+                f">\n"
+                f"> - **題型分佈**：目標考試命中 **{st.get('target_total', 0)}** 題（申論 {st.get('target_essay', 0)} 題 / 測驗 {st.get('target_mcq', 0)} 題），全題庫累積 **{st.get('all_total', 0)}** 題。\n"
+                f"> - **歷屆代表真題**：\n"
+                f"{samples_md}\n"
+                f">\n"
+                f"> - **備考指引**：本考點在公職考試中具一定出題頻率，建議點擊右上角「🔍 查看全部試題」檢視完整歷屆考題與詳解。"
+            )
+            html_val = render_markdown_block(fallback_md)
+            laws_val = md_info.get("laws", "") if md_info else ""
+        else:
+            laws_val = md_info.get("laws", "")
+            subtopics_val = md_info.get("subtopics", "")
+            patterns_val = md_info.get("patterns", "")
+            html_val = md_info.get("html", "")
+
         enriched_topics.append({
             "id": tid,
-            "label": t.get("label") or tid,
+            "label": t_label,
             "target_total": st.get("target_total", 0),
             "target_essay": st.get("target_essay", 0),
             "target_mcq": st.get("target_mcq", 0),
             "all_total": st.get("all_total", 0),
             "all_essay": st.get("all_essay", 0),
             "all_mcq": st.get("all_mcq", 0),
-            "laws": md_info.get("laws", ""),
-            "subtopics": md_info.get("subtopics", ""),
-            "patterns": md_info.get("patterns", ""),
-            "html": md_info.get("html", ""),
+            "laws": laws_val,
+            "subtopics": subtopics_val,
+            "patterns": patterns_val,
+            "html": html_val,
         })
     enriched_topics.sort(key=lambda x: (-x["target_total"], -x["all_total"], x["id"]))
 
