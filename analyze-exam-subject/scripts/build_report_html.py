@@ -2705,7 +2705,9 @@ function renderQuestionPage(page) {
         </div>`;
     }).join('');
 
-    document.getElementById('questions-list-container').innerHTML = listHtml || '<div class="section-card">找不到符合篩選條件的題目。</div>';
+    const qListContainer = document.getElementById('questions-list-container');
+    qListContainer.innerHTML = listHtml || '<div class="section-card">找不到符合篩選條件的題目。</div>';
+    renderMath(qListContainer);
 
     // 分頁按鈕
     const pagEl = document.getElementById('pagination-container');
