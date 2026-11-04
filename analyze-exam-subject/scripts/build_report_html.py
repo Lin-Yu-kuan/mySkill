@@ -9,6 +9,7 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import sys
 import tempfile
 from typing import Any
@@ -441,12 +442,12 @@ def render_markdown_block(md_text: str) -> str:
 
 
 def _to_rel_or_file_uri(target_path: str | None, run_dir: Path) -> str:
-    """同屬 run_dir 下之檔案（如 render-images/*.png）轉為相對路徑，外部檔案轉為 file:/// URI。"""
+    """優先將檔案轉為相對於 run_dir 之相對路徑，若跨磁碟無法計算則轉為 file:/// URI。"""
     if not target_path:
         return ""
     p = Path(target_path)
     try:
-        rel = p.resolve().relative_to(run_dir.resolve())
+        rel = os.path.relpath(p.resolve(), run_dir.resolve())
         return str(rel).replace("\\", "/")
     except (ValueError, OSError):
         raw = str(p).replace("\\", "/")
@@ -1445,6 +1446,137 @@ body {
     padding: 24px 28px;
     margin-bottom: 24px;
 }
+/* 知識地圖介接指引卡片 */
+.km-guide-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(124, 58, 237, 0.25);
+    border-radius: 10px;
+    margin: 14px 0 18px 0;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(124, 58, 237, 0.06);
+}
+.km-guide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background: var(--purple-light);
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid rgba(124, 58, 237, 0.15);
+}
+.km-guide-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.92rem;
+    color: var(--purple);
+    font-weight: 700;
+}
+.km-guide-badge {
+    background: var(--purple);
+    color: #fff;
+    font-size: 0.72rem;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+.km-guide-toggle-btn {
+    font-size: 0.78rem;
+    color: var(--purple);
+    background: transparent;
+    border: 1px solid rgba(124, 58, 237, 0.3);
+    border-radius: 6px;
+    padding: 3px 8px;
+    cursor: pointer;
+}
+.km-guide-body {
+    padding: 16px 18px;
+}
+.km-steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 14px;
+}
+.km-step-item {
+    display: flex;
+    gap: 10px;
+    background: var(--bg-muted);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+}
+.km-step-num {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--purple);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.km-step-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.km-step-title {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+.km-step-desc {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+.km-install-box {
+    background: rgba(124, 58, 237, 0.04);
+    border: 1px dashed rgba(124, 58, 237, 0.35);
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.km-install-title {
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: var(--purple);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.km-install-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.km-install-btn {
+    background: var(--bg-card);
+    border: 1px solid rgba(124, 58, 237, 0.4);
+    color: var(--purple);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.km-install-btn:hover {
+    background: var(--purple);
+    color: #fff;
+    border-color: var(--purple);
+}
 .km-mode-selector {
     display: flex;
     gap: 8px;
@@ -1824,6 +1956,59 @@ body {
             <p style="font-size:0.93rem;color:var(--text-primary);margin-bottom:14px">
                 本系統已根據目標考試配分權重，將考點自動劃分為 <strong>M1 核心奪分模組</strong>、<strong>M2 進階拉分模組</strong> 與 <strong>M3 學理防禦模組</strong>，並預先綁定本報告路徑與各主題之「子考點、必背法條、易混淆邊界與歷屆代表題」。請點選下方學習模式或於下方自訂勾選考點主題，複製指令貼入對話框即可<strong>零摩擦直接展開 M1-1 深度精講</strong>！
             </p>
+
+            <!-- 介接與環境準備指引卡片 -->
+            <div class="km-guide-card">
+                <div class="km-guide-header" onclick="toggleKmGuide()">
+                    <div class="km-guide-title">
+                        <span class="km-guide-badge">介接指引</span>
+                        <span>💡 如何將本考情報告介接至 Antigravity 進行深度自學？</span>
+                    </div>
+                    <button class="km-guide-toggle-btn" id="km-guide-toggle-text">收合指引 ▲</button>
+                </div>
+                <div id="km-guide-body" class="km-guide-body">
+                    <div class="km-steps-grid">
+                        <div class="km-step-item">
+                            <div class="km-step-num">1</div>
+                            <div class="km-step-content">
+                                <div class="km-step-title">步驟一：準備 / 安裝技能</div>
+                                <div class="km-step-desc">確認 Antigravity 已安裝 <code>knowledge-map-learning</code> 技能套件（未安裝可點下方一鍵複製指令安裝）。</div>
+                            </div>
+                        </div>
+                        <div class="km-step-item">
+                            <div class="km-step-num">2</div>
+                            <div class="km-step-content">
+                                <div class="km-step-title">步驟二：選定學習模式</div>
+                                <div class="km-step-desc">在下方選擇「全科衝刺」、「弱點專班」或自由勾選目標考點主題。</div>
+                            </div>
+                        </div>
+                        <div class="km-step-item">
+                            <div class="km-step-num">3</div>
+                            <div class="km-step-content">
+                                <div class="km-step-title">步驟三：貼入對話框開課</div>
+                                <div class="km-step-desc">點擊「立即複製」，貼入對話框發送，AI 導師將自動解析本報告展開精講並逐章生成 HTML 講義！</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="km-install-box">
+                        <div class="km-install-title">
+                            <span>🛠️ 若尚未安裝此技能，請點擊複製以下雲端直裝指令：</span>
+                        </div>
+                        <div class="km-install-actions">
+                            <button class="km-install-btn" onclick="copyKmInstallCmd('ps')">
+                                💻 複製 Windows PowerShell 雲端直裝指令
+                            </button>
+                            <button class="km-install-btn" onclick="copyKmInstallCmd('sh')">
+                                🍎 複製 macOS / Linux 雲端直裝指令
+                            </button>
+                            <button class="km-install-btn" onclick="copyKmInstallCmd('nlp')">
+                                💬 複製 Antigravity 對話框自然語言安裝語句
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="km-mode-selector">
                 <button class="km-mode-btn active" data-km-mode="full" onclick="selectKmMode('full')">
                     🚀 模式 A：全科系統化知識地圖（M1～M3 全選）
@@ -1907,12 +2092,47 @@ function getEffectiveReportPath() {
                 p = p.substring(1);
             }
             p = p.replace(/\\/g, '/');
+            // 若為 .html 結尾，指向同目錄下 LLM 專用的 .md 報告（防止 AI 讀取 1.85MB HTML 截斷）
+            if (p.toLowerCase().endsWith('.html')) {
+                p = p.replace(/\.html$/i, '.md');
+            }
             if (p) return p;
         }
     } catch (e) {
         console.warn('動態偵測檔案路徑失敗，降級使用靜態路徑', e);
     }
     return DATA.report_path || '';
+}
+
+// 動態將 PDF 路徑轉為自適應相對路徑，防止搬移資料夾後絕對路徑失效
+function getEffectivePdfUrl(rawPdf) {
+    if (!rawPdf) return '';
+    try {
+        // 從 rawPdf 提取 [科目, 檔名]（最後兩層路徑）
+        const clean = decodeURIComponent(rawPdf.replace(/\\/g, '/').replace(/^file:\/\/\/?/i, ''));
+        const parts = clean.split('/').filter(Boolean);
+        if (parts.length >= 2) {
+            const relPath = parts.slice(-2).join('/');
+
+            // 嘗試偵測當前本機報告所在目錄
+            const curReport = getEffectiveReportPath();
+            if (curReport) {
+                const normalized = curReport.replace(/\\/g, '/');
+                const analysisIdx = normalized.indexOf('/_analysis/');
+                if (analysisIdx !== -1) {
+                    // 位於 _analysis/<科目>/<run_id>/ 下：向上 3 層回到題庫根目錄
+                    return '../../../' + relPath;
+                } else {
+                    // 位於題庫根目錄下：直接以相對路徑開啟同層的官方科目資料夾
+                    return './' + relPath;
+                }
+            }
+            return './' + relPath;
+        }
+    } catch (e) {
+        console.warn('動態重定向 PDF 路徑失敗，降級使用原始路徑', e);
+    }
+    return rawPdf;
 }
 
 function escapeHtml(str) {
@@ -1929,6 +2149,35 @@ function showToast(msg) {
     t.textContent = msg;
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+function copyKmInstallCmd(type) {
+    let cmd = '';
+    let msg = '';
+    if (type === 'ps') {
+        cmd = '$u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $t="$env:TEMP\\\\myskill.zip"; $d="$HOME\\\\.gemini\\\\config\\\\skills\\\\knowledge-map-learning"; if (!(Test-Path $d)) { New-Item -ItemType Directory -Path $d -Force }; Invoke-WebRequest $u -OutFile $t; Expand-Archive $t "$env:TEMP\\\\myskill-temp" -Force; Copy-Item "$env:TEMP\\\\myskill-temp\\\\mySkill-main\\\\knowledge-map-learning\\\\*" $d -Recurse -Force; Remove-Item $t,"$env:TEMP\\\\myskill-temp" -Recurse -Force; Write-Host "✅ knowledge-map-learning 技能套件已成功安裝至 Antigravity！" -ForegroundColor Green';
+        msg = '✅ 已複製 Windows (PowerShell) 雲端直裝指令！';
+    } else if (type === 'sh') {
+        cmd = 'mkdir -p "$HOME/.gemini/config/skills/knowledge-map-learning" && curl -sSL "https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.tar.gz" | tar -xz -C "$HOME/.gemini/config/skills/knowledge-map-learning" --strip-components=2 "mySkill-main/knowledge-map-learning/" && echo "✅ knowledge-map-learning 技能套件已成功安裝！"';
+        msg = '✅ 已複製 macOS / Linux 雲端直裝指令！';
+    } else if (type === 'nlp') {
+        cmd = '請幫我從 GitHub 倉庫 (https://github.com/Lin-Yu-kuan/mySkill) 將 knowledge-map-learning 技能套件下載並安裝到我的 Antigravity 全域技能目錄 (~/.gemini/config/skills/knowledge-map-learning)。';
+        msg = '✅ 已複製 Antigravity 對話框自然語言安裝語句！';
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(cmd).then(() => showToast(msg)).catch(() => fallbackExecCopy(cmd, msg));
+    } else {
+        fallbackExecCopy(cmd, msg);
+    }
+}
+
+function toggleKmGuide() {
+    const body = document.getElementById('km-guide-body');
+    const btnText = document.getElementById('km-guide-toggle-text');
+    if (!body || !btnText) return;
+    const isHidden = body.style.display === 'none';
+    body.style.display = isHidden ? 'block' : 'none';
+    btnText.textContent = isHidden ? '收合指引 ▲' : '展開指引 ▼';
 }
 
 function copyTextWithFallback(text, successMsg) {
@@ -2322,7 +2571,7 @@ function renderQuestionPage(page) {
                </span>`
             : `<span style="color:var(--text-muted)">申論題（配分 ${q.score || 25} 分）</span>`;
 
-        const pageLabel = q.p && q.p.length ? ` (P.${q.p[0]})` : '';
+        const effectivePdf = getEffectivePdfUrl(src.pdf);
 
         return `
         <div class="q-card" id="qcard-${escapeHtml(q.id)}">
@@ -2347,7 +2596,7 @@ function renderQuestionPage(page) {
             <div class="q-footer">
                 <div>${ansHtml}</div>
                 <div style="display:flex;gap:6px;flex-wrap:wrap">
-                    ${src.pdf ? `<a class="btn-sm" href="${escapeHtml(src.pdf)}" target="_blank" style="text-decoration:none">📄 開啟原卷 PDF${pageLabel}</a>` : ''}
+                    ${effectivePdf ? `<a class="btn-sm" href="${escapeHtml(effectivePdf + (q.p && q.p[0] ? ('#page=' + q.p[0]) : ''))}" target="_blank" rel="noopener noreferrer" style="text-decoration:none">📄 開啟原卷 PDF</a>` : ''}
                 </div>
             </div>
         </div>`;
@@ -2724,6 +2973,15 @@ document.addEventListener('DOMContentLoaded', initApp);
 """
 
 
+def find_repo_root(run_dir: Path) -> Path | None:
+    """若 run_dir 位於題庫的 _analysis/ 目錄下，尋找其對應的題庫根目錄。"""
+    cur = run_dir.resolve()
+    for parent in [cur, *cur.parents]:
+        if parent.name == "_analysis":
+            return parent.parent
+    return None
+
+
 def build_report_html(
     run_dir: Path,
     report_path: Path | None = None,
@@ -2732,6 +2990,7 @@ def build_report_html(
     index_path: Path | None = None,
     extraction_path: Path | None = None,
     output_path: Path | None = None,
+    sync_root: bool = True,
 ) -> Path:
     """從 run_dir（或指定檔案路徑）讀取分析成果並原子寫出單一自包含 report.html。"""
     run_dir = run_dir.resolve()
@@ -2786,6 +3045,23 @@ def build_report_html(
                 pass
         raise
 
+    # 自動同步一份至題庫根目錄（雙軌保證：通用 report.* 與具名 <備考科目>_考點分析報告.*）
+    if sync_root:
+        repo_root = find_repo_root(run_dir)
+        if repo_root and repo_root.is_dir():
+            try:
+                # 1. 複製標準入口
+                shutil.copy2(out_file, repo_root / "report.html")
+                shutil.copy2(report_file, repo_root / "report.md")
+
+                # 2. 複製具名入口（防止同一題庫不同備考科目互相覆蓋）
+                safe_subj = re.sub(r'[\\/*?:"<>|]', '_', str(payload.get("study_subject", "")).strip())
+                if safe_subj:
+                    shutil.copy2(out_file, repo_root / f"{safe_subj}_考點分析報告.html")
+                    shutil.copy2(report_file, repo_root / f"{safe_subj}_考點分析報告.md")
+            except OSError as exc:
+                print(f"提示：同步報告至題庫根目錄時略過：{exc}", file=sys.stderr)
+
     return out_file
 
 
@@ -2798,6 +3074,7 @@ def main() -> int:
     parser.add_argument("--index", type=Path, help="指定 question-index.json 路徑")
     parser.add_argument("--extraction", type=Path, help="指定 extraction.json 路徑")
     parser.add_argument("--output", type=Path, help="指定輸出之 report.html 路徑")
+    parser.add_argument("--no-sync-root", action="store_true", help="停用自動同步報告至題庫根目錄")
     args = parser.parse_args()
 
     run_dir = args.run_dir
@@ -2818,6 +3095,7 @@ def main() -> int:
             index_path=args.index,
             extraction_path=args.extraction,
             output_path=args.output,
+            sync_root=not args.no_sync_root,
         )
         print(f"已輸出互動式報告：{out_path}")
         return 0
