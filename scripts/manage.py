@@ -138,7 +138,7 @@ class SkillInfo:
 
     def _load(self) -> None:
         if self.skill_md.exists():
-            content = self.skill_md.read_text(encoding="utf-8")
+            content = self.skill_md.read_text(encoding="utf-8-sig")
             self.frontmatter, self.body = parse_frontmatter(content)
 
         for item in sorted(self.path.iterdir()):
@@ -233,7 +233,7 @@ def lint_skills(root: Path) -> int:
         if not s.readme_md.exists():
             errors.append(f"{prefix} 缺少 `README.md` 說明文件")
         else:
-            readme_text = s.readme_md.read_text(encoding="utf-8")
+            readme_text = s.readme_md.read_text(encoding="utf-8-sig")
             if "一鍵安裝" not in readme_text:
                 warnings.append(f"{prefix} README.md 缺少「🚀 Antigravity 一鍵安裝方式」章節")
             if ".gemini\\config\\skills" not in readme_text:
