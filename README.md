@@ -15,6 +15,7 @@
 | [essay-solver](./essay-solver) | 臺灣國家考試、國營事業與專技申論題擬答，考場手寫實戰架構、標準四板塊輸出與嚴謹法條裁判查證 | 公職 / 考試 | [查看說明文件](./essay-solver/README.md) |
 | [analyze-exam-subject](./analyze-exam-subject) | 本機考古題 PDF 題庫智慧盤點與聚合分析，支援視覺逐頁開圖核對、精簡批次快取、去重命題事件統計與結構化考點地圖報告產出 | 備考 / 題庫分析 | [查看說明文件](./analyze-exam-subject/README.md) |
 | [vibe-coding-toolchain](./vibe-coding-toolchain) | Antigravity IDE「Vibe Coding 黃金工具鏈」一鍵配置與健康體檢專家，自動安裝與掛載 RTK、ast-grep、CodeGraph、repomix、Context7 MCP、Chrome DevTools，並以冪等方式寫入全域與專案局域規則 | 環境配置 / 開發工具鏈 | [查看說明文件](./vibe-coding-toolchain/README.md) |
+| [skill-evolution](./skill-evolution) | 既有 Skill 唯讀診斷與最小化演進專家，具備引用鏈完整追蹤、區分「缺少判準 vs 實測偏移」及「否定極性反轉與同義改寫」事實核對能力 | 技能治理 / 診斷優化 | [查看說明文件](./skill-evolution/README.md) |
 
 *(未來若有新增其他 Skill，會陸續擴充於此)*
 
@@ -77,9 +78,14 @@ mySkill/
 │   ├── references/                # 作業指引與資料契約規範
 │   ├── scripts/                   # 本機純 Python 盤點、渲染與精簡分析工具鏈
 │   └── tests/                     # 單元測試與行為驗收案例
-└── vibe-coding-toolchain/         # Vibe Coding 黃金工具鏈一鍵配置與體檢專家
-    ├── SKILL.md                   # 核心技能定義（含 5 階段安裝、規則範本與自動更新指引）
-    └── README.md                  # 技能說明文件與零下載雲端安裝指南
+├── vibe-coding-toolchain/         # Vibe Coding 黃金工具鏈一鍵配置與體檢專家
+│   ├── SKILL.md                   # 核心技能定義（含 5 階段安裝、規則範本與自動更新指引）
+│   └── README.md                  # 技能說明文件與零下載雲端安裝指南
+└── skill-evolution/               # 既有 Skill 唯讀診斷與最小化演進專家
+    ├── SKILL.md                   # 核心技能定義（含五大強制原則與四步唯讀診斷流程）
+    ├── README.md                  # 技能說明文件與一鍵安裝指南
+    ├── references/                # 唯讀診斷判準指南與 Holdout 驗收規範
+    └── scripts/                   # 引用鏈收集與主張極性／時態核對輔助工具
 ```
 
 ---
