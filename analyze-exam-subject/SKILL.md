@@ -21,7 +21,7 @@ update_url: https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/analyze-e
 
 請使用者命名一個備考科目、選取來源科目，並選填目標考試／等別／類科；沒有多選介面時接受編號列表。已明確指定的範圍不重問；未確認檔案讓使用者依檔案編號選擇，不靜默排除或加入。零選取不分析，AI 建議不能擴張選取。
 
-一次分析一個備考科目，同一來源可供不同次分析使用。選取代表分析來源，不代表整卷都屬於該科。依 [資料契約](references/output-contract.md) 保存 `selection.json`，路徑使用絕對路徑，未知 metadata 寫 `null`。
+一次分析一個備考科目，同一來源可供不同次分析使用。選取代表分析來源，不代表整卷都屬於該科。依 [資料契約](references/output-contract.md) 保存 `selection.json`，每筆來源複製 inventory 的 `relative_path`（題庫內相對路徑），未知 metadata 寫 `null`。使用者會整包搬移題庫，對外引用只用相對路徑。
 
 ## 2. 視覺核對與分類
 
@@ -39,7 +39,9 @@ update_url: https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/analyze-e
 
 ## 3. 統計與報告
 
-以 `merge --visual-review` 補齊來源，再用 `summary` 計算統計；有文字擷取時傳入 `--extraction`。最後只讀 summary 與必要代表題，按 [報告結構](references/report-template.md) 產出 `report.md`，不憑模型印象估算次數。
+以 `merge --visual-review` 補齊來源，再用 `summary` 計算統計；有文字擷取時傳入 `--extraction`。summary 輸出到與 `report.md` 相同的執行目錄。最後只讀 summary 與必要代表題，按 [報告結構](references/report-template.md) 產出 `report.md`，不憑模型印象估算次數。
+
+考題連結只用 summary 提供的相對 `link`，並以文字標示題庫相對路徑、頁碼與題號；報告不得出現本機絕對路徑。使用者想接著用 knowledge-map-learning 深入某考點時，依報告結構的銜接規則附上題目快照與題庫相對路徑，讓另一個技能不讀 PDF 也能開課。
 
 同內容只解析一次，不代表相同命題事件。不同年度或考試的重複題保留各次出現；同場共用一卷的多類科不重複計獨立命題。疑似重複只標記，不自動合併；事件關係不明時揭露不確定性。
 
@@ -51,7 +53,7 @@ update_url: https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/analyze-e
 
 只寫本次新建的執行目錄；來源唯讀時依工具使用文件指定可寫入的 `--output-root`。保存盤點、選取、分類表與抽樣筆記、渲染及視覺紀錄、批次工作與結果、題目索引、統計及報告；有擷取文字時一併保存。逐批落盤，不在聊天中重述全部題目。
 
-恢復時依 [工具使用](references/usage.md) 核對文字擷取、依視覺檢查文件核對渲染、依精簡分析文件核對 AI 快取；來源雜湊變更不得沿用舊分析。這些文件分別維護恢復條件與命令，勿僅憑舊完成標記跳過工作。
+恢復時依 [工具使用](references/usage.md) 核對文字擷取、依視覺檢查文件核對渲染、依精簡分析文件核對 AI 快取；來源雜湊變更不得沿用舊分析。這些文件分別維護恢復條件與命令，勿僅憑舊完成標記跳過工作。題庫搬移後重新盤點新位置，沿用含 `relative_path` 的 selection 即可重用快取。
 
 交付報告連結、處理範圍與限制，單列失敗、不可判讀及待確認項目。文字擷取成功、圖片生成成功與題目判讀完成分開統計；完整覆蓋前標示「部分完成」，不將擷取成功等同分析正確。
 

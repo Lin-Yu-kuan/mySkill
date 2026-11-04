@@ -6,7 +6,7 @@ from datetime import datetime
 import hashlib
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 import re
 import secrets
 import sqlite3
@@ -98,7 +98,7 @@ def inventory(root: Path, manifest: Path | None = None) -> dict[str, Any]:
                 if not resolved.is_relative_to(root):
                     raise ValueError("檔案超出來源根目錄")
                 sha = digest(resolved)
-                files.append({"path": str(resolved), "relative_path": str(path.relative_to(root)),
+                files.append({"path": str(resolved), "relative_path": portable_relative(path, root),
                               "sha256": sha, "size": resolved.stat().st_size, "status": "inventoried",
                               "metadata": metadata.get(sha, [])})
                 contents.setdefault(sha, []).append(str(resolved))
@@ -112,6 +112,34 @@ def inventory(root: Path, manifest: Path | None = None) -> dict[str, Any]:
 def read_json(path: Path) -> dict[str, Any]:
     with path.open(encoding="utf-8-sig") as stream:
         return json.load(stream)
+
+
+def portable_relative(path: Path, root: Path) -> str:
+    """題庫內相對路徑一律用 `/` 分隔，整個題庫搬移或跨平台後仍可還原。"""
+    return path.relative_to(root).as_posix()
+
+
+def source_path(source: dict[str, Any], root: Path) -> Path:
+    """還原選取來源的實際路徑；優先採用相對題庫根目錄的 relative_path。
+
+    題庫整體搬移後，舊的絕對 path 會失效，但 relative_path 搭配新盤點的 root 仍正確。
+    兩者都提供且舊 path 仍存在時必須指向同一檔案，避免靜默換成別的試卷。
+    """
+    relative = source.get("relative_path")
+    absolute = source.get("path")
+    if relative:
+        parts = PurePosixPath(str(relative).replace("\\", "/"))
+        if parts.is_absolute() or ".." in parts.parts or PureWindowsPath(str(relative)).drive:
+            raise ValueError("relative_path 必須是題庫根目錄內的相對路徑")
+        resolved = (root / Path(*parts.parts)).resolve()
+        if absolute:
+            old = Path(absolute)
+            if old.exists() and old.resolve() != resolved:
+                raise ValueError("selection 的 path 與 relative_path 指向不同檔案")
+        return resolved
+    if absolute:
+        return Path(absolute).resolve()
+    raise ValueError("selection 來源需提供 relative_path 或 path")
 
 
 def select_sources(data: dict[str, Any], selection: dict[str, Any] | None,
@@ -129,7 +157,7 @@ def select_sources(data: dict[str, Any], selection: dict[str, Any] | None,
             raise ValueError("selection 缺少支援的版本或備考科目")
         chosen = []
         for source in selection.get("selected_sources", []):
-            key = str(Path(source["path"]).resolve())
+            key = str(source_path(source, root))
             item = available.get(key)
             if not item or item["sha256"] != source.get("sha256"):
                 raise ValueError("selection 與盤點來源／雜湊不一致，請重新盤點")

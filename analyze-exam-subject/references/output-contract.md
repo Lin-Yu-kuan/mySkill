@@ -2,7 +2,17 @@
 
 inventory、selection、extraction、render-index 與 visual-review 使用 `schema_version=1`；`question-index` 使用 `schema_version=3`；`summary` 使用 `schema_version=2`；compact `work` 使用 `protocol=2`。讀取舊版 `question-index` 時，缺少視覺資訊一律解讀為 `not_checked`，不能默認已確認。沒有 compact cache 的舊索引不能當作分析快取。既有 extract CLI 與輸出不變。
 
-JSON 使用 UTF-8。檔案路徑保存絕對路徑，頁碼為 PDF 一基頁碼，不是印刷頁碼。未知值用 null，不能編造 ID 或年度。
+JSON 使用 UTF-8。頁碼為 PDF 一基頁碼，不是印刷頁碼。未知值用 null，不能編造 ID 或年度。
+
+## 可攜路徑
+
+使用者會整包搬移題庫資料夾，絕對路徑隨時可能失效，因此路徑分兩種角色：
+
+- `path`：本次執行時的絕對路徑，只供本機工具驗證與讀檔，**不得寫進報告連結或交給其他技能當定位依據**。
+- `relative_path`：相對題庫根目錄（inventory 的 `root`）的路徑，一律以 `/` 分隔，是跨次執行、跨機器與跨技能的穩定識別。不得含 `..`、磁碟代號或開頭 `/`。
+- `source_root`：work、question-index、summary 記錄本次題庫根目錄，僅供說明與計算連結；題庫搬移後以新盤點的 root 為準。
+
+selection 同時提供兩者時，工具以 `relative_path`＋目前盤點 root 還原；舊 `path` 仍存在卻指向不同檔案時拒絕。題庫搬移後只要重新 inventory，並沿用含 `relative_path` 的 selection，即可繼續使用分析快取（快取以內容雜湊為鍵，與路徑無關）。
 
 預設採 [精簡分析契約](compact-analysis.md)。AI 只產生短欄位結果，由 merge 補齊 question-index。summary／reason／evidence_excerpt 不再是每題必填；一般題可為空，頁碼與圖片證據仍保留。parent_question_id 可省略，以 countable=false 排除已拆分父題。可選 `answers`、`duplicate_of`、`score` 由 merge 驗證後補成 `answer_refs`、`duplicate_candidates`、`score`。
 
@@ -10,9 +20,11 @@ work.json 保存 config、config_hash、來源 registry、batches、可重用 ca
 
 summary.json 保存唯一相關題數、補充題數、待確認數、coverage、主題計數、每主題有限代表題、年度考試分層與可選的答案／重複題計數。分類時使用 r/c/i/u；落盤索引轉為完整 relevance 列舉。不把 summary 的文字大小視為模型 Token 用量。
 
+summary 另含 `source_root` 與 `source_files`（每個來源檔一筆：relative_path、sha256、official_subject、year、exam_name、link），代表題的 `sources` 也補上 `link`。`link` 是相對於 summary 輸出目錄（即報告目錄）的 Markdown 連結，已跳脫空白、括號、`#`、`%`；只在輸出目錄位於題庫根目錄內時產生，否則為 null（外部 `--output-root` 或不同磁碟的連結會在題庫搬移後失效）。連結以純字串計算，題庫與 `_analysis` 一起搬移後仍然有效。
+
 ## inventory.json（工具生成）
 
-root、files、contents、warnings。files 每筆有 path、relative_path、sha256、size、status、metadata；失敗檔保留 status 與 error，其餘欄位可缺。metadata 為 manifest 來源關聯列表。contents 以 sha256 分組且保留 paths。雜湊是內容識別，不是命題事件識別。
+root、files、contents、warnings。files 每筆有 path、relative_path（`/` 分隔）、sha256、size、status、metadata；失敗檔保留 status 與 error，其餘欄位可缺。metadata 為 manifest 來源關聯列表。contents 以 sha256 分組且保留 paths。雜湊是內容識別，不是命題事件識別。
 
 ## selection.json（使用者選取後由宿主保存）
 
@@ -25,6 +37,7 @@ root、files、contents、warnings。files 每筆有 path、relative_path、sha2
   "selected_sources": [
     {
       "path": "D:/題庫/合科/試題.pdf",
+      "relative_path": "合科/試題.pdf",
       "sha256": "替換為盤點的完整 SHA-256",
       "official_subject": "資料結構與資料庫及資料探勘",
       "role": "question",
@@ -37,7 +50,7 @@ root、files、contents、warnings。files 每筆有 path、relative_path、sha2
 }
 ```
 
-path 寫絕對路徑；未知 metadata 寫 null。`classification_version` 是 compact 分析必填。同一檔案可有多個來源事件，保留多筆 selected_sources；工具只依 path＋sha256 驗證選取及去重。role 可為 question、official_answer、corrected_answer、unknown；答案角色由可靠來源確認，未知不自動套用。
+relative_path 直接複製 inventory 對應檔案的值，新建 selection 一律填寫；只有 path 的舊 selection 仍相容，但題庫搬移後須補上 relative_path。path 可選，寫入時為當下絕對路徑。未知 metadata 寫 null。`classification_version` 是 compact 分析必填。同一檔案可有多個來源事件，保留多筆 selected_sources；工具依 relative_path（或 path）＋sha256 驗證選取及去重。role 可為 question、official_answer、corrected_answer、unknown；答案角色由可靠來源確認，未知不自動套用。
 
 ## extraction.json（工具生成）
 
@@ -45,19 +58,19 @@ tool_version、pypdf_version、page_scope、documents。每筆 document 包含 s
 
 ## question-index.json（宿主分析生成，schema 3）
 
-- schema_version、study_subject、target_exam、classification_version、config_hash、warnings。
+- schema_version、study_subject、target_exam、classification_version、config_hash、source_root、warnings。
 - status：partial／complete；coverage：見下方。
 - topics：穩定 topic_id、label、parent_id。
 - questions：question_id、content_sha256、pages、question_number、parent_question_id（可省略）、countable、summary、relevance、topic_ids、reason、evidence_excerpt（可省略）、source_refs、answer_refs、duplicate_candidates、score（可選）、analysis_status、visual_status、interpretation_method、image_evidence。
 - relevance：relevant／cross_domain／irrelevant／uncertain；analysis_status：completed／needs_review／unreadable。
 - content_sha256 是來源 PDF 的內容雜湊，不是單題語意雜湊；question_id 以來源短 ID＋起始頁＋題號產生，跨卷同題以 duplicate_candidates 標記。
-- source_refs：path、sha256、year、exam_name、category、official_subject、role、event_id（未知為 null）、metadata_evidence。path 必須是絕對路徑。
-- answer_refs：source、path、sha256、page、question_number、role、answer（可選答案內容）、basis、conflict；只接受 official_answer／corrected_answer，頁碼必須在已渲染範圍。
+- source_refs：path、relative_path、sha256、year、exam_name、category、official_subject、role、event_id（未知為 null）、metadata_evidence。path 是本次絕對路徑；對外引用一律用 relative_path。
+- answer_refs：source、path、relative_path、sha256、page、question_number、role、answer（可選答案內容）、basis、conflict；只接受 official_answer／corrected_answer，頁碼必須在已渲染範圍。
 - duplicate_candidates：other_question_id、reason；只標記，不自動合併，指向的題目必須存在。
 - visual_status：not_checked／checked／unreadable。`checked` 必須來自 `merge --visual-review` 的實際圖片證據且 `host_vision.available=true`；未提供 visual-review 時所有題目維持 not_checked、整體為 partial，只保留文字暫判。render-index 本身永遠是 not_checked。
 - interpretation_method：text_only／vision_only／text_and_vision；有提供 `merge --extraction` 且題目所有頁都沒有 text_extracted 時為 vision_only。
 - image_evidence：source_sha256、page、image_path、image_sha256；可指向 300 DPI detail-index 的實際判讀圖片。
-- source_status：每個已選路徑的列表，欄位 path、sha256、status（pending／processed／failed／needs_review）、detail。
+- source_status：每個已選路徑的列表，欄位 path、relative_path、sha256、status（pending／processed／failed／needs_review）、detail。
 - coverage：
   - selected_files、processed_files、failed_files、pending_files、needs_review_files。
   - selected_pages、text_extracted_pages（未提供 extraction 時 null）、rendered_pages、visually_checked_pages、pending_visual_pages、unrendered_pages、unreadable_pages、render_failed_pages、unknown_page_count_files。

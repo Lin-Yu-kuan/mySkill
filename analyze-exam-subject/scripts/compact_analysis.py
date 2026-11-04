@@ -6,10 +6,12 @@ from collections import Counter, defaultdict
 import hashlib
 import json
 import math
-from pathlib import Path
+import os
+from pathlib import Path, PurePosixPath
 from typing import Any
 
-from exam_files import digest, read_json, select_sources, verify_source, write_new
+from exam_files import (digest, portable_relative, read_json, select_sources, source_path, verify_source,
+                        write_new)
 
 PROTOCOL = 2
 INDEX_SCHEMA = 3
@@ -19,6 +21,8 @@ MAX_WHY_CHARS = 200
 MAX_EVIDENCE_CHARS = 300
 RELEVANCE = {"r": "relevant", "c": "cross_domain", "i": "irrelevant", "u": "uncertain"}
 ANSWER_ROLES = {"official_answer", "corrected_answer"}
+# 只跳脫會破壞 Markdown 連結或被當成錨點的字元，中文檔名保持可讀。
+_LINK_ESCAPES = {"%": "%25", " ": "%20", "(": "%28", ")": "%29", "#": "%23", "<": "%3C", ">": "%3E"}
 _UNSET = object()
 
 RULES = [
@@ -44,10 +48,11 @@ def _short_list(values: list[Any], limit: int = 10) -> str:
     return text + (f"…等 {len(values)} 頁" if len(values) > limit else "")
 
 
-def _normalise_ref(item: dict[str, Any], path: Path) -> dict[str, Any]:
-    """selection 可能只寫路徑／雜湊；輸出契約要求絕對路徑與未知值 null。"""
+def _normalise_ref(item: dict[str, Any], path: Path, root: Path) -> dict[str, Any]:
+    """selection 可能只寫路徑／雜湊；保留目前絕對路徑，並補上可攜的題庫相對路徑。"""
     ref = dict(item)
     ref["path"] = str(path)
+    ref["relative_path"] = portable_relative(path, root)
     ref["role"] = str(ref.get("role") or "unknown")
     for key in ("official_subject", "exam_name", "category", "metadata_evidence", "event_id"):
         value = ref.get(key)
@@ -93,7 +98,7 @@ def prepare(inventory: dict, selection: dict, renders: dict, topics: list[dict],
     config = {**analysis, "target_exam": selection.get("target_exam")}
     sources: dict[str, dict] = {}
     for item in selection["selected_sources"]:
-        path = Path(item["path"]).resolve()
+        path = source_path(item, root)
         if str(path) not in chosen_paths:
             raise ValueError("來源不在選取內")
         sha = item["sha256"]
@@ -101,7 +106,7 @@ def prepare(inventory: dict, selection: dict, renders: dict, topics: list[dict],
         if sid in sources and sources[sid]["sha256"] != sha:
             raise ValueError("來源短 ID 碰撞")
         source = sources.setdefault(sid, {"sha256": sha, "refs": [], "pages": {}, "total_pages": None})
-        ref = _normalise_ref(item, path)
+        ref = _normalise_ref(item, path, root)
         if ref not in source["refs"]:
             source["refs"].append(ref)
 
@@ -172,6 +177,7 @@ def prepare(inventory: dict, selection: dict, renders: dict, topics: list[dict],
                             "pages": [{"p": p, "image": source["pages"][str(p)]["image"]}
                                       for p in numbers[start:start + batch_size]]})
     return {"schema_version": 1, "kind": "compact-work", "config": config, "config_hash": signature,
+            "source_root": str(root),
             "sources": sources, "batches": batches, "cached": cached, "warnings": warnings,
             "verification": verification}
 
@@ -318,7 +324,8 @@ def _normalise_answers(value: Any, work: dict) -> list[dict]:
         role = answer.get("role")
         if role not in ANSWER_ROLES:
             raise ValueError("答案 role 必須是 official_answer 或 corrected_answer")
-        result.append({"source": sid, "path": source["refs"][0]["path"], "sha256": source["sha256"],
+        result.append({"source": sid, "path": source["refs"][0]["path"],
+                       "relative_path": source["refs"][0].get("relative_path"), "sha256": source["sha256"],
                        "page": page, "question_number": number.strip(), "role": role,
                        "answer": str(answer.get("answer", "")).strip(),
                        "basis": str(answer.get("basis", "")).strip(),
@@ -567,6 +574,7 @@ def merge(work: dict, results: list[dict], visual_review: dict | None = None,
     elif visual["available"] is not True:
         warnings.append("host_vision 未確認為 true；本次只產生 partial 的文字暫判。")
     result = {"schema_version": INDEX_SCHEMA, **work["config"], "config_hash": work["config_hash"],
+              "source_root": work.get("source_root"),
               "status": "complete" if source_status and all(s == "complete" for s in source_status.values()) else "partial",
               "source_status": paths, "questions": list(questions.values()), "cache": cache,
               "coverage": coverage, "warnings": warnings}
@@ -622,7 +630,8 @@ def _coverage(work: dict, reviewed: dict[str, set[int]], visual: dict | None,
                 path_status = "needs_review"
             else:
                 path_status = "pending"
-            file_rows.append({"path": path, "sha256": source["sha256"], "status": path_status,
+            file_rows.append({"path": path, "relative_path": ref.get("relative_path"),
+                              "sha256": source["sha256"], "status": path_status,
                               "detail": "尚未完成視覺核對" if path_status == "pending" else ""})
     counts = Counter(row["status"] for row in file_rows)
     coverage = {
@@ -640,10 +649,38 @@ def _coverage(work: dict, reviewed: dict[str, set[int]], visual: dict | None,
     return coverage, file_rows
 
 
-def summarize(index: dict, examples: int = 2, target: Any = _UNSET) -> dict:
-    """計唯一題、主題及年度考試分層，不推測獨立命題事件。"""
+def _report_link(root: str | None, relative: str | None, link_base: Path | None) -> str | None:
+    """產生相對於報告目錄的連結；只在報告位於題庫內時提供，整個題庫搬移後仍有效。
+
+    以純字串計算，不要求檔案存在；報告在題庫外（例如外部 --output-root 或不同磁碟）時回傳 None，
+    避免產生題庫一搬就失效的連結，改由報告以題庫相對路徑文字標示。
+    """
+    if not root or not relative or link_base is None:
+        return None
+    base = Path(os.path.abspath(link_base))
+    bank = Path(os.path.abspath(root))
+    if not base.is_relative_to(bank):
+        return None
+    target = bank.joinpath(*PurePosixPath(relative).parts)
+    try:
+        link = Path(os.path.relpath(target, base)).as_posix()
+    except ValueError:
+        return None
+    return "".join(_LINK_ESCAPES.get(char, char) for char in link)
+
+
+def _with_link(ref: dict, root: str | None, link_base: Path | None) -> dict:
+    return {**ref, "link": _report_link(root, ref.get("relative_path"), link_base)}
+
+
+def summarize(index: dict, examples: int = 2, target: Any = _UNSET, link_base: Path | None = None) -> dict:
+    """計唯一題、主題及年度考試分層，不推測獨立命題事件。
+
+    link_base 為 summary／報告所在目錄；提供時為每個來源補上相對於報告的可攜連結。
+    """
     if examples < 0 or examples > 5:
         raise ValueError("每主題代表題數需介於 0～5")
+    root = index.get("source_root")
     ids = [q["question_id"] for q in index["questions"]]
     if len(ids) != len(set(ids)):
         raise ValueError("索引包含重複 question_id")
@@ -663,7 +700,8 @@ def summarize(index: dict, examples: int = 2, target: Any = _UNSET) -> dict:
             if len(samples[tag]) < examples:
                 samples[tag].append({"id": q["question_id"], "pages": q["pages"],
                                      "summary": q.get("summary", ""),
-                                     "sources": [r for r in q["source_refs"] if matches_target(r, target)]})
+                                     "sources": [_with_link(r, root, link_base) for r in q["source_refs"]
+                                                 if matches_target(r, target)]})
         for ref in q["source_refs"]:
             if matches_target(ref, target):
                 groups[(ref.get("year"), ref.get("exam_name"))].add(q["question_id"])
@@ -671,7 +709,17 @@ def summarize(index: dict, examples: int = 2, target: Any = _UNSET) -> dict:
                for key, value in sorted(groups.items(),
                                         key=lambda item: (item[0][0] is None, str(item[0][0]).zfill(6),
                                                           str(item[0][1] or "")))]
+    source_files: dict[str, dict] = {}
+    for q in index["questions"]:
+        for ref in q.get("source_refs", []):
+            key = ref.get("relative_path") or ref.get("path")
+            if key and key not in source_files:
+                source_files[key] = {"relative_path": ref.get("relative_path"), "sha256": ref.get("sha256"),
+                                     "official_subject": ref.get("official_subject"), "year": ref.get("year"),
+                                     "exam_name": ref.get("exam_name"),
+                                     "link": _report_link(root, ref.get("relative_path"), link_base)}
     return {"schema_version": SUMMARY_SCHEMA, "study_subject": index["study_subject"], "target_exam": target,
+            "source_root": root, "source_files": list(source_files.values()),
             "status": index["status"], "coverage": index["coverage"],
             "unique_related_questions": len(related),
             "supplemental_related_questions": len(all_related) - len(related),
@@ -771,7 +819,8 @@ def main() -> int:
         elif args.command == "packet":
             result = packet(read_json(args.work), args.batch_id, args.context)
         else:
-            result = summarize(read_json(args.index), args.examples, _parse_target(args.target))
+            result = summarize(read_json(args.index), args.examples, _parse_target(args.target),
+                               link_base=args.output.parent)
         write_new(args.output, result)
         print(f"已輸出：{args.output}")
         if args.command == "prepare":

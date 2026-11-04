@@ -51,6 +51,15 @@ python scripts/compact_analysis.py merge --work work.json --results result-001.j
 python scripts/compact_analysis.py summary --index question-index.json --target "高考" --output summary.json
 ```
 
+summary 請輸出到與 `report.md` 相同的執行目錄；它會依輸出位置計算相對於報告的考題連結（`link`）。執行目錄在題庫內（預設 `_analysis`）時連結隨題庫一起搬移仍有效；使用外部 `--output-root` 時 `link` 為 null，報告改以題庫相對路徑文字標示。
+
+### 題庫搬移後
+
+1. 對新位置重新執行 `inventory`（root 會更新）。
+2. 沿用原 selection；只要每筆有 `relative_path`，舊的絕對 `path` 失效也能還原。舊 selection 只有 `path` 時，從新 inventory 補上 `relative_path`。
+3. 重新 `render`（圖片位置可能隨 `_analysis` 改變）、`prepare --prior 舊的 question-index.json`；內容雜湊未變時直接命中快取，不必重跑 AI。
+4. 只想讓既有報告連結繼續可用時什麼都不必做：報告連結是相對路徑，題庫與 `_analysis` 一起搬即可。
+
 批次回覆、merge 選項、目標考試切換與 AI 快取條件統一見 [精簡考點分析](compact-analysis.md)；視覺完成判定見 [視覺檢查](visual-review.md)。`question-index` 使用 schema 3，`summary` 使用 schema 2，欄位見 [資料契約](output-contract.md)。
 
 文字擷取恢復只重用完整擷取，且來源內容雜湊、工具版本、pypdf 版本與頁碼範圍皆一致的結果；不符合時重新擷取。渲染恢復與圖片快取條件統一見視覺檢查文件。
