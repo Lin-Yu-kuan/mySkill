@@ -640,7 +640,9 @@ def build_compact_payload(
         "target_unique_count": summary_target.get("unique_related_questions", 0),
         "all_unique_count": summary_all.get("unique_related_questions", len(compact_questions)),
         "answer_pair_count": summary_all.get("answer_pair_count", 0),
+        "target_answer_pair_count": summary_target.get("answer_pair_count", 0),
         "duplicate_count": summary_all.get("duplicate_candidate_count", 0),
+        "target_duplicate_count": summary_target.get("duplicate_candidate_count", 0),
         "report_path": report_uri_for_prompt,
         "topics": enriched_topics,
         "sources": sources_list,
@@ -928,11 +930,11 @@ body {
 .status-complete { background: var(--emerald-light); color: var(--emerald); }
 .status-partial { background: var(--amber-light); color: var(--amber); }
 
-/* KPI 指標卡片列 */
+/* KPI 指標卡片列（雙核心指標：題量與題型） */
 .kpi-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
     margin-bottom: 26px;
 }
 .kpi-card {
@@ -941,24 +943,138 @@ body {
     border-radius: 12px;
     padding: 16px 20px;
     box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 128px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.kpi-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: rgba(37, 99, 235, 0.35);
+}
+.kpi-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
 }
 .kpi-label {
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     color: var(--text-secondary);
-    font-weight: 600;
-    margin-bottom: 4px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: -0.01em;
+}
+.kpi-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 999px;
+    line-height: 1.3;
+    white-space: nowrap;
+}
+.badge-blue { background: var(--accent-light); color: var(--accent); }
+.badge-purple { background: var(--purple-light); color: var(--purple); }
+.badge-emerald { background: var(--emerald-light); color: var(--emerald); }
+.badge-amber { background: var(--amber-light); color: var(--amber); }
+
+.kpi-card-body {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin: 4px 0 6px 0;
 }
 .kpi-value {
-    font-size: 1.75rem;
+    font-size: 1.85rem;
     font-weight: 800;
     color: var(--accent);
-    line-height: 1.2;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+}
+.kpi-unit {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-muted);
 }
 .kpi-sub {
-    font-size: 0.78rem;
+    font-size: 0.77rem;
     color: var(--text-muted);
-    margin-top: 4px;
+    line-height: 1.45;
+    margin-top: auto;
 }
+.kpi-sub strong {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+/* 雙指標卡片 (卡片 2) */
+.kpi-split {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 4px 0 6px 0;
+}
+.kpi-split-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.kpi-split-label {
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.kpi-split-val {
+    font-size: 1.35rem;
+    font-weight: 800;
+    line-height: 1.1;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 3px;
+}
+.kpi-split-val.purple { color: var(--purple); }
+.kpi-split-val.blue { color: var(--accent); }
+.kpi-split-pct {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+.kpi-split-divider {
+    width: 1px;
+    height: 32px;
+    background: var(--border);
+}
+.kpi-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.kpi-dot.purple { background: var(--purple); }
+.kpi-dot.blue { background: var(--accent); }
+
+/* 微比例長條圖 (Micro Ratio Bar) */
+.kpi-ratio-bar {
+    width: 100%;
+    height: 6px;
+    background: var(--bg-muted);
+    border-radius: 999px;
+    overflow: hidden;
+    display: flex;
+    margin: 6px 0 8px 0;
+}
+.ratio-segment {
+    height: 100%;
+    transition: width 0.3s ease;
+}
+.ratio-segment.purple { background: var(--purple); }
+.ratio-segment.blue { background: var(--accent); }
 
 /* 視圖切換區 */
 .view-panel { display: none; }
@@ -1781,6 +1897,24 @@ const studyCart = new Set();
 let selectedKmTopicIds = new Set(); // 知識地圖所選考點主題
 let activeKmMode = 'full';          // 'full' | 'm1_only' | 'm2_only' | 'm3_only' | 'essay_focus' | 'cart' | 'custom' | 'topic'
 
+// 動態偵測當前檔案在使用者本機的真實絕對路徑，防止搬移資料夾後指令抓錯舊路徑
+function getEffectiveReportPath() {
+    try {
+        if (window.location && window.location.protocol === 'file:') {
+            let p = decodeURIComponent(window.location.pathname || '');
+            // Windows 環境：去除前導斜線 /C:/... -> C:/...
+            if (/^\/[a-zA-Z]:\//i.test(p)) {
+                p = p.substring(1);
+            }
+            p = p.replace(/\\/g, '/');
+            if (p) return p;
+        }
+    } catch (e) {
+        console.warn('動態偵測檔案路徑失敗，降級使用靜態路徑', e);
+    }
+    return DATA.report_path || '';
+}
+
 function escapeHtml(str) {
     if (str === null || str === undefined) return '';
     return String(str)
@@ -1895,40 +2029,67 @@ function renderScopeDependentViews() {
     let essayCount = 0, mcqCount = 0;
     DATA.questions.forEach(q => {
         if (isTarget && !q.target) return;
-        if (q.type === 'essay') essayCount++;
-        else mcqCount++;
+        if (q.type === 'essay') {
+            essayCount++;
+        } else {
+            mcqCount++;
+        }
     });
 
-    const cov = DATA.coverage || {};
-    const kpis = [
-        {
-            label: isTarget ? '🎯 目標考試唯一題數' : '📚 全題庫唯一題數',
-            value: totalQ.toLocaleString(),
-            sub: isTarget ? `全題庫共 ${DATA.all_unique_count.toLocaleString()} 題（補充 ${DATA.all_unique_count - DATA.target_unique_count} 題）` : `目標考試佔 ${DATA.target_unique_count.toLocaleString()} 題`
-        },
-        {
-            label: '✍️ 申論題 vs 單選測驗題',
-            value: `${essayCount} / ${mcqCount}`,
-            sub: `申論佔 ${totalQ ? ((essayCount / totalQ) * 100).toFixed(1) : 0}% ｜ 測驗佔 ${totalQ ? ((mcqCount / totalQ) * 100).toFixed(1) : 0}%`
-        },
-        {
-            label: '👁️ 試卷視覺檢查覆蓋率',
-            value: `${cov.visually_checked_pages || 0} / ${cov.selected_pages || 0} 頁`,
-            sub: `共 ${cov.processed_files || 0} 份 PDF 檔案（失敗 ${cov.failed_files || 0} 份）`
-        },
-        {
-            label: '🔑 標準答案配對 ／ 重複題關聯',
-            value: `${DATA.answer_pair_count} 筆`,
-            sub: `跨卷重複或共卷關聯 ${DATA.duplicate_count} 筆`
-        }
-    ];
-    document.getElementById('kpi-container').innerHTML = kpis.map(k => `
+    // 申論與測驗佔比
+    const essayPct = totalQ ? ((essayCount / totalQ) * 100).toFixed(1) : '0.0';
+    const mcqPct = totalQ ? ((mcqCount / totalQ) * 100).toFixed(1) : '0.0';
+
+    // 卡片 1：題量核心
+    const card1 = `
         <div class="kpi-card">
-            <div class="kpi-label">${escapeHtml(k.label)}</div>
-            <div class="kpi-value">${escapeHtml(k.value)}</div>
-            <div class="kpi-sub">${escapeHtml(k.sub)}</div>
+            <div class="kpi-card-header">
+                <span class="kpi-label">${isTarget ? '🎯 本科核心精選題' : '📚 全題庫總收錄'}</span>
+                <span class="kpi-badge badge-blue">${isTarget ? '去重真題' : '全科目題庫'}</span>
+            </div>
+            <div class="kpi-card-body">
+                <span class="kpi-value">${totalQ.toLocaleString()}</span>
+                <span class="kpi-unit">題</span>
+            </div>
+            <div class="kpi-sub">
+                ${isTarget 
+                    ? `全題庫收錄 <strong>${DATA.all_unique_count.toLocaleString()}</strong> 題（含跨類科補充 ${(DATA.all_unique_count - DATA.target_unique_count).toLocaleString()} 題）` 
+                    : `涵蓋目標核心 <strong>${DATA.target_unique_count.toLocaleString()}</strong> 題 ＋ 跨類科延伸 ${(DATA.all_unique_count - DATA.target_unique_count).toLocaleString()} 題`}
+            </div>
         </div>
-    `).join('');
+    `;
+
+    // 卡片 2：題型配比（申論 vs 測驗）- 雙欄視覺 + 微比例長條
+    const card2 = `
+        <div class="kpi-card">
+            <div class="kpi-card-header">
+                <span class="kpi-label">✍️ 題型配比（申論／測驗）</span>
+                <span class="kpi-badge badge-purple">${isTarget ? '核心題型' : '總覽配比'}</span>
+            </div>
+            <div class="kpi-split">
+                <div class="kpi-split-item">
+                    <span class="kpi-split-label"><span class="kpi-dot purple"></span>申論題</span>
+                    <span class="kpi-split-val purple">${essayCount.toLocaleString()}<span class="kpi-unit-sm" style="font-size:0.75rem;color:var(--text-muted);font-weight:600"> 題</span></span>
+                    <span class="kpi-split-pct">佔 ${essayPct}%</span>
+                </div>
+                <div class="kpi-split-divider"></div>
+                <div class="kpi-split-item">
+                    <span class="kpi-split-label"><span class="kpi-dot blue"></span>單選測驗</span>
+                    <span class="kpi-split-val blue">${mcqCount.toLocaleString()}<span class="kpi-unit-sm" style="font-size:0.75rem;color:var(--text-muted);font-weight:600"> 題</span></span>
+                    <span class="kpi-split-pct">佔 ${mcqPct}%</span>
+                </div>
+            </div>
+            <div class="kpi-ratio-bar" title="申論佔 ${essayPct}% ｜ 測驗佔 ${mcqPct}%">
+                <div class="ratio-segment purple" style="width: ${essayPct}%"></div>
+                <div class="ratio-segment blue" style="width: ${mcqPct}%"></div>
+            </div>
+            <div class="kpi-sub">
+                ${mcqCount >= essayCount ? `以單選測驗為大宗（佔 ${mcqPct}%），搭配 ${essayCount} 題核心申論` : `申論為主（佔 ${essayPct}%），搭配 ${mcqCount} 題測驗`}
+            </div>
+        </div>
+    `;
+
+    document.getElementById('kpi-container').innerHTML = card1 + card2;
 
     // 渲染橫向長條圖
     const maxHit = Math.max(1, ...DATA.topics.map(t => isTarget ? t.target_total : t.all_total));
@@ -2418,7 +2579,7 @@ function buildFullKmPromptText(topicList, customTitleNote) {
 
     return `/knowledge-map-learning 我想以國考「${DATA.study_subject}」（目標考試：${targetDesc}）為主題進行由上而下的系統化精讀${customTitleNote || ''}。
 
-請直接參考這份已完成的考古題深度分析報告：@[${DATA.report_path}]
+請直接參考這份已完成的考古題深度分析報告：@[${getEffectiveReportPath()}]
 
 ### 課程規劃與認識論對接要求：
 1. **依據國考 ROI 權重與寬節點拆分原則建立大綱**：
@@ -2475,7 +2636,7 @@ function updateKmPromptUI() {
                     : '';
                 return `${idx + 1}. 【${src.year}年 ${src.exam}《${src.subj}》題 ${q.q}｜主題：${q.t.join(', ')}】\n   題幹：${q.stem}${optsStr}\n   考選部標準答案：${q.ans || '申論題'}`;
             }).join('\n\n');
-            text = `/knowledge-map-learning 我在練習「${DATA.study_subject}」歷屆考古題時，對以下 ${cartQs.length} 道題目背後的法條機制與觀念邊界感到困惑。請為這組弱點考點規劃一個精準的知識地圖微課程（將核心觀念拆解為 M1-1, M1-2... 節點），並在第一回合直接給出脈絡大綱且無縫展開 M1-1 深度精講！\n\n參考分析報告：@[${DATA.report_path}]\n\n### 我的待學弱點題目清單：\n${qLines}`;
+            text = `/knowledge-map-learning 我在練習「${DATA.study_subject}」歷屆考古題時，對以下 ${cartQs.length} 道題目背後的法條機制與觀念邊界感到困惑。請為這組弱點考點規劃一個精準的知識地圖微課程（將核心觀念拆解為 M1-1, M1-2... 節點），並在第一回合直接給出脈絡大綱且無縫展開 M1-1 深度精講！\n\n參考分析報告：@[${getEffectiveReportPath()}]\n\n### 我的待學弱點題目清單：\n${qLines}`;
         }
     } else if (activeKmMode === 'custom') {
         title = `📋 自訂知識地圖組合啟動指令（已選 ${selectedTopics.length} 個主題）`;
@@ -2514,7 +2675,7 @@ function copyTopicKmPrompt(tid) {
 
     const promptText = `/knowledge-map-learning 我想專攻國考「${DATA.study_subject}」中的高頻考點主題：【${t.id}：${t.label}】（在目標考試命中 ${t.target_total} 題、全題庫命中 ${t.all_total} 題）。
 
-請參考分析報告：@[${DATA.report_path}]
+請參考分析報告：@[${getEffectiveReportPath()}]
 
 ### 主題結構與拆節點要求：
 - **核心法規與釋字**：${t.laws || '依報告第 2 節所述'}
