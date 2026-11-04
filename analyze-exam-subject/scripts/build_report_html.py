@@ -1329,6 +1329,36 @@ body {
     padding: 24px 28px;
     margin-bottom: 24px;
 }
+.km-mode-selector {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+.km-mode-btn {
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 0.86rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.km-mode-btn:hover {
+    border-color: var(--purple);
+    color: var(--purple);
+}
+.km-mode-btn.active {
+    background: var(--purple);
+    color: #fff;
+    border-color: var(--purple);
+    box-shadow: var(--shadow-sm);
+}
 .km-module-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -1337,9 +1367,60 @@ body {
 }
 .km-mod-card {
     background: var(--bg-card);
-    border: 1px solid var(--border);
+    border: 2px solid var(--border);
     border-radius: 12px;
     padding: 18px 20px;
+    transition: all 0.2s;
+}
+.km-mod-card.has-selected {
+    border-color: var(--purple);
+    background: var(--bg-card);
+}
+.km-mod-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+.km-mod-title {
+    font-size: 1.02rem;
+    color: var(--purple);
+    font-weight: 800;
+}
+.km-topic-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.88rem;
+}
+.km-topic-item {
+    margin-bottom: 8px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+    background: var(--bg-main);
+}
+.km-topic-item:hover {
+    border-color: var(--purple);
+}
+.km-topic-item.selected {
+    background: var(--purple-light);
+    border-color: var(--purple);
+}
+.km-topic-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+.km-topic-cb {
+    margin-top: 3px;
+    cursor: pointer;
+    accent-color: var(--purple);
+    width: 16px;
+    height: 16px;
 }
 .prompt-preview-box {
     width: 100%;
@@ -1625,18 +1706,31 @@ body {
                 🧭 `/knowledge-map-learning` 深度學習無縫橋接中心
             </h2>
             <p style="font-size:0.93rem;color:var(--text-primary);margin-bottom:14px">
-                本系統已根據目標考試配分權重，將考點自動劃分為 <strong>M1 核心奪分模組</strong>、<strong>M2 進階拉分模組</strong> 與 <strong>M3 學理防禦模組</strong>，並預先綁定本報告路徑與各主題之「子考點、必背法條、易混淆邊界與歷屆代表題」。請選擇下方任一學習模式，複製指令貼入對話框即可<strong>零摩擦直接展開 M1-1 深度精講</strong>！
+                本系統已根據目標考試配分權重，將考點自動劃分為 <strong>M1 核心奪分模組</strong>、<strong>M2 進階拉分模組</strong> 與 <strong>M3 學理防禦模組</strong>，並預先綁定本報告路徑與各主題之「子考點、必背法條、易混淆邊界與歷屆代表題」。請點選下方學習模式或於下方自訂勾選考點主題，複製指令貼入對話框即可<strong>零摩擦直接展開 M1-1 深度精講</strong>！
             </p>
-            <div style="display:flex;gap:10px;flex-wrap:wrap">
-                <button class="btn-sm btn-km" style="padding:9px 16px;font-size:0.88rem" onclick="generateKmPrompt('full')">
-                    🚀 模式 A：全科系統化知識地圖（M1～M3 完整規劃）
+            <div class="km-mode-selector">
+                <button class="km-mode-btn active" data-km-mode="full" onclick="selectKmMode('full')">
+                    🚀 模式 A：全科系統化知識地圖（M1～M3 全選）
                 </button>
-                <button class="btn-sm" style="padding:9px 16px;font-size:0.88rem" onclick="generateKmPrompt('m1_only')">
-                    ⚡ 模式 B：高投報率衝刺班（專攻 M1 核心奪分區）
+                <button class="km-mode-btn" data-km-mode="m1_only" onclick="selectKmMode('m1_only')">
+                    ⚡ 模式 B：高投報率衝刺班（專攻 M1 核心奪分）
                 </button>
-                <button class="btn-sm" style="padding:9px 16px;font-size:0.88rem" onclick="generateKmPrompt('cart')">
-                    📌 模式 C：待學錯題與弱點突破微課程（已選 <span id="km-cart-count">0</span> 題）
+                <button class="km-mode-btn" data-km-mode="m2_only" onclick="selectKmMode('m2_only')">
+                    🥈 模式 C：進階拉分專班（專攻 M2 治理實務）
                 </button>
+                <button class="km-mode-btn" data-km-mode="m3_only" onclick="selectKmMode('m3_only')">
+                    🥉 模式 D：學理防禦專班（專攻 M3 基礎與跨域）
+                </button>
+                <button class="km-mode-btn" data-km-mode="essay_focus" onclick="selectKmMode('essay_focus')">
+                    ✍️ 模式 E：申論題攻堅專班（涵蓋高頻申論主題）
+                </button>
+                <button class="km-mode-btn" data-km-mode="cart" onclick="selectKmMode('cart')">
+                    📌 模式 F：待學錯題微課程（已選 <span id="km-cart-count">0</span> 題）
+                </button>
+            </div>
+            <div id="km-mode-status" style="margin-top:14px;font-size:0.86rem;color:var(--purple);font-weight:700;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+                <span id="km-mode-desc">目前模式：🚀 模式 A（全選 11 個主題）</span>
+                <button class="btn-sm btn-km" onclick="copyCurrentTextareaPrompt()">📋 立即複製當前啟動指令</button>
             </div>
         </div>
 
@@ -1684,6 +1778,8 @@ let filteredQuestions = [];
 let currentPage = 1;
 const PAGE_SIZE = 25;
 const studyCart = new Set();
+let selectedKmTopicIds = new Set(); // 知識地圖所選考點主題
+let activeKmMode = 'full';          // 'full' | 'm1_only' | 'm2_only' | 'm3_only' | 'essay_focus' | 'cart' | 'custom' | 'topic'
 
 function escapeHtml(str) {
     if (str === null || str === undefined) return '';
@@ -2169,7 +2265,7 @@ function updateCartCountUI() {
 
 function openCartKmView() {
     switchView('view-km');
-    generateKmPrompt('cart');
+    selectKmMode('cart');
 }
 
 function renderFullReport() {
@@ -2182,37 +2278,125 @@ function renderFullReport() {
 }
 
 function renderKmBridge() {
+    if (selectedKmTopicIds.size === 0 && activeKmMode === 'full') {
+        selectedKmTopicIds = new Set(DATA.topics.map(t => t.id));
+    }
     const mods = ['M1', 'M2', 'M3'];
     const modTitles = {
         'M1': '🥇 M1 核心奪分模組（高投報率必考法制）',
         'M2': '🥈 M2 進階拉分模組（實務運作與治理監督）',
         'M3': '🥉 M3 學理與防禦模組（基礎理論與跨域比較）'
     };
+
     document.getElementById('km-modules-preview').innerHTML = mods.map(m => {
         const items = DATA.topics.filter(t => t.km_module === m);
+        const allSelectedInMod = items.every(t => selectedKmTopicIds.has(t.id));
+        const someSelectedInMod = items.some(t => selectedKmTopicIds.has(t.id));
+        const selectedCount = items.filter(t => selectedKmTopicIds.has(t.id)).length;
         return `
-        <div class="km-mod-card">
-            <h3 style="font-size:1.02rem;color:var(--purple);margin-bottom:10px">${modTitles[m]}</h3>
-            <ul style="padding-left:18px;font-size:0.88rem">
-                ${items.map(t => `
-                <li style="margin-bottom:8px">
-                    <strong><code>${escapeHtml(t.id)}</code> ${escapeHtml(t.label)}</strong>
-                    <div style="font-size:0.78rem;color:var(--text-secondary)">
-                        🎯 目標 ${t.target_total} 題 ／ 📚 全庫 ${t.all_total} 題
-                        <button class="btn-sm" style="padding:1px 7px;margin-left:6px;font-size:0.72rem" onclick="copyTopicKmPrompt('${escapeHtml(t.id)}')">單獨精讀</button>
+        <div class="km-mod-card ${someSelectedInMod ? 'has-selected' : ''}" id="km-card-${m}">
+            <div class="km-mod-header">
+                <div>
+                    <h3 class="km-mod-title">${modTitles[m]}</h3>
+                    <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:2px">
+                        已選 ${selectedCount} / ${items.length} 主題
                     </div>
-                </li>`).join('')}
+                </div>
+                <button class="btn-sm" style="font-size:0.75rem;padding:3px 8px" onclick="toggleKmModuleTopics('${m}')">
+                    ${allSelectedInMod ? '取消此模組' : '全選此模組'}
+                </button>
+            </div>
+            <ul class="km-topic-list">
+                ${items.map(t => {
+                    const isChecked = selectedKmTopicIds.has(t.id);
+                    return `
+                    <li class="km-topic-item ${isChecked ? 'selected' : ''}" id="km-item-${escapeHtml(t.id)}">
+                        <div class="km-topic-row">
+                            <input type="checkbox" class="km-topic-cb" id="cb-km-${escapeHtml(t.id)}"
+                                   ${isChecked ? 'checked' : ''}
+                                   onchange="toggleKmTopicSingle('${escapeHtml(t.id)}', this.checked)">
+                            <div style="flex:1">
+                                <label for="cb-km-${escapeHtml(t.id)}" style="cursor:pointer;font-weight:700">
+                                    <code>${escapeHtml(t.id)}</code> ${escapeHtml(t.label)}
+                                </label>
+                                <div style="font-size:0.78rem;color:var(--text-secondary);margin-top:2px;display:flex;justify-content:space-between;align-items:center">
+                                    <span>🎯 目標 ${t.target_total} 題（申 ${t.target_essay}／測 ${t.target_mcq}）</span>
+                                    <button class="btn-sm" style="padding:1px 6px;font-size:0.72rem" onclick="copyTopicKmPrompt('${escapeHtml(t.id)}')">單獨精讀</button>
+                                </div>
+                            </div>
+                        </div>
+                    </li>`;
+                }).join('')}
             </ul>
         </div>`;
     }).join('');
-    generateKmPrompt('full');
+
+    updateKmPromptUI();
 }
 
-function buildFullKmPromptText(onlyM1) {
+function selectKmMode(mode) {
+    activeKmMode = mode;
+    // 切換按鈕 active 樣式
+    document.querySelectorAll('.km-mode-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.kmMode === mode);
+    });
+
+    if (mode === 'full') {
+        selectedKmTopicIds = new Set(DATA.topics.map(t => t.id));
+    } else if (mode === 'm1_only') {
+        selectedKmTopicIds = new Set(DATA.topics.filter(t => t.km_module === 'M1').map(t => t.id));
+    } else if (mode === 'm2_only') {
+        selectedKmTopicIds = new Set(DATA.topics.filter(t => t.km_module === 'M2').map(t => t.id));
+    } else if (mode === 'm3_only') {
+        selectedKmTopicIds = new Set(DATA.topics.filter(t => t.km_module === 'M3').map(t => t.id));
+    } else if (mode === 'essay_focus') {
+        // 篩選有申論題的主題，或申論題數 >= 3 的關鍵主題
+        selectedKmTopicIds = new Set(DATA.topics.filter(t => t.target_essay > 0 || t.all_essay >= 5).map(t => t.id));
+    } else if (mode === 'cart') {
+        // 待學錯題微課程不以主題為限
+    }
+
+    renderKmBridge();
+}
+
+function toggleKmTopicSingle(tid, isChecked) {
+    if (isChecked) {
+        selectedKmTopicIds.add(tid);
+    } else {
+        selectedKmTopicIds.delete(tid);
+    }
+    activeKmMode = 'custom';
+    document.querySelectorAll('.km-mode-btn').forEach(btn => btn.classList.remove('active'));
+    renderKmBridge();
+}
+
+function toggleKmModuleTopics(m) {
+    const modItems = DATA.topics.filter(t => t.km_module === m);
+    const allSelected = modItems.every(t => selectedKmTopicIds.has(t.id));
+    if (allSelected) {
+        modItems.forEach(t => selectedKmTopicIds.delete(t.id));
+    } else {
+        modItems.forEach(t => selectedKmTopicIds.add(t.id));
+    }
+    activeKmMode = 'custom';
+    document.querySelectorAll('.km-mode-btn').forEach(btn => btn.classList.remove('active'));
+    renderKmBridge();
+}
+
+function addHighFreqCartQuestions() {
+    // 從目標考試挑選具有代表性之高頻錯題／重複題 5 題加入待學清單
+    const candidates = DATA.questions.filter(q => q.target && (q.dups && q.dups.length > 0 || q.orig_ans || q.type === 'essay'));
+    const toAdd = candidates.slice(0, 5);
+    toAdd.forEach(q => studyCart.add(q.id));
+    updateCartCountUI();
+    showToast(`已自動帶入 ${toAdd.length} 道高頻精選代表題至待學清單！`);
+    selectKmMode('cart');
+}
+
+function buildFullKmPromptText(topicList, customTitleNote) {
     const targetDesc = formatTargetLabel(DATA.target_exam);
-    const selectedTopics = onlyM1 ? DATA.topics.filter(t => t.km_module === 'M1') : DATA.topics;
     const modGroups = {};
-    selectedTopics.forEach(t => {
+    topicList.forEach(t => {
         if (!modGroups[t.km_module]) modGroups[t.km_module] = [];
         modGroups[t.km_module].push(t);
     });
@@ -2221,14 +2405,18 @@ function buildFullKmPromptText(onlyM1) {
     Object.keys(modGroups).forEach(m => {
         const mName = modGroups[m][0].km_module_name;
         outlineLines.push(`- **${mName}**`);
-        modGroups[m].forEach((t, idx) => {
+        modGroups[m].forEach((t) => {
             outlineLines.push(`  - 主題方向 \`${t.id}\`（目標考試命中 ${t.target_total} 題／全庫 ${t.all_total} 題）：${t.label}`);
             if (t.laws) outlineLines.push(`    - 核心法規與釋字：${t.laws}`);
             if (t.subtopics) outlineLines.push(`    - 涵蓋子主題（請依寬節點拆分原則細拆為獨立 M 節點）：${t.subtopics}`);
         });
     });
 
-    return `/knowledge-map-learning 我想以國考「${DATA.study_subject}」（目標考試：${targetDesc}）為主題進行由上而下的系統化精讀。
+    const essayInstruction = (activeKmMode === 'essay_focus')
+        ? '\n3. **申論題攻堅導向（特化要求）**：\n   - 請針對所列主題之各節點，特別加強「申論題三段論法（前言法理爭點／主文法條與大法官判決涵攝／結語制度革新評析）」的結構性論述訓練。\n   - 思考題直接改編為國家考試高分申論擬答框架思考題。'
+        : '';
+
+    return `/knowledge-map-learning 我想以國考「${DATA.study_subject}」（目標考試：${targetDesc}）為主題進行由上而下的系統化精讀${customTitleNote || ''}。
 
 請直接參考這份已完成的考古題深度分析報告：@[${DATA.report_path}]
 
@@ -2240,25 +2428,45 @@ function buildFullKmPromptText(onlyM1) {
    - **直覺心智模型**：用具象化架構建立法制與學理直覺。
    - **機制／法條／釋字證據**：直接扣合報告中的必背法條與大法官解釋／憲法法庭判決。
    - **適用條件與命題陷阱邊界**：點破考生最常混淆的法條比較（如核定 vs 備查、覆議 vs 復議、罰則上限等）。
-   - **遷移式開放思考題**：以歷屆高鑑別度真題情境改編為課後思考題。
+   - **遷移式開放思考題**：以歷屆高鑑別度真題情境改編為課後思考題。${essayInstruction}
 
-### 實證考點權重藍圖：
+### 實證考點權重藍圖（已選 ${topicList.length} 個主題）：
 ${outlineLines.join('\n')}`;
 }
 
-function generateKmPrompt(mode) {
+function updateKmPromptUI() {
+    let title = '';
+    let statusDesc = '';
     let text = '';
-    if (mode === 'full') {
-        document.getElementById('km-prompt-box-title').textContent = '📋 模式 A：全科系統化知識地圖啟動指令（M1～M3）';
-        text = buildFullKmPromptText(false);
-    } else if (mode === 'm1_only') {
-        document.getElementById('km-prompt-box-title').textContent = '📋 模式 B：高投報率衝刺班啟動指令（專攻 M1 核心奪分模組）';
-        text = buildFullKmPromptText(true);
-    } else if (mode === 'cart') {
-        document.getElementById('km-prompt-box-title').textContent = `📋 模式 C：待學錯題與弱點突破微課程指令（已選 ${studyCart.size} 題）`;
+    const selectedTopics = DATA.topics.filter(t => selectedKmTopicIds.has(t.id));
+
+    if (activeKmMode === 'full') {
+        title = '📋 模式 A：全科系統化知識地圖啟動指令（M1～M3 全選）';
+        statusDesc = `目前模式：🚀 模式 A（全選 ${selectedTopics.length} 個主題）`;
+        text = buildFullKmPromptText(selectedTopics, '');
+    } else if (activeKmMode === 'm1_only') {
+        title = '📋 模式 B：高投報率衝刺班啟動指令（專攻 M1 核心奪分模組）';
+        statusDesc = `目前模式：⚡ 模式 B（專攻 M1 核心模組，共 ${selectedTopics.length} 個主題）`;
+        text = buildFullKmPromptText(selectedTopics, '（專攻高投報率之 M1 核心奪分模組）');
+    } else if (activeKmMode === 'm2_only') {
+        title = '📋 模式 C：進階拉分專班啟動指令（專攻 M2 實務運作與治理監督）';
+        statusDesc = `目前模式：🥈 模式 C（專攻 M2 治理實務，共 ${selectedTopics.length} 個主題）`;
+        text = buildFullKmPromptText(selectedTopics, '（專攻 M2 進階拉分模組）');
+    } else if (activeKmMode === 'm3_only') {
+        title = '📋 模式 D：學理防禦專班啟動指令（專攻 M3 基礎理論與跨域比較）';
+        statusDesc = `目前模式：🥉 模式 D（專攻 M3 學理防禦，共 ${selectedTopics.length} 個主題）`;
+        text = buildFullKmPromptText(selectedTopics, '（專攻 M3 學理與防禦模組）');
+    } else if (activeKmMode === 'essay_focus') {
+        title = '📋 模式 E：申論題攻堅專班啟動指令（高頻申論考點強化論述）';
+        statusDesc = `目前模式：✍️ 模式 E（高頻申論主題，共 ${selectedTopics.length} 個主題）`;
+        text = buildFullKmPromptText(selectedTopics, '（重點攻堅申論題型與法理論述框架）');
+    } else if (activeKmMode === 'cart') {
+        title = `📋 模式 F：待學錯題與弱點突破微課程指令（已選 ${studyCart.size} 題）`;
+        statusDesc = `目前模式：📌 模式 F（待學錯題微課程，已納入 ${studyCart.size} 題）`;
         const cartQs = DATA.questions.filter(q => studyCart.has(q.id));
         if (cartQs.length === 0) {
-            text = '（目前待學清單為空。請先前往「🔍 題庫檢索與刷題器」點擊題目右上角的「➕ 加入待學清單」，再回來生成專屬弱點突破指令！）';
+            text = '（目前待學清單為空。請先前往「🔍 題庫檢索與刷題器」點擊題目右上角的「➕ 加入待學清單」，或點擊上方「⚡ 一鍵帶入精選代表題」！）';
+            statusDesc += ' — 尚未選題，可點擊上方按鈕一鍵帶入精選題目';
         } else {
             const qLines = cartQs.map((q, idx) => {
                 const src = DATA.sources[q.s] || {};
@@ -2269,13 +2477,30 @@ function generateKmPrompt(mode) {
             }).join('\n\n');
             text = `/knowledge-map-learning 我在練習「${DATA.study_subject}」歷屆考古題時，對以下 ${cartQs.length} 道題目背後的法條機制與觀念邊界感到困惑。請為這組弱點考點規劃一個精準的知識地圖微課程（將核心觀念拆解為 M1-1, M1-2... 節點），並在第一回合直接給出脈絡大綱且無縫展開 M1-1 深度精講！\n\n參考分析報告：@[${DATA.report_path}]\n\n### 我的待學弱點題目清單：\n${qLines}`;
         }
+    } else if (activeKmMode === 'custom') {
+        title = `📋 自訂知識地圖組合啟動指令（已選 ${selectedTopics.length} 個主題）`;
+        statusDesc = `目前模式：🎛️ 自訂主題組合（已選 ${selectedTopics.length} / ${DATA.topics.length} 個主題）`;
+        if (selectedTopics.length === 0) {
+            text = '（請在上方模組卡片中勾選至少一個考點主題，系統將自動產生專屬學習指令）';
+        } else {
+            text = buildFullKmPromptText(selectedTopics, `（自訂專攻 ${selectedTopics.length} 個特定主題）`);
+        }
+    } else if (activeKmMode === 'topic') {
+        // 單一主題模式
+        return;
     }
-    document.getElementById('km-prompt-textarea').value = text;
+
+    const titleEl = document.getElementById('km-prompt-box-title');
+    if (titleEl) titleEl.textContent = title;
+    const descEl = document.getElementById('km-mode-desc');
+    if (descEl) descEl.textContent = statusDesc;
+    const taEl = document.getElementById('km-prompt-textarea');
+    if (taEl) taEl.value = text;
 }
 
 function copyFullKmPrompt() {
-    const text = buildFullKmPromptText(false);
-    copyTextWithFallback(text, '🚀 已複製全科 /knowledge-map-learning 啟動指令！');
+    selectKmMode('full');
+    copyCurrentTextareaPrompt();
 }
 
 function copyTopicKmPrompt(tid) {
@@ -2299,6 +2524,17 @@ function copyTopicKmPrompt(tid) {
 ${qLines}
 
 請在第一回合直接輸出此專題的知識脈絡全景圖（M1-1～Mn-x），並同回合無縫展開 M1-1 深度講義與思考題！`;
+
+    activeKmMode = 'topic';
+    document.querySelectorAll('.km-mode-btn').forEach(btn => btn.classList.remove('active'));
+    selectedKmTopicIds = new Set([tid]);
+    renderKmBridge();
+    const titleEl = document.getElementById('km-prompt-box-title');
+    if (titleEl) titleEl.textContent = `📋 單一主題深度精講指令：${t.id}（${t.label}）`;
+    const descEl = document.getElementById('km-mode-desc');
+    if (descEl) descEl.textContent = `目前模式：🎯 單一主題專攻（${t.id}）`;
+    const taEl = document.getElementById('km-prompt-textarea');
+    if (taEl) taEl.value = promptText;
 
     copyTextWithFallback(promptText, `🧠 已複製「${t.id}」主題專攻指令！可直接貼入對話框`);
 }
