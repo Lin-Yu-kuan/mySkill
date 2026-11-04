@@ -4,6 +4,21 @@
 
 ---
 
+## 零、倉庫架構原則：實體扁平相容・邏輯領域分群
+
+1. **禁止將技能搬移至深層巢狀子資料夾**（例如禁止改為 `categories/exam/essay-solver/`）：
+   - 所有技能目錄必須直接位於倉庫根目錄下（`mySkill/<skill-name>/`），以確保對外發布的 `update_url`（`https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/<skill-name>/SKILL.md`）與雲端一鍵安裝腳本 **100% 永久向後相容**。
+2. **透過 Frontmatter 進行邏輯領域分類**：
+   - 每個技能於 `SKILL.md` 的 YAML Frontmatter 中宣告 `category`（領域代碼）、`category_label`（子類別標籤）與 `summary`（首頁表格簡介）。
+   - 標準五大領域代碼（`category`）：
+     - `exam`：📚 公職考試與備考體系
+     - `learning`：🧠 思維架構與深度自學
+     - `frontend`：🎨 前端視覺與互動設計
+     - `content`：✍️ 內容創作與個人社群
+     - `dev-tools`：🛠️ 開發環境與技能治理
+
+---
+
 ## 一、技能文件標準（Skill README Standard）
 
 每個位於本倉庫中的技能（Skill）目錄下，除了核心定義檔 `SKILL.md` 之外，**必須包含一份高品質的 `README.md`**，且必須包含標準的 **「🚀 Antigravity 一鍵安裝方式」** 章節。
@@ -21,7 +36,7 @@
 - **特徵**：僅由 `SKILL.md` 組成，無附屬的 `scripts/` 或 `resources/` 資料夾（如 `essay-solver`）。
 - **PowerShell 語法**：
   ```powershell
-  $dir = "$HOME\.gemini\config\skills\<skill-name>"; if (!(Test-Path $dir)) { New-Item -ItemType Directory -Path $d -Force }; Invoke-RestMethod -Uri "https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/<skill-name>/SKILL.md" | Out-File -FilePath "$dir\SKILL.md" -Encoding utf8; Write-Host "✅ <skill-name> 技能已成功安裝！" -ForegroundColor Green
+  $dir = "$HOME\.gemini\config\skills\<skill-name>"; if (!(Test-Path $dir)) { New-Item -ItemType Directory -Path $dir -Force }; Invoke-RestMethod -Uri "https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/<skill-name>/SKILL.md" | Out-File -FilePath "$dir\SKILL.md" -Encoding utf8; Write-Host "✅ <skill-name> 技能已成功安裝！" -ForegroundColor Green
   ```
 - **macOS / Linux 語法**：
   ```bash
@@ -31,7 +46,7 @@
 ---
 
 ### 類型 2：目錄套件型技能（Multi-File / Package Skill）
-- **特徵**：包含 `scripts/`、`resources/` 或 `plugin.json` 等附屬檔案（如 `knowledge-map-learning`、`frontend-ui-annotator`）。
+- **特徵**：包含 `scripts/`、`references/`、`resources/` 或 `plugin.json` 等附屬檔案（如 `knowledge-map-learning`、`frontend-ui-annotator`）。
 - **PowerShell 語法（純原生、免 Git、免第三方工具）**：
   利用 GitHub Archive Zip 串流解壓單一子目錄並自動清除暫存檔：
   ```powershell
@@ -58,29 +73,39 @@
 
 ---
 
-## 四、全域總目錄同步維護規範
+## 四、自動化總目錄同步與體檢規範（Automated Governance）
 
-每當專案內有以下變更時，**必須同步更新倉庫首頁根目錄 [`README.md`](./README.md)**：
-1. **新增 Skill**：在「📦 Skills 目錄」表格中登記名稱、簡介、類別與連結，並更新「專案結構規範」目錄樹。
-2. **更新 Skill 定位或說明**：同步修正根目錄表格簡介。
+每當專案內新增、刪除或修改任何 Skill 時，**嚴禁僅靠人工手改根目錄 `README.md`**，必須執行內建管理腳本 [`scripts/manage.py`](./scripts/manage.py)：
+
+```bash
+# 步驟 1：執行規範體檢（檢查所有技能的 Frontmatter、更新網址與安裝指令）
+python scripts/manage.py lint
+
+# 步驟 2：自動同步生成根目錄 README.md（包含領域分類表格、全家桶安裝指令、專案結構目錄樹）
+python scripts/manage.py sync
+```
 
 ---
 
-## 五、SKILL.md 自動更新規範（Skill Auto-Update Standard）
+## 五、SKILL.md 自動更新與元資料規範（Skill Metadata & Auto-Update Standard）
 
-為實現使用者對 Antigravity 說「幫我更新 [技能名稱]」即可無感升級，每個 Skill 的 `SKILL.md` 必須遵循以下標準：
+為實現自動化分類索引與使用者對 Antigravity 說「幫我更新 [技能名稱]」即可無感升級，每個 Skill 的 `SKILL.md` 必須遵循以下標準：
 
-### 1. Frontmatter 必備更新欄位
+### 1. Frontmatter 必備欄位
 ```yaml
 ---
 name: <skill-name>
+category: <exam|learning|frontend|content|dev-tools>
+category_label: <子類別標籤，如：公職 / 考試>
+summary: <供根目錄 README 表格顯示的一句話核心功能簡介>
 description: >-
-  [技能說明]
+  [技能觸發說明與適用範圍]
   亦支援在使用者要求「更新此技能 / 檢查最新版本」時自動調用以進行線上更新。
 repository: https://github.com/Lin-Yu-kuan/mySkill
 update_url: https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/<skill-name>/SKILL.md
 ---
 ```
+- **`category` & `category_label` & `summary`**：供 `scripts/manage.py` 自動彙整領域分類目錄與全家桶安裝包使用。
 - **`repository`**：統一指向 GitHub 倉庫根目錄。
 - **`update_url`**：指向該技能在 `main` 分支上的 Raw `SKILL.md` 連結。
 - **`description`**：必須提及更新觸發字眼，確保 Antigravity 在使用者發出更新請求時能依據 Progressive Disclosure 機制正確喚醒本技能。

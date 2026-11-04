@@ -1,5 +1,8 @@
 ---
 name: knowledge-map-learning
+category: learning
+category_label: 學習 / 思考
+summary: 由上而下脈絡全景圖、四層認識論深度精講、逐回合即時落盤與自包含 HTML 互動手冊匯出
 description: >-
   以「由上而下（Top-Down）」方式系統化引導學習新主題：主題明確時同回合輸出結構化脈絡大綱與 M1-1 深度精講
   （貫穿核心問題、直覺模型、機制與證據、邊界限制，以清楚、具體、可推理之講義品質規格取代固定字數配額），具備「逐回合即時落盤」抗長對話上下文壓縮，

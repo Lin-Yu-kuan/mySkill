@@ -1,5 +1,8 @@
 ---
 name: skill-evolution
+category: dev-tools
+category_label: 技能治理 / 診斷優化
+summary: 既有 Skill 唯讀診斷與最小化演進專家，具備引用鏈完整追蹤、區分「缺少判準 vs 實測偏移」及「否定極性反轉與同義改寫」事實核對能力
 description: >-
   既有 Skill 唯讀診斷與最小化演進專家。當使用者要求檢查、診斷、評估某個既有 Skill
   有無可改進之處，或希望在不破壞原有設計與互動契約的前提下優化 Skill 時使用。

@@ -1,5 +1,8 @@
 ---
 name: vibe-coding-toolchain
+category: dev-tools
+category_label: 環境配置 / 開發工具鏈
+summary: Antigravity IDE「Vibe Coding 黃金工具鏈」一鍵配置與健康體檢專家，自動安裝與掛載 RTK、ast-grep、CodeGraph、repomix、Context7 MCP、Chrome DevTools，並以冪等方式寫入全域與專案局域規則
 description: >-
   Antigravity IDE「Vibe Coding 黃金工具鏈」一鍵自動化環境配置、健康體檢與規則佈署專家。
   當使用者換電腦、初始化新開發環境、分享給朋友，或要求「配置黃金工具鏈」、「安裝 Vibe Coding 工具鏈」、

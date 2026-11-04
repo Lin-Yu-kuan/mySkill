@@ -1,6 +1,13 @@
 ---
 name: social-post-voice
-description: 以使用者自然、生活化、適度吐槽的臺灣繁體中文語氣，撰寫社群貼文、修改草稿，以及改寫成 Dcard、Facebook、Instagram、Threads 等平台版本。適用個人社群發文，不自動發布或延伸為內容排程。
+category: content
+category_label: 社群創作 / 語氣改寫
+summary: 臺灣繁體中文自然生活感社群貼文寫作與改稿專家，適度吐槽不浮誇，支援 Dcard、Facebook、Instagram、Threads 多平台語氣轉寫與嚴格事實邊界把關
+description: >-
+  以使用者自然、生活化、適度吐槽的臺灣繁體中文語氣，撰寫社群貼文、修改草稿，以及改寫成 Dcard、Facebook、Instagram、Threads 等平台版本。適用個人社群發文，不自動發布或延伸為內容排程。
+  亦支援在使用者要求「更新此技能 / 檢查最新版本」時自動調用以進行線上更新。
+repository: https://github.com/Lin-Yu-kuan/mySkill
+update_url: https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/social-post-voice/SKILL.md
 ---
 
 # 我的社群寫作
@@ -48,3 +55,19 @@ emoji 用於有意義的情緒或重點，不要求每段都放。依主題自�
 交稿前確認：像自然分享而非廣告；所有具體事實有素材依據；未把規劃寫成已上線；改稿未改變立場；各平台版本資訊一致；連結無重複雜訊。
 
 本技能只產出文字，不自動發布、操作帳號或安排發文。後續依使用者明確改稿回饋校準語氣，不把一次性的要求擴張為永久規則。
+
+---
+
+## 技能維護與自動更新指引
+
+當使用者要求「更新 social-post-voice 技能」或「檢查 social-post-voice 最新版本」時：
+1. **單檔快速更新**：讀取 Frontmatter 中的 `update_url`（`https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/social-post-voice/SKILL.md`）取得最新內容，確認有效後直接覆蓋本機 `SKILL.md`。
+2. **完整套件更新**（含 `references/` 語氣指南）：
+   - **Windows (PowerShell)**：
+     ```powershell
+     $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $t="$env:TEMP\myskill.zip"; $d="$HOME\.gemini\config\skills\social-post-voice"; if (!(Test-Path $d)) { New-Item -ItemType Directory -Path $d -Force }; Invoke-WebRequest $u -OutFile $t; Expand-Archive $t "$env:TEMP\myskill-temp" -Force; Copy-Item "$env:TEMP\myskill-temp\mySkill-main\social-post-voice\*" $d -Recurse -Force; Remove-Item $t,"$env:TEMP\myskill-temp" -Recurse -Force; Write-Host "✅ social-post-voice 技能套件已更新至最新版本！" -ForegroundColor Green
+     ```
+   - **macOS / Linux**：
+     ```bash
+     mkdir -p "$HOME/.gemini/config/skills/social-post-voice" && curl -sSL "https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.tar.gz" | tar -xz -C "$HOME/.gemini/config/skills/social-post-voice" --strip-components=2 "mySkill-main/social-post-voice/" && echo "✅ social-post-voice 技能套件已更新至最新版本！"
+     ```

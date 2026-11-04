@@ -1,5 +1,8 @@
 ---
 name: frontend-ui-annotator
+category: frontend
+category_label: 前端 / UI 設計
+summary: 前端介面生成、全域自由便條紙標註與全頁風格萃取專家，支援任意位置隨手貼紙、外站全頁 Design Tokens 萃取、雙軌環境智慧辨識與一鍵迭代
 description: >-
   專為 Antigravity IDE 與真實瀏覽器設計的前端介面生成、自由便條紙標註與全頁風格萃取專家。當使用者想要設計、原型製作、迭代前端介面，
   或在「別人的網站」隨處貼便條紙借鏡靈感、一鍵萃取全站 Design Tokens 時使用。
