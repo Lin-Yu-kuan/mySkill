@@ -41,7 +41,7 @@ update_url: https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/analyze-e
 
 以 `merge --visual-review` 補齊來源，再用 `summary` 計算統計；有文字擷取時傳入 `--extraction`。summary 輸出到與 `report.md` 相同的執行目錄。最後只讀 summary 與必要代表題，按 [報告結構](references/report-template.md) 產出 `report.md`，不憑模型印象估算次數。
 
-考題連結只用 summary 提供的相對 `link`，並以文字標示題庫相對路徑、頁碼與題號；報告不得出現本機絕對路徑。使用者想接著用 knowledge-map-learning 深入某考點時，依報告結構的銜接規則附上題目快照與題庫相對路徑，讓另一個技能不讀 PDF 也能開課。
+考題連結只用 summary 提供的相對 `link`，並以文字標示題庫相對路徑、頁碼與題號；報告不得出現本機絕對路徑。產出報告後，可於題庫根目錄同步一份 `<備考科目>_考點分析報告.md` 作為首頁入口（連結改採題庫相對路徑），方便使用者即時查閱。使用者想接著用 knowledge-map-learning 深入某考點時，依報告結構的銜接規則附上題目快照與題庫相對路徑，讓另一個技能不讀 PDF 也能開課。
 
 同內容只解析一次，不代表相同命題事件。不同年度或考試的重複題保留各次出現；同場共用一卷的多類科不重複計獨立命題。疑似重複只標記，不自動合併；事件關係不明時揭露不確定性。
 
@@ -55,7 +55,7 @@ update_url: https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/analyze-e
 
 恢復時依 [工具使用](references/usage.md) 核對文字擷取、依視覺檢查文件核對渲染、依精簡分析文件核對 AI 快取；來源雜湊變更不得沿用舊分析。這些文件分別維護恢復條件與命令，勿僅憑舊完成標記跳過工作。題庫搬移後重新盤點新位置，沿用含 `relative_path` 的 selection 即可重用快取。
 
-交付報告連結、處理範圍與限制，單列失敗、不可判讀及待確認項目。文字擷取成功、圖片生成成功與題目判讀完成分開統計；完整覆蓋前標示「部分完成」，不將擷取成功等同分析正確。
+交付報告連結、處理範圍與限制，單列失敗、不可判讀及待確認項目。文字擷取成功、圖片生成成功與題目判讀完成分開統計；完整覆蓋前標示「部分完成」，不將擷取成功等同分析正確。分析完成後，若磁碟空間吃緊，可執行 `exam_files.py clean-images` 安全清理 `render-images/` 暫存圖檔；日常閱讀報告與開啟考題僅需原始 PDF，不依賴圖片，日後亦可 100% 確定性重繪。
 
 ---
 

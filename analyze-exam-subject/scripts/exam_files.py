@@ -300,6 +300,64 @@ def write_new(path: Path, data: dict[str, Any]) -> None:
         temp.unlink(missing_ok=True)
 
 
+def clean_images(target: Path) -> dict[str, Any]:
+    """安全清理分析衍生之 render-images 資料夾以釋放磁碟空間。
+
+    僅刪除名為 'render-images' 之資料夾及其內部暫存圖片，不跟隨符號連結，
+    亦不刪除任何 JSON 索引、Markdown 報告或原始試題 PDF。
+    """
+    target = target.resolve(strict=True)
+    if not target.is_dir():
+        raise ValueError("目標路徑必須是資料夾")
+    if linked(target):
+        raise ValueError("目標不可為連結或接合點")
+
+    candidates: list[Path] = []
+    if target.name.casefold() == "render-images":
+        candidates.append(target)
+    else:
+        for current, dirs, _ in os.walk(target, followlinks=False):
+            parent = Path(current)
+            kept = []
+            for d in dirs:
+                sub = parent / d
+                if not linked(sub):
+                    if d.casefold() == "render-images":
+                        candidates.append(sub)
+                    else:
+                        kept.append(d)
+            dirs[:] = kept
+
+    freed_files = 0
+    freed_bytes = 0
+    removed_dirs: list[str] = []
+
+    for img_dir in candidates:
+        if linked(img_dir):
+            continue
+        dir_bytes = 0
+        dir_files = 0
+        # 逐檔安全驗證：僅刪除 render 產生的圖片或暫存檔
+        for root_dir, _, filenames in os.walk(img_dir, topdown=False, followlinks=False):
+            p = Path(root_dir)
+            for fname in filenames:
+                file_path = p / fname
+                if not linked(file_path):
+                    size = file_path.stat().st_size
+                    file_path.unlink()
+                    dir_bytes += size
+                    dir_files += 1
+            try:
+                p.rmdir()
+            except OSError:
+                pass
+        freed_files += dir_files
+        freed_bytes += dir_bytes
+        removed_dirs.append(str(img_dir))
+
+    return {"freed_bytes": freed_bytes, "freed_files": freed_files, "removed_dirs": removed_dirs}
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
@@ -324,7 +382,18 @@ def main() -> int:
     render.add_argument("--dpi", type=float, default=150.0)
     render.add_argument("--resume", type=Path, help="先前 render-index.json，可與 output 相同")
     render.add_argument("--output", required=True, type=Path, help="render-index.json 路徑")
+    clean = commands.add_parser("clean-images", help="清理分析衍生之 render-images 資料夾以釋放磁碟空間")
+    clean.add_argument("target", type=Path, help="執行目錄、_analysis 目錄或題庫根目錄")
     args = parser.parse_args()
+    if args.command == "clean-images":
+        try:
+            stat = clean_images(args.target)
+            mb = stat["freed_bytes"] / (1024 * 1024)
+            print(f"已清理 {len(stat['removed_dirs'])} 個圖片目錄，共刪除 {stat['freed_files']} 個暫存圖片，釋放 {mb:.2f} MB 空間。")
+            return 0
+        except (OSError, ValueError) as exc:
+            print(f"無法完成清理：{exc}", file=sys.stderr)
+            return 2
     if args.command == "run-dir":
         try:
             print(run_dir(args.root, args.subject, args.output_root))
