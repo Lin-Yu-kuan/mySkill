@@ -1,0 +1,4 @@
+body { margin: 0; padding: 48px 24px; background: #0f172a; color: #f8fafc; font: 16px/1.8 system-ui, sans-serif; }
+main { max-width: 680px; margin: auto; }
+h1 { color: #fbbf24; }
+#reason { padding: 16px; border: 1px solid #f87171; border-radius: 12px; color: #fca5a5; overflow-wrap: anywhere; }

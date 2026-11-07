@@ -1,36 +1,163 @@
 /**
- * Antigravity Universal Sticky Notes & Theme Extractor (v3.0)
+ * Antigravity Universal Sticky Notes & Theme Extractor (v3.2.0)
  * 全能自由便條紙與整頁設計風格萃取腳本：
  * - 任意位置貼便條紙（支援元素錨點、空白間隙、自選階層麵包屑）
  * - 自由敘述任意想法（不限修改、插入新組件、靈感借鏡、刪除）
  * - 智慧環境雙軌辨識（本地專案直指檔案/路由 vs 外站自動帶入網址與品牌語境）
  * - 🌐 一鍵萃取全頁設計系統（配色盤、字體階層、圓角陰影、頁面骨架）
  * - 精緻圖釘懸停展開、就地編輯、刪除
- * - 零外部依賴、純原生 JS、相容 CSP
+ * - 零外部依賴、純原生 JS；執行仍受目標網站 CSP 限制
  */
 (function () {
+  const cleanup = [];
+  function teardown() {
+    for (const release of cleanup.reverse()) { try { release(); } catch { /* Continue releasing other resources. */ } }
+    cleanup.length = 0;
+    window.__AGY_STICKY_LOADED__ = false;
+  }
+  try {
   if (window.__AGY_STICKY_LOADED__) {
     const toggle = document.getElementById('agy-toggle-btn');
-    if (toggle) toggle.click();
-    return;
+    if (toggle) { toggle.click(); return; }
+    // Recover from older versions that marked a partial initialization as loaded.
+    document.getElementById('agy-fixed-root')?.remove();
+    document.getElementById('agy-scroll-root')?.remove();
+    window.__AGY_STICKY_LOADED__ = false;
   }
-  window.__AGY_STICKY_LOADED__ = true;
+  if (!document.body) throw new Error('頁面尚未準備好，請載入完成後重試');
 
   let isAnnotating = false;
   let notes = [];
   let currentTarget = null;
   let ancestorsList = [];
+  let nextId = 1;
+  let disposed = false;
+  let restoring = false;
+  let unsaved = false;
+  let screenshot = null;
+  let route = location.href;
+  const originalCursor = document.body.style.cursor;
+  const listeners = new AbortController();
+  const timers = new Set();
+  const objectUrls = new Set();
+  cleanup.push(() => { disposed = true; isAnnotating = false; listeners.abort(); });
+  cleanup.push(() => timers.forEach(clearTimeout));
+  cleanup.push(() => objectUrls.forEach(url => URL.revokeObjectURL(url)));
+  cleanup.push(() => { document.body.style.cursor = originalCursor; });
+  function later(fn, ms) {
+    const timer = setTimeout(() => { timers.delete(timer); if (!disposed) fn(); }, ms);
+    timers.add(timer);
+    return timer;
+  }
+  function ui(tag, attrs = {}, ...children) {
+    const node = document.createElement(tag);
+    if (tag === 'button') node.type = 'button';
+    for (const [key, value] of Object.entries(attrs)) {
+      if (key === 'style') node.style.cssText = value;
+      else node.setAttribute(key, value);
+    }
+    node.append(...children);
+    return node;
+  }
+  function fingerprint(el) {
+    return { tag: el.tagName, id: el.id, text: el === document.body || el === document.documentElement ? '' : (el.textContent || '').trim().slice(0, 120) };
+  }
+  function makeAnchor(el, x, y) {
+    const parts = [];
+    let node = el;
+    while (node && node !== document.documentElement) {
+      if (node.id && document.querySelectorAll('#' + CSS.escape(node.id)).length === 1) {
+        parts.unshift('#' + CSS.escape(node.id)); break;
+      }
+      const siblings = node.parentElement ? Array.from(node.parentElement.children).filter(n => n.tagName === node.tagName) : [node];
+      parts.unshift(node.tagName.toLowerCase() + ':nth-of-type(' + (siblings.indexOf(node) + 1) + ')');
+      node = node.parentElement;
+    }
+    const rect = el.getBoundingClientRect();
+    return { css: parts.join(' > '), fingerprint: fingerprint(el),
+      rx: rect.width ? (x - scrollX - rect.left) / rect.width : 0,
+      ry: rect.height ? (y - scrollY - rect.top) / rect.height : 0 };
+  }
+  function resolveAnchor(anchor) {
+    try {
+      const matches = document.querySelectorAll(anchor.css);
+      if (matches.length !== 1) return null;
+      const el = matches[0], expected = anchor.fingerprint, actual = fingerprint(el);
+      return actual.tag === expected.tag && actual.id === expected.id && actual.text === expected.text ? el : null;
+    } catch { return null; }
+  }
+  function refreshPins() {
+    notes.forEach(item => {
+      if (!item.target?.isConnected) item.target = resolveAnchor(item.anchor);
+      const rect = item.target?.getBoundingClientRect();
+      item.missing = !rect || !rect.width || !rect.height;
+      if (!item.missing) {
+        item.pageX = rect.left + scrollX + rect.width * item.anchor.rx;
+        item.pageY = rect.top + scrollY + rect.height * item.anchor.ry;
+      }
+      item.pinEl.style.left = (item.pageX - scrollX - 14) + 'px';
+      item.pinEl.style.top = (item.pageY - scrollY - 14) + 'px';
+      item.pinEl.style.background = item.missing ? '#64748b' : '#f59e0b';
+      item.pinEl.title = item.missing ? '目標已失效，請刪除後重新標註' : item.selector;
+    });
+  }
+  function noteData(item) {
+    return { id: item.id, text: item.text, selector: item.selector, anchor: item.anchor, pageX: item.pageX, pageY: item.pageY };
+  }
+  function storageKey() { return 'agy-notes-v1:' + route; }
+  function saveDraft() {
+    if (restoring) return;
+    try {
+      if (notes.length) localStorage.setItem(storageKey(), JSON.stringify({ schemaVersion: 1, notes: notes.map(noteData) }));
+      else localStorage.removeItem(storageKey());
+      unsaved = false;
+    } catch { unsaved = true; showToast('草稿保存失敗，請匯出 JSON 備份', '#dc2626'); }
+  }
+  function validateNotes(data) {
+    if (data.schemaVersion !== 1 || !Array.isArray(data.notes) || data.notes.length > 500) throw new Error('不支援的便條紙格式');
+    const ids = new Set();
+    for (const n of data.notes) {
+      if (!Number.isSafeInteger(n.id) || n.id < 1 || ids.has(n.id) || typeof n.text !== 'string' || n.text.length > 50000 ||
+          typeof n.selector !== 'string' || typeof n.anchor?.css !== 'string' || typeof n.anchor?.fingerprint?.tag !== 'string' ||
+          typeof n.anchor.fingerprint.id !== 'string' || typeof n.anchor.fingerprint.text !== 'string' ||
+          ![n.pageX, n.pageY, n.anchor.rx, n.anchor.ry].every(Number.isFinite)) throw new Error('便條紙資料不完整');
+      ids.add(n.id);
+    }
+    return data.notes;
+  }
+  function loadNotes(data) {
+    const entries = validateNotes(data);
+    restoring = true;
+    try {
+      notes.forEach(n => n.pinEl.remove()); notes = []; nextId = 1;
+      entries.forEach(n => createStickyPin(resolveAnchor(n.anchor), n.selector, n.text, n.pageX, n.pageY, n));
+      countSpan.innerText = notes.length;
+      refreshPins();
+    } finally { restoring = false; }
+  }
+  function restoreDraft() {
+    try {
+      const raw = localStorage.getItem(storageKey());
+      if (raw) { loadNotes(JSON.parse(raw)); showToast('已恢復 ' + notes.length + ' 張便條紙'); }
+    } catch { showToast('無法恢復草稿；原資料未覆寫', '#d97706'); }
+  }
+  async function copyText(text, success) {
+    try { await navigator.clipboard.writeText(text); if (!disposed) showToast(success); }
+    catch { if (!disposed) prompt('請手動複製以下內容：', text); }
+  }
 
   // 1. 建立 UI 根容器
   const fixedRoot = document.createElement('div');
   fixedRoot.id = 'agy-fixed-root';
   fixedRoot.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999999;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;';
   document.body.appendChild(fixedRoot);
+  cleanup.push(() => fixedRoot.remove());
 
   const scrollRoot = document.createElement('div');
   scrollRoot.id = 'agy-scroll-root';
   scrollRoot.style.cssText = 'position:absolute;top:0;left:0;width:100%;min-height:100%;pointer-events:none;z-index:9999990;';
   document.body.appendChild(scrollRoot);
+  cleanup.push(() => scrollRoot.remove());
 
   // 懸停高亮框
   const hoverBox = document.createElement('div');
@@ -55,7 +182,9 @@
     opacity: 0;
     transition: opacity 0.25s ease, transform 0.25s ease;
     z-index: 10000020;
-    white-space: nowrap;
+    white-space: normal;
+    max-width: calc(100vw - 32px);
+    box-sizing: border-box;
   `;
   fixedRoot.appendChild(toast);
 
@@ -66,7 +195,7 @@
     toast.style.background = bg;
     toast.style.opacity = '1';
     toast.style.transform = 'translateX(-50%) translateY(4px)';
-    toastTimer = setTimeout(() => {
+    toastTimer = later(() => {
       toast.style.opacity = '0';
       toast.style.transform = 'translateX(-50%) translateY(0)';
     }, 2800);
@@ -94,77 +223,14 @@
     user-select: none;
     transition: transform 0.2s ease;
   `;
-  toolbar.innerHTML = `
-    <button id="agy-toggle-btn" style="
-      background: #f59e0b;
-      color: #0f172a;
-      border: none;
-      padding: 7px 14px;
-      border-radius: 9999px;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 2px 10px rgba(245,158,11,0.4);
-      outline: none;
-      transition: all 0.2s;
-    ">
-      <span>📌</span> <span id="agy-btn-text">貼便條紙模式</span>
-    </button>
-    <button id="agy-theme-btn" title="一秒掃描整頁配色、字體、圓角與佈局骨架" style="
-      background: rgba(255,255,255,0.1);
-      color: #f8fafc;
-      border: 1px solid rgba(255,255,255,0.2);
-      padding: 7px 13px;
-      border-radius: 9999px;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      outline: none;
-      transition: background 0.2s;
-    ">
-      <span>🌐</span> 萃取整頁風格
-    </button>
-    <button id="agy-copy-btn" style="
-      background: rgba(255,255,255,0.1);
-      color: #f8fafc;
-      border: 1px solid rgba(255,255,255,0.2);
-      padding: 7px 13px;
-      border-radius: 9999px;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      outline: none;
-      transition: background 0.2s;
-    ">
-      <span>📋</span> 複製便條紙 (<span id="agy-count">0</span>)
-    </button>
-    <button id="agy-exit-btn" title="完全離開並關閉工具" style="
-      background: rgba(255,255,255,0.08);
-      color: #94a3b8;
-      border: 1px solid rgba(255,255,255,0.12);
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      font-size: 13px;
-      font-weight: bold;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-left: 2px;
-      outline: none;
-      transition: all 0.15s ease;
-    ">✕</button>
-  `;
+  const toolbarButtonStyle = 'background:rgba(255,255,255,0.1);color:#f8fafc;border:1px solid rgba(255,255,255,0.2);padding:7px 13px;border-radius:9999px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:5px';
+  toolbar.append(
+    ui('button', { id: 'agy-toggle-btn', style: toolbarButtonStyle + ';background:#f59e0b;color:#0f172a;font-weight:700' },
+      '📌 ', ui('span', { id: 'agy-btn-text' }, '貼便條紙模式')),
+    ui('button', { id: 'agy-theme-btn', title: '掃描目前頁面風格摘要', style: toolbarButtonStyle }, '🌐 萃取整頁風格'),
+    ui('button', { id: 'agy-copy-btn', style: toolbarButtonStyle }, '📋 複製便條紙 (', ui('span', { id: 'agy-count' }, '0'), ')'),
+    ui('button', { id: 'agy-exit-btn', title: '完全離開並關閉工具', style: toolbarButtonStyle + ';width:28px;height:28px;padding:0;justify-content:center;color:#94a3b8' }, '✕')
+  );
   fixedRoot.appendChild(toolbar);
 
   const toggleBtn = toolbar.querySelector('#agy-toggle-btn');
@@ -193,16 +259,9 @@
 
   // 完全退出
   exitBtn.addEventListener('click', () => {
-    if (notes.length > 0) {
-      if (!confirm(`目前畫面上還有 ${notes.length} 張便條紙尚未複製，確定要完全關閉嗎？`)) {
-        return;
-      }
-    }
+    if (unsaved && !confirm('草稿未能保存，請先匯出 JSON。仍要關閉嗎？')) return;
     closeDialog();
-    fixedRoot.remove();
-    scrollRoot.remove();
-    document.body.style.cursor = '';
-    window.__AGY_STICKY_LOADED__ = false;
+    teardown();
   });
 
   // 切換便條紙模式
@@ -220,7 +279,7 @@
       toggleBtn.style.color = '#0f172a';
       toggleBtn.style.boxShadow = '0 2px 10px rgba(245,158,11,0.4)';
       btnText.innerText = '貼便條紙模式';
-      document.body.style.cursor = '';
+      document.body.style.cursor = originalCursor;
       hoverBox.style.display = 'none';
       closeDialog();
     }
@@ -319,12 +378,12 @@
     if (!isAnnotating) return;
     if (fixedRoot.contains(e.target) || scrollRoot.contains(e.target)) return;
     updateHoverBox(e.target);
-  }, true);
+  }, { capture: true, signal: listeners.signal });
 
   window.addEventListener('scroll', () => {
-    if (!isAnnotating) return;
-    if (currentTarget) updateHoverBox(currentTarget);
-  }, { passive: true });
+    if (isAnnotating && currentTarget) updateHoverBox(currentTarget);
+    refreshPins();
+  }, { passive: true, capture: true, signal: listeners.signal });
 
   // 5. 點擊貼便條紙
   document.addEventListener('click', (e) => {
@@ -343,7 +402,7 @@
     const clickClientY = e.clientY;
 
     openStickyDialog(currentTarget, clickPageX, clickPageY, clickClientX, clickClientY);
-  }, true);
+  }, { capture: true, signal: listeners.signal });
 
   function closeDialog() {
     const existing = document.getElementById('agy-active-dialog');
@@ -354,6 +413,7 @@
   function openStickyDialog(target, pageX, pageY, clientX, clientY, editNoteId = null) {
     closeDialog();
     currentTarget = target;
+    ancestorsList = getAncestors(target);
     updateHoverBox(currentTarget);
 
     const dialog = document.createElement('div');
@@ -371,6 +431,8 @@
       top: ${top}px;
       left: ${left}px;
       width: 320px;
+      max-width: calc(100vw - 20px);
+      box-sizing: border-box;
       background: #0f172a;
       color: #f8fafc;
       border: 1px solid #f59e0b;
@@ -382,74 +444,41 @@
       font-size: 13px;
     `;
 
-    const breadcrumbsHtml = ancestorsList.map((node, index) => {
-      const isSelected = node === currentTarget;
-      const tag = node.tagName.toLowerCase();
-      const rawClass = getSafeClassName(node);
-      const firstClass = rawClass ? '.' + rawClass.split(/\s+/)[0] : '';
-      const label = `${tag}${firstClass}`;
-      return `
-        <button class="agy-crumb-btn" data-index="${index}" style="
-          background: ${isSelected ? '#f59e0b' : '#1e293b'};
-          color: ${isSelected ? '#0f172a' : '#94a3b8'};
-          border: 1px solid ${isSelected ? '#f59e0b' : '#334155'};
-          font-weight: ${isSelected ? '700' : '500'};
-          border-radius: 4px;
-          padding: 2px 6px;
-          font-size: 11px;
-          cursor: pointer;
-          max-width: 90px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          outline: none;
-        ">${label}</button>
-      `;
-    }).reverse().join('<span style="color:#64748b;font-size:10px;">➔</span>');
-
     const initialText = editNoteId ? (notes.find(n => n.id === editNoteId)?.text || '') : '';
-
-    dialog.innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-        <span style="font-size:12px;font-weight:700;color:#f59e0b;display:flex;align-items:center;gap:4px;">
-          📌 ${editNoteId ? '編輯便條紙 #' + editNoteId : '貼上新便條紙'}
-        </span>
-        <span style="font-size:11px;color:#94a3b8;">自由填寫任何想法</span>
-      </div>
-      <div style="font-size:11px;color:#cbd5e1;margin-bottom:8px;background:#1e293b;padding:5px 8px;border-radius:6px;word-break:break-all;">
-        位置錨點：<span id="agy-selected-tag" style="color:#fbbf24;font-family:monospace;font-weight:600;">${getReadableSelector(currentTarget)}</span>
-      </div>
-      ${ancestorsList.length > 1 ? `
-        <div style="font-size:10px;color:#94a3b8;margin-bottom:4px;">切換外層容器：</div>
-        <div id="agy-crumbs" style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-bottom:10px;">
-          ${breadcrumbsHtml}
-        </div>
-      ` : ''}
-      <textarea id="agy-note-input" placeholder="隨心所欲敘述任何內容，例如：&#10;• 這裡想插入一排用戶評價星級&#10;• 這個按鈕改深紫漸層並加大圓角&#10;• 這整塊空白處太寬，縮小間距" style="
-        width: 100%;
-        box-sizing: border-box;
-        height: 84px;
-        background: #020617;
-        color: white;
-        border: 1px solid #334155;
-        border-radius: 8px;
-        padding: 8px 10px;
-        font-size: 13px;
-        line-height: 1.45;
-        resize: none;
-        outline: none;
-      ">${initialText}</textarea>
-      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px;">
-        <button id="agy-cancel-btn" style="background:transparent;color:#94a3b8;border:none;font-size:12px;cursor:pointer;padding:5px 10px;">取消</button>
-        <button id="agy-save-btn" style="background:#f59e0b;color:#0f172a;border:none;border-radius:6px;font-size:12px;font-weight:700;padding:6px 15px;cursor:pointer;">
-          ${editNoteId ? '更新便條紙' : '📌 釘上便條紙'}
-        </button>
-      </div>
-    `;
+    dialog.append(
+      ui('div', { style: 'display:flex;justify-content:space-between;margin-bottom:8px' },
+        ui('span', { style: 'font-size:12px;font-weight:700;color:#f59e0b' }, '📌 ' + (editNoteId ? '編輯便條紙 #' + editNoteId : '貼上新便條紙')),
+        ui('span', { style: 'font-size:11px;color:#94a3b8' }, '自由填寫任何想法')),
+      ui('div', { style: 'font-size:11px;color:#cbd5e1;margin-bottom:8px;background:#1e293b;padding:5px 8px;border-radius:6px;word-break:break-all' },
+        '位置錨點：', ui('span', { id: 'agy-selected-tag', style: 'color:#fbbf24;font-family:monospace;font-weight:600' }, getReadableSelector(currentTarget)))
+    );
+    if (ancestorsList.length > 1) {
+      const crumbs = ui('div', { id: 'agy-crumbs', style: 'display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-bottom:10px' });
+      ancestorsList.map((node, index) => {
+        const selected = node === currentTarget;
+        const rawClass = getSafeClassName(node);
+        return ui('button', { class: 'agy-crumb-btn', 'data-index': index,
+          style: 'border:1px solid #334155;border-radius:4px;padding:2px 6px;font-size:11px;cursor:pointer;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;' +
+            (selected ? 'background:#f59e0b;color:#0f172a;font-weight:700' : 'background:#1e293b;color:#94a3b8')
+        }, node.tagName.toLowerCase() + (rawClass ? '.' + rawClass.split(/\s+/)[0] : ''));
+      }).reverse().forEach((button, index) => {
+        if (index) crumbs.append(ui('span', { style: 'color:#64748b;font-size:10px' }, '➔'));
+        crumbs.append(button);
+      });
+      dialog.append(ui('div', { style: 'font-size:10px;color:#94a3b8;margin-bottom:4px' }, '切換外層容器：'), crumbs);
+    }
+    dialog.append(
+      ui('textarea', { id: 'agy-note-input', placeholder: '描述想修改的內容、插入元件或參考風格',
+        style: 'width:100%;box-sizing:border-box;height:84px;background:#020617;color:white;border:1px solid #334155;border-radius:8px;padding:8px 10px;font-size:13px;line-height:1.45;resize:none' }),
+      ui('div', { style: 'display:flex;justify-content:flex-end;gap:8px;margin-top:10px' },
+        ui('button', { id: 'agy-cancel-btn', style: 'background:transparent;color:#94a3b8;border:none;font-size:12px;cursor:pointer;padding:5px 10px' }, '取消'),
+        ui('button', { id: 'agy-save-btn', style: 'background:#f59e0b;color:#0f172a;border:none;border-radius:6px;font-size:12px;font-weight:700;padding:6px 15px;cursor:pointer' }, editNoteId ? '更新便條紙' : '📌 釘上便條紙'))
+    );
 
     fixedRoot.appendChild(dialog);
 
     const textarea = dialog.querySelector('#agy-note-input');
+    textarea.value = initialText;
     textarea.focus();
 
     const crumbBtns = dialog.querySelectorAll('.agy-crumb-btn');
@@ -477,7 +506,7 @@
         return;
       }
       if (editNoteId) {
-        updateNote(editNoteId, text);
+        updateNote(editNoteId, text, currentTarget, pageX, pageY);
       } else {
         createStickyPin(currentTarget, getReadableSelector(currentTarget), text, pageX, pageY);
       }
@@ -486,12 +515,13 @@
   }
 
   // 7. 釘在網頁上的精美便條紙圖釘（展開態與編輯/刪除）
-  function createStickyPin(target, selector, text, pageX, pageY) {
-    const id = notes.length + 1;
+  function createStickyPin(target, selector, text, pageX, pageY, restored = null) {
+    const id = restored ? restored.id : nextId++;
+    nextId = Math.max(nextId, id + 1);
     const pin = document.createElement('div');
     pin.className = 'agy-sticky-pin';
     pin.style.cssText = `
-      position: absolute;
+      position: fixed;
       top: ${pageY - 14}px;
       left: ${pageX - 14}px;
       width: 28px;
@@ -533,17 +563,15 @@
       z-index: 10000005;
       pointer-events: auto;
     `;
-    previewCard.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;border-bottom:1px solid #334155;padding-bottom:4px;">
-        <span style="font-weight:700;color:#fbbf24;">📌 便條紙 #${id}</span>
-        <div style="display:flex;gap:6px;">
-          <button class="agy-card-edit-btn" style="background:transparent;border:none;color:#94a3b8;cursor:pointer;font-size:11px;">✏️ 編輯</button>
-          <button class="agy-card-del-btn" style="background:transparent;border:none;color:#ef4444;cursor:pointer;font-size:11px;">🗑️ 刪除</button>
-        </div>
-      </div>
-      <div style="font-size:10px;color:#94a3b8;margin-bottom:4px;word-break:break-all;">位置：${selector}</div>
-      <div class="agy-card-text" style="white-space:pre-wrap;color:#e2e8f0;">${text}</div>
-    `;
+    previewCard.append(
+      ui('div', { style: 'display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;border-bottom:1px solid #334155;padding-bottom:4px' },
+        ui('span', { style: 'font-weight:700;color:#fbbf24' }, '📌 便條紙 #' + id),
+        ui('div', { style: 'display:flex;gap:6px' },
+          ui('button', { class: 'agy-card-edit-btn', style: 'background:transparent;border:none;color:#94a3b8;cursor:pointer;font-size:11px' }, '✏️ 編輯'),
+          ui('button', { class: 'agy-card-del-btn', style: 'background:transparent;border:none;color:#ef4444;cursor:pointer;font-size:11px' }, '🗑️ 刪除'))),
+      ui('div', { class: 'agy-card-selector', style: 'font-size:10px;color:#94a3b8;margin-bottom:4px;word-break:break-all' }, '位置：' + selector),
+      ui('div', { class: 'agy-card-text', style: 'white-space:pre-wrap;color:#e2e8f0' }, text)
+    );
     pin.appendChild(previewCard);
 
     let hideTimer = null;
@@ -552,14 +580,15 @@
       previewCard.style.display = 'block';
     });
     pin.addEventListener('mouseleave', () => {
-      hideTimer = setTimeout(() => {
+      hideTimer = later(() => {
         previewCard.style.display = 'none';
       }, 250);
     });
 
     previewCard.querySelector('.agy-card-edit-btn').addEventListener('click', (e) => {
       e.stopPropagation();
-      openStickyDialog(target, pageX, pageY, pageX - window.scrollX, pageY - window.scrollY, id);
+      if (item.missing) { showToast('目標已失效，請重新標註', '#d97706'); return; }
+      openStickyDialog(item.target, item.pageX, item.pageY, item.pageX - window.scrollX, item.pageY - window.scrollY, id);
     });
 
     previewCard.querySelector('.agy-card-del-btn').addEventListener('click', (e) => {
@@ -567,21 +596,29 @@
       deleteNote(id);
     });
 
-    const item = { id, target, selector, text, pageX, pageY, pinEl: pin, previewCard };
+    const item = { id, target, selector, text, pageX, pageY, anchor: restored?.anchor || makeAnchor(target, pageX, pageY), pinEl: pin, previewCard };
     notes.push(item);
     countSpan.innerText = notes.length;
 
     scrollRoot.appendChild(pin);
-    showToast(`✅ 已釘上便條紙 #${id}`, '#f59e0b');
+    refreshPins();
+    if (!restoring) showToast(`✅ 已釘上便條紙 #${id}`, '#f59e0b');
+    saveDraft();
   }
 
-  function updateNote(id, newText) {
+  function updateNote(id, newText, target, pageX, pageY) {
     const item = notes.find(n => n.id === id);
     if (!item) return;
     item.text = newText;
+    item.target = target;
+    item.selector = getReadableSelector(target);
+    item.anchor = makeAnchor(target, pageX, pageY);
+    item.previewCard.querySelector('.agy-card-selector').textContent = '位置：' + item.selector;
     const cardText = item.previewCard.querySelector('.agy-card-text');
     if (cardText) cardText.innerText = newText;
+    refreshPins();
     showToast(`✅ 已更新便條紙 #${id}`, '#f59e0b');
+    saveDraft();
   }
 
   function deleteNote(id) {
@@ -591,6 +628,7 @@
     notes = notes.filter(n => n.id !== id);
     countSpan.innerText = notes.length;
     showToast(`🗑️ 已刪除便條紙 #${id}`);
+    saveDraft();
   }
 
   // 8. 複製便條紙清單 (雙軌格式)
@@ -601,10 +639,12 @@
     }
 
     const env = getEnvironmentContext();
-    let text = `${env.header}\n\n`;
+    refreshPins();
+    let text = `${env.header}\n- **畫面尺寸**：${innerWidth} × ${innerHeight}（DPR ${devicePixelRatio}）\n- **完整路由**：${location.href}\n- **截圖**：${screenshot ? '已附於 JSON 回饋包' : '未附；可用「附截圖」選取圖片'}\n\n`;
 
     notes.forEach((item, index) => {
-      text += `📌 **便條紙 #${index + 1}**（位置錨點：\`${item.selector}\`）\n`;
+      text += `📌 **便條紙 #${item.id}**（位置錨點：\`${item.selector}\`）\n`;
+      text += `- CSS 定位：\`${item.anchor.css}\`\n- 狀態：${item.missing ? '目標已失效，請人工確認' : '已定位'}\n- 樣式摘要：${JSON.stringify(styleSnapshot(item.target))}\n`;
       text += `> 「${item.text.replace(/\n/g, '\n> ')}」\n\n`;
     });
 
@@ -614,17 +654,13 @@
       text += `請參考此網站之視覺質感與上述便條紙期望，配合我當前的對話指令進行處理。`;
     }
 
-    navigator.clipboard.writeText(text).then(() => {
-      showToast('📋 已複製便條紙清單！請在 Antigravity 對話框 Ctrl+V 發送');
-    }).catch(() => {
-      prompt('請手動複製以下便條紙清單：', text);
-    });
+    copyText(text, '📋 已複製 AI 回饋包；附圖請另外匯出 JSON');
   });
 
   // 9. 🌐 一鍵萃取全頁設計風格 (Theme Extractor Algorithm)
   themeBtn.addEventListener('click', () => {
     showToast('🔍 正在掃描全頁 Design Tokens...', '#3b82f6');
-    setTimeout(extractFullPageTheme, 100);
+    later(extractFullPageTheme, 100);
   });
 
   function extractFullPageTheme() {
@@ -712,14 +748,103 @@ ${sections.length > 0 ? sections.map(s => '   - ' + s).join('\n') : '   - Header
 ---
 🎯 **請參考此全站設計系統與風格**，配合我當前的對話需求進行後續處理。`;
 
-    navigator.clipboard.writeText(themeMarkdown).then(() => {
-      showToast('✨ 已成功萃取全頁設計系統！已複製至剪貼簿', '#059669');
-    }).catch(() => {
-      prompt('請手動複製以下全頁設計風格：', themeMarkdown);
-    });
+    copyText(themeMarkdown, '✨ 已複製目前頁面的風格摘要');
   }
 
   // 10. 動畫樣式
+  function styleSnapshot(el) {
+    if (!el?.isConnected) return null;
+    const computed = getComputedStyle(el);
+    return Object.fromEntries(['color', 'backgroundColor', 'fontFamily', 'fontSize', 'fontWeight', 'lineHeight',
+      'padding', 'margin', 'gap', 'borderRadius', 'boxShadow', 'display'].map(key => [key, computed[key]]));
+  }
+  function feedbackPackage() {
+    refreshPins();
+    return { schemaVersion: 1, toolVersion: '3.2.0', url: route, title: document.title, createdAt: new Date().toISOString(),
+      viewport: { width: innerWidth, height: innerHeight, devicePixelRatio, scrollX, scrollY }, screenshot,
+      notes: notes.map(item => ({ ...noteData(item), status: item.missing ? 'missing' : 'resolved', styles: styleSnapshot(item.target) })) };
+  }
+  function addAction(label, action) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = label;
+    button.style.cssText = 'background:#334155;color:white;border:1px solid #64748b;border-radius:8px;padding:7px;cursor:pointer;font-size:12px';
+    button.addEventListener('click', action);
+    toolbar.insertBefore(button, exitBtn);
+    return button;
+  }
+  toolbar.style.flexWrap = 'wrap';
+  toolbar.style.maxWidth = 'calc(100vw - 48px)';
+  toolbar.style.boxSizing = 'border-box';
+  toolbar.style.borderRadius = '16px';
+  addAction('匯出 JSON', () => {
+    const url = URL.createObjectURL(new Blob([JSON.stringify(feedbackPackage(), null, 2)], { type: 'application/json' }));
+    objectUrls.add(url);
+    const link = document.createElement('a');
+    link.href = url; link.download = 'ui-feedback.json'; fixedRoot.appendChild(link); link.click(); link.remove();
+    later(() => { URL.revokeObjectURL(url); objectUrls.delete(url); }, 30000);
+  });
+  const importInput = document.createElement('input');
+  importInput.type = 'file'; importInput.accept = '.json,application/json'; importInput.hidden = true;
+  fixedRoot.appendChild(importInput);
+  importInput.addEventListener('change', async () => {
+    const file = importInput.files[0];
+    try {
+      if (!file) return;
+      if (file.size > 10 * 1024 * 1024) throw new Error('JSON 不可超過 10 MB');
+      const data = JSON.parse(await file.text());
+      if (disposed) return;
+      if (data.url !== route) throw new Error('請在回饋包的原始網址匯入');
+      validateNotes(data);
+      if (notes.length && !confirm('匯入將取代目前便條紙，是否繼續？')) return;
+      loadNotes(data);
+      screenshot = typeof data.screenshot === 'string' && /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(data.screenshot) ? data.screenshot : null;
+      screenshotBtn.textContent = screenshot ? '更換截圖 ✓' : '附截圖';
+      showToast('已匯入便條紙'); saveDraft();
+    } catch (error) { showToast('匯入失敗：' + error.message, '#dc2626'); }
+    finally { importInput.value = ''; }
+  });
+  addAction('匯入 JSON', () => importInput.click());
+  const imageInput = document.createElement('input');
+  imageInput.type = 'file'; imageInput.accept = 'image/png,image/jpeg,image/webp'; imageInput.hidden = true;
+  fixedRoot.appendChild(imageInput);
+  const screenshotBtn = addAction('附截圖', () => imageInput.click());
+  imageInput.addEventListener('change', () => {
+    const file = imageInput.files[0], capturedRoute = route;
+    if (!file) return;
+    if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type) || file.size > 5 * 1024 * 1024) {
+      showToast('請選擇 5 MB 以下的 PNG、JPEG 或 WebP', '#d97706'); imageInput.value = ''; return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (disposed || route !== capturedRoute) return;
+      screenshot = reader.result;
+      screenshotBtn.textContent = '更換截圖 ✓';
+      showToast('已附截圖，匯出 JSON 即可帶出；截圖不存入草稿');
+    };
+    reader.onerror = () => { if (!disposed) showToast('讀取截圖失敗', '#dc2626'); };
+    reader.readAsDataURL(file); imageInput.value = '';
+  });
+  addAction('清除草稿', () => {
+    if (!confirm('清除本頁所有便條紙與已附截圖？')) return;
+    closeDialog(); notes.forEach(n => n.pinEl.remove()); notes = []; screenshot = null;
+    screenshotBtn.textContent = '附截圖'; countSpan.innerText = '0'; saveDraft();
+  });
+  window.addEventListener('resize', refreshPins, { signal: listeners.signal });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') { closeDialog(); if (isAnnotating) toggleBtn.click(); }
+  }, { signal: listeners.signal });
+  // Also covers layout shifts, SPA replacement and sticky/fixed targets without observing our own DOM writes.
+  const trackingTimer = setInterval(() => {
+    if (location.href !== route) {
+      closeDialog(); currentTarget = null;
+      notes.forEach(n => n.pinEl.remove()); notes = []; countSpan.innerText = '0';
+      screenshot = null; screenshotBtn.textContent = '附截圖'; route = location.href; restoreDraft();
+    }
+    refreshPins();
+  }, 250);
+  cleanup.push(() => clearInterval(trackingTimer));
+  restoreDraft();
   const style = document.createElement('style');
   style.innerText = `
     @keyframes agy-pop {
@@ -728,4 +853,12 @@ ${sections.length > 0 ? sections.map(s => '   - ' + s).join('\n') : '   - Header
     }
   `;
   document.head.appendChild(style);
+  cleanup.push(() => style.remove());
+  window.__AGY_STICKY_LOADED__ = true;
+  showToast('📌 標註器 v3.2.0 已啟動');
+  } catch (error) {
+    teardown();
+    console.error('[Frontend UI Annotator] 啟動失敗', error);
+    alert('標註器啟動失敗：' + (error?.message || String(error)) + '\n請重新整理頁面後重試。');
+  }
 })();

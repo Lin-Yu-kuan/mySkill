@@ -16,28 +16,38 @@
   <!-- 頂部 Header -->
   <div class="max-w-4xl mx-auto w-full pt-8 pb-4 text-center">
     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold mb-4">
-      <span>🚀</span> Antigravity IDE 專屬前端輔助套件 v3.1
+      <span>🚀</span> Antigravity IDE 專屬前端輔助套件 v3.2.0
     </div>
     <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-3">
       全能自由便條紙 & 全頁風格萃取器
     </h1>
     <p class="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto">
-      無需安裝任何擴充套件！拖曳下方按鈕至瀏覽器書籤列，即可在任何網頁隨處貼便條紙、一秒萃取整頁設計規範，並自動依據「本機絕對路徑」或「外部網站」智慧格式化需求回傳給 Antigravity。
+      要在其他分頁標註，請安裝下方 Chrome 擴充功能。切換到目標網頁後，點擴充功能即可啟動；本頁示範不代表已安裝。
     </p>
   </div>
 
+  <section style="max-width:850px;margin:24px auto;padding:24px;border:1px solid #f59e0b;border-radius:16px;background:#0f172a;color:#f8fafc;line-height:1.8">
+    <h2 style="font-size:22px;font-weight:700;color:#fbbf24">推薦：Chrome 擴充功能 v3.2.0</h2>
+    <ol style="list-style:decimal;padding-left:24px">
+      <li>在 Chrome 網址列輸入 <code>chrome://extensions</code>，開啟右上角「開發人員模式」。</li>
+      <li>點「載入未封裝項目」，選擇本套件的 <strong>extension</strong> 資料夾（與 resources 同層）。</li>
+      <li>切換到你要標註的網站，點右上角拼圖 →「Frontend UI Annotator 便條紙」。可釘選到工具列。</li>
+    </ol>
+    <p>每個分頁獨立啟動，不必回到安裝頁。成功時顯示工具列，失敗時開啟錯誤說明頁；Chrome 內建頁面無法標註。本機 HTML 需在擴充功能詳細資料開啟「允許存取檔案網址」。</p>
+    <p style="color:#94a3b8">只使用 activeTab 與 scripting 權限，僅在點擊時作用於目前分頁，不要求所有網站的常駐存取權限。</p>
+  </section>
   <!-- 核心安裝按鈕區 -->
   <div class="max-w-xl mx-auto w-full my-8 bg-slate-900/90 border border-slate-800 rounded-2xl p-8 shadow-2xl backdrop-blur-xl text-center relative overflow-hidden">
     <div class="absolute -top-24 -left-24 w-48 h-48 bg-amber-600/20 rounded-full blur-3xl pointer-events-none"></div>
     <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
 
-    <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">步驟一：將此黃色按鈕拖曳到瀏覽器書籤列</div>
+    <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">備用書籤方式（受目標網站限制）：將黃色按鈕拖曳到書籤列</div>
     
     <div class="py-4">
-      <a id="bookmarkletLink" href="javascript:(function(){%2F**%0A%20*%20Antigravity%20Universal%20Sticky%20Notes%20%26%20Theme%20Extractor%20(v3.0)%0A%20*%20%E5%85%A8%E8%83%BD%E8%87%AA%E7%94%B1%E4%BE%BF%E6%A2%9D%E7%B4%99%E8%88%87%E6%95%B4%E9%A0%81%E8%A8%AD%E8%A8%88%E9%A2%A8%E6%A0%BC%E8%90%83%E5%8F%96%E8%85%B3%E6%9C%AC%EF%BC%9A%0A%20*%20-%20%E4%BB%BB%E6%84%8F%E4%BD%8D%E7%BD%AE%E8%B2%BC%E4%BE%BF%E6%A2%9D%E7%B4%99%EF%BC%88%E6%94%AF%E6%8F%B4%E5%85%83%E7%B4%A0%E9%8C%A8%E9%BB%9E%E3%80%81%E7%A9%BA%E7%99%BD%E9%96%93%E9%9A%99%E3%80%81%E8%87%AA%E9%81%B8%E9%9A%8E%E5%B1%A4%E9%BA%B5%E5%8C%85%E5%B1%91%EF%BC%89%0A%20*%20-%20%E8%87%AA%E7%94%B1%E6%95%98%E8%BF%B0%E4%BB%BB%E6%84%8F%E6%83%B3%E6%B3%95%EF%BC%88%E4%B8%8D%E9%99%90%E4%BF%AE%E6%94%B9%E3%80%81%E6%8F%92%E5%85%A5%E6%96%B0%E7%B5%84%E4%BB%B6%E3%80%81%E9%9D%88%E6%84%9F%E5%80%9F%E9%8F%A1%E3%80%81%E5%88%AA%E9%99%A4%EF%BC%89%0A%20*%20-%20%E6%99%BA%E6%85%A7%E7%92%B0%E5%A2%83%E9%9B%99%E8%BB%8C%E8%BE%A8%E8%AD%98%EF%BC%88%E6%9C%AC%E5%9C%B0%E5%B0%88%E6%A1%88%E7%9B%B4%E6%8C%87%E6%AA%94%E6%A1%88%2F%E8%B7%AF%E7%94%B1%20vs%20%E5%A4%96%E7%AB%99%E8%87%AA%E5%8B%95%E5%B8%B6%E5%85%A5%E7%B6%B2%E5%9D%80%E8%88%87%E5%93%81%E7%89%8C%E8%AA%9E%E5%A2%83%EF%BC%89%0A%20*%20-%20%F0%9F%8C%90%20%E4%B8%80%E9%8D%B5%E8%90%83%E5%8F%96%E5%85%A8%E9%A0%81%E8%A8%AD%E8%A8%88%E7%B3%BB%E7%B5%B1%EF%BC%88%E9%85%8D%E8%89%B2%E7%9B%A4%E3%80%81%E5%AD%97%E9%AB%94%E9%9A%8E%E5%B1%A4%E3%80%81%E5%9C%93%E8%A7%92%E9%99%B0%E5%BD%B1%E3%80%81%E9%A0%81%E9%9D%A2%E9%AA%A8%E6%9E%B6%EF%BC%89%0A%20*%20-%20%E7%B2%BE%E7%B7%BB%E5%9C%96%E9%87%98%E6%87%B8%E5%81%9C%E5%B1%95%E9%96%8B%E3%80%81%E5%B0%B1%E5%9C%B0%E7%B7%A8%E8%BC%AF%E3%80%81%E5%88%AA%E9%99%A4%0A%20*%20-%20%E9%9B%B6%E5%A4%96%E9%83%A8%E4%BE%9D%E8%B3%B4%E3%80%81%E7%B4%94%E5%8E%9F%E7%94%9F%20JS%E3%80%81%E7%9B%B8%E5%AE%B9%20CSP%0A%20*%2F%0A(function%20()%20%7B%0A%20%20if%20(window.__AGY_STICKY_LOADED__)%20%7B%0A%20%20%20%20const%20toggle%20%3D%20document.getElementById('agy-toggle-btn')%3B%0A%20%20%20%20if%20(toggle)%20toggle.click()%3B%0A%20%20%20%20return%3B%0A%20%20%7D%0A%20%20window.__AGY_STICKY_LOADED__%20%3D%20true%3B%0A%0A%20%20let%20isAnnotating%20%3D%20false%3B%0A%20%20let%20notes%20%3D%20%5B%5D%3B%0A%20%20let%20currentTarget%20%3D%20null%3B%0A%20%20let%20ancestorsList%20%3D%20%5B%5D%3B%0A%0A%20%20%2F%2F%201.%20%E5%BB%BA%E7%AB%8B%20UI%20%E6%A0%B9%E5%AE%B9%E5%99%A8%0A%20%20const%20fixedRoot%20%3D%20document.createElement('div')%3B%0A%20%20fixedRoot.id%20%3D%20'agy-fixed-root'%3B%0A%20%20fixedRoot.style.cssText%20%3D%20'position%3Afixed%3Btop%3A0%3Bleft%3A0%3Bwidth%3A100%25%3Bheight%3A100%25%3Bpointer-events%3Anone%3Bz-index%3A9999999%3Bfont-family%3Asystem-ui%2C-apple-system%2CBlinkMacSystemFont%2C%22Segoe%20UI%22%2CRoboto%2Csans-serif%3B'%3B%0A%20%20document.body.appendChild(fixedRoot)%3B%0A%0A%20%20const%20scrollRoot%20%3D%20document.createElement('div')%3B%0A%20%20scrollRoot.id%20%3D%20'agy-scroll-root'%3B%0A%20%20scrollRoot.style.cssText%20%3D%20'position%3Aabsolute%3Btop%3A0%3Bleft%3A0%3Bwidth%3A100%25%3Bmin-height%3A100%25%3Bpointer-events%3Anone%3Bz-index%3A9999990%3B'%3B%0A%20%20document.body.appendChild(scrollRoot)%3B%0A%0A%20%20%2F%2F%20%E6%87%B8%E5%81%9C%E9%AB%98%E4%BA%AE%E6%A1%86%0A%20%20const%20hoverBox%20%3D%20document.createElement('div')%3B%0A%20%20hoverBox.style.cssText%20%3D%20'position%3Afixed%3Bpointer-events%3Anone%3Bborder%3A2px%20dashed%20%23f59e0b%3Bbackground%3Argba(245%2C158%2C11%2C0.12)%3Bdisplay%3Anone%3Bz-index%3A10000000%3Bborder-radius%3A6px%3Bbox-sizing%3Aborder-box%3Btransition%3Atop%200.04s%20ease%2C%20left%200.04s%20ease%2C%20width%200.04s%20ease%2C%20height%200.04s%20ease%3B'%3B%0A%20%20fixedRoot.appendChild(hoverBox)%3B%0A%0A%20%20%2F%2F%20%E5%90%90%E5%8F%B8%E9%80%9A%E7%9F%A5%0A%20%20const%20toast%20%3D%20document.createElement('div')%3B%0A%20%20toast.style.cssText%20%3D%20%60%0A%20%20%20%20position%3A%20fixed%3B%0A%20%20%20%20top%3A%2024px%3B%0A%20%20%20%20left%3A%2050%25%3B%0A%20%20%20%20transform%3A%20translateX(-50%25)%3B%0A%20%20%20%20background%3A%20%23059669%3B%0A%20%20%20%20color%3A%20white%3B%0A%20%20%20%20font-size%3A%2013px%3B%0A%20%20%20%20font-weight%3A%20600%3B%0A%20%20%20%20padding%3A%209px%2020px%3B%0A%20%20%20%20border-radius%3A%209999px%3B%0A%20%20%20%20box-shadow%3A%200%208px%2024px%20rgba(0%2C0%2C0%2C0.4)%3B%0A%20%20%20%20pointer-events%3A%20none%3B%0A%20%20%20%20opacity%3A%200%3B%0A%20%20%20%20transition%3A%20opacity%200.25s%20ease%2C%20transform%200.25s%20ease%3B%0A%20%20%20%20z-index%3A%2010000020%3B%0A%20%20%20%20white-space%3A%20nowrap%3B%0A%20%20%60%3B%0A%20%20fixedRoot.appendChild(toast)%3B%0A%0A%20%20let%20toastTimer%20%3D%20null%3B%0A%20%20function%20showToast(msg%2C%20bg%20%3D%20'%23059669')%20%7B%0A%20%20%20%20clearTimeout(toastTimer)%3B%0A%20%20%20%20toast.innerText%20%3D%20msg%3B%0A%20%20%20%20toast.style.background%20%3D%20bg%3B%0A%20%20%20%20toast.style.opacity%20%3D%20'1'%3B%0A%20%20%20%20toast.style.transform%20%3D%20'translateX(-50%25)%20translateY(4px)'%3B%0A%20%20%20%20toastTimer%20%3D%20setTimeout(()%20%3D%3E%20%7B%0A%20%20%20%20%20%20toast.style.opacity%20%3D%20'0'%3B%0A%20%20%20%20%20%20toast.style.transform%20%3D%20'translateX(-50%25)%20translateY(0)'%3B%0A%20%20%20%20%7D%2C%202800)%3B%0A%20%20%7D%0A%0A%20%20%2F%2F%202.%20%E6%87%B8%E6%B5%AE%E5%B7%A5%E5%85%B7%E5%88%97%0A%20%20const%20toolbar%20%3D%20document.createElement('div')%3B%0A%20%20toolbar.id%20%3D%20'agy-main-toolbar'%3B%0A%20%20toolbar.style.cssText%20%3D%20%60%0A%20%20%20%20position%3A%20fixed%3B%0A%20%20%20%20bottom%3A%2024px%3B%0A%20%20%20%20right%3A%2024px%3B%0A%20%20%20%20display%3A%20flex%3B%0A%20%20%20%20align-items%3A%20center%3B%0A%20%20%20%20gap%3A%208px%3B%0A%20%20%20%20background%3A%20rgba(15%2C%2023%2C%2042%2C%200.95)%3B%0A%20%20%20%20backdrop-filter%3A%20blur(14px)%3B%0A%20%20%20%20-webkit-backdrop-filter%3A%20blur(14px)%3B%0A%20%20%20%20border%3A%201px%20solid%20rgba(255%2C%20255%2C%20255%2C%200.16)%3B%0A%20%20%20%20padding%3A%207px%2012px%3B%0A%20%20%20%20border-radius%3A%209999px%3B%0A%20%20%20%20box-shadow%3A%200%2012px%2035px%20rgba(0%2C0%2C0%2C0.55)%3B%0A%20%20%20%20pointer-events%3A%20auto%3B%0A%20%20%20%20z-index%3A%2010000005%3B%0A%20%20%20%20user-select%3A%20none%3B%0A%20%20%20%20transition%3A%20transform%200.2s%20ease%3B%0A%20%20%60%3B%0A%20%20toolbar.innerHTML%20%3D%20%60%0A%20%20%20%20%3Cbutton%20id%3D%22agy-toggle-btn%22%20style%3D%22%0A%20%20%20%20%20%20background%3A%20%23f59e0b%3B%0A%20%20%20%20%20%20color%3A%20%230f172a%3B%0A%20%20%20%20%20%20border%3A%20none%3B%0A%20%20%20%20%20%20padding%3A%207px%2014px%3B%0A%20%20%20%20%20%20border-radius%3A%209999px%3B%0A%20%20%20%20%20%20font-size%3A%2013px%3B%0A%20%20%20%20%20%20font-weight%3A%20700%3B%0A%20%20%20%20%20%20cursor%3A%20pointer%3B%0A%20%20%20%20%20%20display%3A%20flex%3B%0A%20%20%20%20%20%20align-items%3A%20center%3B%0A%20%20%20%20%20%20gap%3A%206px%3B%0A%20%20%20%20%20%20box-shadow%3A%200%202px%2010px%20rgba(245%2C158%2C11%2C0.4)%3B%0A%20%20%20%20%20%20outline%3A%20none%3B%0A%20%20%20%20%20%20transition%3A%20all%200.2s%3B%0A%20%20%20%20%22%3E%0A%20%20%20%20%20%20%3Cspan%3E%F0%9F%93%8C%3C%2Fspan%3E%20%3Cspan%20id%3D%22agy-btn-text%22%3E%E8%B2%BC%E4%BE%BF%E6%A2%9D%E7%B4%99%E6%A8%A1%E5%BC%8F%3C%2Fspan%3E%0A%20%20%20%20%3C%2Fbutton%3E%0A%20%20%20%20%3Cbutton%20id%3D%22agy-theme-btn%22%20title%3D%22%E4%B8%80%E7%A7%92%E6%8E%83%E6%8F%8F%E6%95%B4%E9%A0%81%E9%85%8D%E8%89%B2%E3%80%81%E5%AD%97%E9%AB%94%E3%80%81%E5%9C%93%E8%A7%92%E8%88%87%E4%BD%88%E5%B1%80%E9%AA%A8%E6%9E%B6%22%20style%3D%22%0A%20%20%20%20%20%20background%3A%20rgba(255%2C255%2C255%2C0.1)%3B%0A%20%20%20%20%20%20color%3A%20%23f8fafc%3B%0A%20%20%20%20%20%20border%3A%201px%20solid%20rgba(255%2C255%2C255%2C0.2)%3B%0A%20%20%20%20%20%20padding%3A%207px%2013px%3B%0A%20%20%20%20%20%20border-radius%3A%209999px%3B%0A%20%20%20%20%20%20font-size%3A%2013px%3B%0A%20%20%20%20%20%20font-weight%3A%20500%3B%0A%20%20%20%20%20%20cursor%3A%20pointer%3B%0A%20%20%20%20%20%20display%3A%20flex%3B%0A%20%20%20%20%20%20align-items%3A%20center%3B%0A%20%20%20%20%20%20gap%3A%205px%3B%0A%20%20%20%20%20%20outline%3A%20none%3B%0A%20%20%20%20%20%20transition%3A%20background%200.2s%3B%0A%20%20%20%20%22%3E%0A%20%20%20%20%20%20%3Cspan%3E%F0%9F%8C%90%3C%2Fspan%3E%20%E8%90%83%E5%8F%96%E6%95%B4%E9%A0%81%E9%A2%A8%E6%A0%BC%0A%20%20%20%20%3C%2Fbutton%3E%0A%20%20%20%20%3Cbutton%20id%3D%22agy-copy-btn%22%20style%3D%22%0A%20%20%20%20%20%20background%3A%20rgba(255%2C255%2C255%2C0.1)%3B%0A%20%20%20%20%20%20color%3A%20%23f8fafc%3B%0A%20%20%20%20%20%20border%3A%201px%20solid%20rgba(255%2C255%2C255%2C0.2)%3B%0A%20%20%20%20%20%20padding%3A%207px%2013px%3B%0A%20%20%20%20%20%20border-radius%3A%209999px%3B%0A%20%20%20%20%20%20font-size%3A%2013px%3B%0A%20%20%20%20%20%20font-weight%3A%20500%3B%0A%20%20%20%20%20%20cursor%3A%20pointer%3B%0A%20%20%20%20%20%20display%3A%20flex%3B%0A%20%20%20%20%20%20align-items%3A%20center%3B%0A%20%20%20%20%20%20gap%3A%205px%3B%0A%20%20%20%20%20%20outline%3A%20none%3B%0A%20%20%20%20%20%20transition%3A%20background%200.2s%3B%0A%20%20%20%20%22%3E%0A%20%20%20%20%20%20%3Cspan%3E%F0%9F%93%8B%3C%2Fspan%3E%20%E8%A4%87%E8%A3%BD%E4%BE%BF%E6%A2%9D%E7%B4%99%20(%3Cspan%20id%3D%22agy-count%22%3E0%3C%2Fspan%3E)%0A%20%20%20%20%3C%2Fbutton%3E%0A%20%20%20%20%3Cbutton%20id%3D%22agy-exit-btn%22%20title%3D%22%E5%AE%8C%E5%85%A8%E9%9B%A2%E9%96%8B%E4%B8%A6%E9%97%9C%E9%96%89%E5%B7%A5%E5%85%B7%22%20style%3D%22%0A%20%20%20%20%20%20background%3A%20rgba(255%2C255%2C255%2C0.08)%3B%0A%20%20%20%20%20%20color%3A%20%2394a3b8%3B%0A%20%20%20%20%20%20border%3A%201px%20solid%20rgba(255%2C255%2C255%2C0.12)%3B%0A%20%20%20%20%20%20width%3A%2028px%3B%0A%20%20%20%20%20%20height%3A%2028px%3B%0A%20%20%20%20%20%20border-radius%3A%2050%25%3B%0A%20%20%20%20%20%20font-size%3A%2013px%3B%0A%20%20%20%20%20%20font-weight%3A%20bold%3B%0A%20%20%20%20%20%20cursor%3A%20pointer%3B%0A%20%20%20%20%20%20display%3A%20flex%3B%0A%20%20%20%20%20%20align-items%3A%20center%3B%0A%20%20%20%20%20%20justify-content%3A%20center%3B%0A%20%20%20%20%20%20margin-left%3A%202px%3B%0A%20%20%20%20%20%20outline%3A%20none%3B%0A%20%20%20%20%20%20transition%3A%20all%200.15s%20ease%3B%0A%20%20%20%20%22%3E%E2%9C%95%3C%2Fbutton%3E%0A%20%20%60%3B%0A%20%20fixedRoot.appendChild(toolbar)%3B%0A%0A%20%20const%20toggleBtn%20%3D%20toolbar.querySelector('%23agy-toggle-btn')%3B%0A%20%20const%20btnText%20%3D%20toolbar.querySelector('%23agy-btn-text')%3B%0A%20%20const%20themeBtn%20%3D%20toolbar.querySelector('%23agy-theme-btn')%3B%0A%20%20const%20copyBtn%20%3D%20toolbar.querySelector('%23agy-copy-btn')%3B%0A%20%20const%20countSpan%20%3D%20toolbar.querySelector('%23agy-count')%3B%0A%20%20const%20exitBtn%20%3D%20toolbar.querySelector('%23agy-exit-btn')%3B%0A%0A%20%20%2F%2F%20%E5%B7%A5%E5%85%B7%E5%88%97%E6%A8%A3%E5%BC%8F%E4%BA%92%E5%8B%95%0A%20%20%5BthemeBtn%2C%20copyBtn%5D.forEach(btn%20%3D%3E%20%7B%0A%20%20%20%20btn.addEventListener('mouseenter'%2C%20()%20%3D%3E%20btn.style.background%20%3D%20'rgba(255%2C255%2C255%2C0.18)')%3B%0A%20%20%20%20btn.addEventListener('mouseleave'%2C%20()%20%3D%3E%20btn.style.background%20%3D%20'rgba(255%2C255%2C255%2C0.1)')%3B%0A%20%20%7D)%3B%0A%0A%20%20exitBtn.addEventListener('mouseenter'%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20exitBtn.style.background%20%3D%20'%23dc2626'%3B%0A%20%20%20%20exitBtn.style.color%20%3D%20'%23ffffff'%3B%0A%20%20%20%20exitBtn.style.borderColor%20%3D%20'%23ef4444'%3B%0A%20%20%7D)%3B%0A%20%20exitBtn.addEventListener('mouseleave'%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20exitBtn.style.background%20%3D%20'rgba(255%2C255%2C255%2C0.08)'%3B%0A%20%20%20%20exitBtn.style.color%20%3D%20'%2394a3b8'%3B%0A%20%20%20%20exitBtn.style.borderColor%20%3D%20'rgba(255%2C255%2C255%2C0.12)'%3B%0A%20%20%7D)%3B%0A%0A%20%20%2F%2F%20%E5%AE%8C%E5%85%A8%E9%80%80%E5%87%BA%0A%20%20exitBtn.addEventListener('click'%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20if%20(notes.length%20%3E%200)%20%7B%0A%20%20%20%20%20%20if%20(!confirm(%60%E7%9B%AE%E5%89%8D%E7%95%AB%E9%9D%A2%E4%B8%8A%E9%82%84%E6%9C%89%20%24%7Bnotes.length%7D%20%E5%BC%B5%E4%BE%BF%E6%A2%9D%E7%B4%99%E5%B0%9A%E6%9C%AA%E8%A4%87%E8%A3%BD%EF%BC%8C%E7%A2%BA%E5%AE%9A%E8%A6%81%E5%AE%8C%E5%85%A8%E9%97%9C%E9%96%89%E5%97%8E%EF%BC%9F%60))%20%7B%0A%20%20%20%20%20%20%20%20return%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%20%20%20%20closeDialog()%3B%0A%20%20%20%20fixedRoot.remove()%3B%0A%20%20%20%20scrollRoot.remove()%3B%0A%20%20%20%20document.body.style.cursor%20%3D%20''%3B%0A%20%20%20%20window.__AGY_STICKY_LOADED__%20%3D%20false%3B%0A%20%20%7D)%3B%0A%0A%20%20%2F%2F%20%E5%88%87%E6%8F%9B%E4%BE%BF%E6%A2%9D%E7%B4%99%E6%A8%A1%E5%BC%8F%0A%20%20toggleBtn.addEventListener('click'%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20isAnnotating%20%3D%20!isAnnotating%3B%0A%20%20%20%20if%20(isAnnotating)%20%7B%0A%20%20%20%20%20%20toggleBtn.style.background%20%3D%20'%23dc2626'%3B%0A%20%20%20%20%20%20toggleBtn.style.color%20%3D%20'%23ffffff'%3B%0A%20%20%20%20%20%20toggleBtn.style.boxShadow%20%3D%20'0%202px%2010px%20rgba(220%2C38%2C38%2C0.4)'%3B%0A%20%20%20%20%20%20btnText.innerText%20%3D%20'%E9%80%80%E5%87%BA%E8%B2%BC%E7%B4%99%E6%A8%A1%E5%BC%8F'%3B%0A%20%20%20%20%20%20document.body.style.cursor%20%3D%20'crosshair'%3B%0A%20%20%20%20%20%20showToast('%F0%9F%93%8C%20%E4%BE%BF%E6%A2%9D%E7%B4%99%E6%A8%A1%E5%BC%8F%E5%B7%B2%E9%96%8B%E5%95%9F%EF%BC%9A%E9%BB%9E%E6%93%8A%E7%95%AB%E9%9D%A2%E4%B8%8A%E4%BB%BB%E4%BD%95%E5%85%83%E7%B4%A0%E6%88%96%E7%A9%BA%E7%99%BD%E8%99%95%E5%8D%B3%E5%8F%AF%E8%B2%BC%E7%B4%99%EF%BC%81'%2C%20'%23d97706')%3B%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20toggleBtn.style.background%20%3D%20'%23f59e0b'%3B%0A%20%20%20%20%20%20toggleBtn.style.color%20%3D%20'%230f172a'%3B%0A%20%20%20%20%20%20toggleBtn.style.boxShadow%20%3D%20'0%202px%2010px%20rgba(245%2C158%2C11%2C0.4)'%3B%0A%20%20%20%20%20%20btnText.innerText%20%3D%20'%E8%B2%BC%E4%BE%BF%E6%A2%9D%E7%B4%99%E6%A8%A1%E5%BC%8F'%3B%0A%20%20%20%20%20%20document.body.style.cursor%20%3D%20''%3B%0A%20%20%20%20%20%20hoverBox.style.display%20%3D%20'none'%3B%0A%20%20%20%20%20%20closeDialog()%3B%0A%20%20%20%20%7D%0A%20%20%7D)%3B%0A%0A%20%20%2F%2F%203.%20%E6%99%BA%E6%85%A7%E7%92%B0%E5%A2%83%E9%9B%99%E8%BB%8C%E8%BE%A8%E8%AD%98%E8%88%87%E7%B5%95%E5%B0%8D%E8%B7%AF%E5%BE%91%E8%A7%A3%E6%9E%90%0A%20%20function%20getLocalAbsolutePath()%20%7B%0A%20%20%20%20let%20p%20%3D%20decodeURIComponent(window.location.pathname)%3B%0A%20%20%20%20%2F%2F%20Windows%20%E8%B7%AF%E5%BE%91%E6%AD%A3%E8%A6%8F%E5%8C%96%EF%BC%9A%E5%8E%BB%E9%99%A4%E9%96%8B%E9%A0%AD%E6%96%9C%E7%B7%9A%20(%E5%A6%82%20%2FC%3A%2F...%20%E8%BD%89%E7%82%BA%20C%3A%2F...)%0A%20%20%20%20if%20(%2F%5E%5C%2F%5Ba-zA-Z%5D%3A%2F.test(p))%20%7B%0A%20%20%20%20%20%20p%20%3D%20p.substring(1)%3B%0A%20%20%20%20%7D%0A%20%20%20%20return%20p%3B%0A%20%20%7D%0A%0A%20%20function%20getEnvironmentContext()%20%7B%0A%20%20%20%20const%20loc%20%3D%20window.location%3B%0A%20%20%20%20const%20isLocalhost%20%3D%20loc.hostname%20%3D%3D%3D%20'localhost'%20%7C%7C%20loc.hostname%20%3D%3D%3D%20'127.0.0.1'%3B%0A%20%20%20%20const%20isFile%20%3D%20loc.protocol%20%3D%3D%3D%20'file%3A'%3B%0A%0A%20%20%20%20if%20(isFile)%20%7B%0A%20%20%20%20%20%20const%20absPath%20%3D%20getLocalAbsolutePath()%3B%0A%20%20%20%20%20%20return%20%7B%0A%20%20%20%20%20%20%20%20isLocal%3A%20true%2C%0A%20%20%20%20%20%20%20%20type%3A%20'local-file'%2C%0A%20%20%20%20%20%20%20%20header%3A%20%60%E3%80%90%E6%9C%AC%E5%9C%B0%E6%AA%94%E6%A1%88%E8%A6%96%E8%A6%BA%E4%BE%BF%E6%A2%9D%E7%B4%99%E3%80%91%5Cn-%20**%E6%AA%94%E6%A1%88%E8%B7%AF%E5%BE%91**%EF%BC%9A%5C%60%24%7BabsPath%7D%5C%60%60%0A%20%20%20%20%20%20%7D%3B%0A%20%20%20%20%7D%20else%20if%20(isLocalhost)%20%7B%0A%20%20%20%20%20%20const%20fullUrl%20%3D%20%60%24%7Bloc.origin%7D%24%7Bloc.pathname%7D%24%7Bloc.search%7D%24%7Bloc.hash%7D%60%3B%0A%20%20%20%20%20%20return%20%7B%0A%20%20%20%20%20%20%20%20isLocal%3A%20true%2C%0A%20%20%20%20%20%20%20%20type%3A%20'localhost'%2C%0A%20%20%20%20%20%20%20%20header%3A%20%60%E3%80%90%E6%9C%AC%E5%9C%B0%E4%BC%BA%E6%9C%8D%E5%99%A8%E8%A6%96%E8%A6%BA%E4%BE%BF%E6%A2%9D%E7%B4%99%E3%80%91%5Cn-%20**%E4%BC%BA%E6%9C%8D%E5%99%A8%E8%B7%AF%E7%94%B1**%EF%BC%9A%5C%60%24%7BfullUrl%7D%5C%60%60%0A%20%20%20%20%20%20%7D%3B%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20return%20%7B%0A%20%20%20%20%20%20%20%20isLocal%3A%20false%2C%0A%20%20%20%20%20%20%20%20type%3A%20'public-web'%2C%0A%20%20%20%20%20%20%20%20header%3A%20%60%E3%80%90%E5%A4%96%E9%83%A8%E7%B6%B2%E7%AB%99%E5%8F%83%E8%80%83%E4%BE%BF%E6%A2%9D%E7%B4%99%E3%80%91%5Cn-%20**%E4%BE%86%E6%BA%90%E7%B6%B2%E5%9D%80**%EF%BC%9A%24%7Bloc.origin%7D%24%7Bloc.pathname%7D%5Cn-%20**%E7%B6%B2%E9%A0%81%E6%A8%99%E9%A1%8C**%EF%BC%9A%24%7Bdocument.title%20%7C%7C%20'%E5%A4%96%E9%83%A8%E7%B6%B2%E9%A0%81'%7D%60%0A%20%20%20%20%20%20%7D%3B%0A%20%20%20%20%7D%0A%20%20%7D%0A%0A%20%20%2F%2F%204.%20%E5%8F%96%E5%BE%97%E5%85%83%E7%B4%A0%E8%AA%9E%E6%84%8F%E6%A8%99%E7%B1%A4%E8%88%87%E6%A8%A3%E5%BC%8F%E8%BC%94%E5%8A%A9%0A%20%20function%20getSafeClassName(el)%20%7B%0A%20%20%20%20if%20(!el)%20return%20''%3B%0A%20%20%20%20if%20(typeof%20el.className%20%3D%3D%3D%20'string')%20return%20el.className.trim()%3B%0A%20%20%20%20if%20(el.className%20%26%26%20typeof%20el.className.baseVal%20%3D%3D%3D%20'string')%20return%20el.className.baseVal.trim()%3B%0A%20%20%20%20return%20''%3B%0A%20%20%7D%0A%0A%20%20function%20getReadableSelector(el)%20%7B%0A%20%20%20%20if%20(!el%20%7C%7C%20el%20%3D%3D%3D%20document.body%20%7C%7C%20el%20%3D%3D%3D%20document.documentElement)%20return%20'%E9%A0%81%E9%9D%A2%E5%AE%B9%E5%99%A8%2F%E7%A9%BA%E7%99%BD%E7%B8%AB%E9%9A%99'%3B%0A%20%20%20%20const%20tag%20%3D%20el.tagName.toLowerCase()%3B%0A%20%20%20%20const%20id%20%3D%20el.id%20%3F%20%60%23%24%7Bel.id%7D%60%20%3A%20''%3B%0A%20%20%20%20let%20classSnippet%20%3D%20''%3B%0A%20%20%20%20const%20rawClass%20%3D%20getSafeClassName(el)%3B%0A%20%20%20%20if%20(rawClass)%20%7B%0A%20%20%20%20%20%20const%20parts%20%3D%20rawClass.split(%2F%5Cs%2B%2F).filter(c%20%3D%3E%20!c.startsWith('agy-')%20%26%26%20c.length%20%3C%2030).slice(0%2C%202)%3B%0A%20%20%20%20%20%20if%20(parts.length%20%3E%200)%20classSnippet%20%3D%20'.'%20%2B%20parts.join('.')%3B%0A%20%20%20%20%7D%0A%20%20%20%20const%20textSnippet%20%3D%20el.innerText%20%26%26%20el.innerText.trim()%20%3F%20%60%20%22%24%7Bel.innerText.trim().slice(0%2C%2016)%7D%22%60%20%3A%20''%3B%0A%20%20%20%20return%20%60%3C%24%7Btag%7D%24%7Bid%7D%24%7BclassSnippet%7D%3E%24%7BtextSnippet%7D%60%3B%0A%20%20%7D%0A%0A%20%20function%20getAncestors(el)%20%7B%0A%20%20%20%20const%20list%20%3D%20%5B%5D%3B%0A%20%20%20%20let%20cur%20%3D%20el%3B%0A%20%20%20%20while%20(cur%20%26%26%20cur%20!%3D%3D%20document.body%20%26%26%20cur%20!%3D%3D%20document.documentElement%20%26%26%20list.length%20%3C%205)%20%7B%0A%20%20%20%20%20%20if%20(!fixedRoot.contains(cur)%20%26%26%20!scrollRoot.contains(cur))%20%7B%0A%20%20%20%20%20%20%20%20list.push(cur)%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20cur%20%3D%20cur.parentElement%3B%0A%20%20%20%20%7D%0A%20%20%20%20return%20list%3B%0A%20%20%7D%0A%0A%20%20function%20updateHoverBox(el)%20%7B%0A%20%20%20%20if%20(!el%20%7C%7C%20!isAnnotating%20%7C%7C%20el%20%3D%3D%3D%20document.body%20%7C%7C%20el%20%3D%3D%3D%20document.documentElement)%20%7B%0A%20%20%20%20%20%20hoverBox.style.display%20%3D%20'none'%3B%0A%20%20%20%20%20%20return%3B%0A%20%20%20%20%7D%0A%20%20%20%20const%20rect%20%3D%20el.getBoundingClientRect()%3B%0A%20%20%20%20if%20(rect.width%20%3D%3D%3D%200%20%26%26%20rect.height%20%3D%3D%3D%200)%20%7B%0A%20%20%20%20%20%20hoverBox.style.display%20%3D%20'none'%3B%0A%20%20%20%20%20%20return%3B%0A%20%20%20%20%7D%0A%20%20%20%20hoverBox.style.display%20%3D%20'block'%3B%0A%20%20%20%20hoverBox.style.top%20%3D%20rect.top%20%2B%20'px'%3B%0A%20%20%20%20hoverBox.style.left%20%3D%20rect.left%20%2B%20'px'%3B%0A%20%20%20%20hoverBox.style.width%20%3D%20rect.width%20%2B%20'px'%3B%0A%20%20%20%20hoverBox.style.height%20%3D%20rect.height%20%2B%20'px'%3B%0A%20%20%7D%0A%0A%20%20document.addEventListener('mousemove'%2C%20(e)%20%3D%3E%20%7B%0A%20%20%20%20if%20(!isAnnotating)%20return%3B%0A%20%20%20%20if%20(fixedRoot.contains(e.target)%20%7C%7C%20scrollRoot.contains(e.target))%20return%3B%0A%20%20%20%20updateHoverBox(e.target)%3B%0A%20%20%7D%2C%20true)%3B%0A%0A%20%20window.addEventListener('scroll'%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20if%20(!isAnnotating)%20return%3B%0A%20%20%20%20if%20(currentTarget)%20updateHoverBox(currentTarget)%3B%0A%20%20%7D%2C%20%7B%20passive%3A%20true%20%7D)%3B%0A%0A%20%20%2F%2F%205.%20%E9%BB%9E%E6%93%8A%E8%B2%BC%E4%BE%BF%E6%A2%9D%E7%B4%99%0A%20%20document.addEventListener('click'%2C%20(e)%20%3D%3E%20%7B%0A%20%20%20%20if%20(!isAnnotating)%20return%3B%0A%20%20%20%20if%20(fixedRoot.contains(e.target)%20%7C%7C%20scrollRoot.contains(e.target))%20return%3B%0A%0A%20%20%20%20e.preventDefault()%3B%0A%20%20%20%20e.stopPropagation()%3B%0A%0A%20%20%20%20currentTarget%20%3D%20e.target%3B%0A%20%20%20%20ancestorsList%20%3D%20getAncestors(currentTarget)%3B%0A%0A%20%20%20%20const%20clickPageX%20%3D%20e.pageX%3B%0A%20%20%20%20const%20clickPageY%20%3D%20e.pageY%3B%0A%20%20%20%20const%20clickClientX%20%3D%20e.clientX%3B%0A%20%20%20%20const%20clickClientY%20%3D%20e.clientY%3B%0A%0A%20%20%20%20openStickyDialog(currentTarget%2C%20clickPageX%2C%20clickPageY%2C%20clickClientX%2C%20clickClientY)%3B%0A%20%20%7D%2C%20true)%3B%0A%0A%20%20function%20closeDialog()%20%7B%0A%20%20%20%20const%20existing%20%3D%20document.getElementById('agy-active-dialog')%3B%0A%20%20%20%20if%20(existing)%20existing.remove()%3B%0A%20%20%7D%0A%0A%20%20%2F%2F%206.%20%E4%BE%BF%E6%A2%9D%E7%B4%99%E8%BC%B8%E5%85%A5%E5%8D%A1%E7%89%87%0A%20%20function%20openStickyDialog(target%2C%20pageX%2C%20pageY%2C%20clientX%2C%20clientY%2C%20editNoteId%20%3D%20null)%20%7B%0A%20%20%20%20closeDialog()%3B%0A%20%20%20%20currentTarget%20%3D%20target%3B%0A%20%20%20%20updateHoverBox(currentTarget)%3B%0A%0A%20%20%20%20const%20dialog%20%3D%20document.createElement('div')%3B%0A%20%20%20%20dialog.id%20%3D%20'agy-active-dialog'%3B%0A%0A%20%20%20%20let%20top%20%3D%20clientY%20%2B%2012%3B%0A%20%20%20%20let%20left%20%3D%20clientX%20%2B%2012%3B%0A%20%20%20%20if%20(left%20%2B%20330%20%3E%20window.innerWidth)%20left%20%3D%20window.innerWidth%20-%20340%3B%0A%20%20%20%20if%20(top%20%2B%20280%20%3E%20window.innerHeight)%20top%20%3D%20clientY%20-%20280%3B%0A%20%20%20%20if%20(top%20%3C%2010)%20top%20%3D%2010%3B%0A%20%20%20%20if%20(left%20%3C%2010)%20left%20%3D%2010%3B%0A%0A%20%20%20%20dialog.style.cssText%20%3D%20%60%0A%20%20%20%20%20%20position%3A%20fixed%3B%0A%20%20%20%20%20%20top%3A%20%24%7Btop%7Dpx%3B%0A%20%20%20%20%20%20left%3A%20%24%7Bleft%7Dpx%3B%0A%20%20%20%20%20%20width%3A%20320px%3B%0A%20%20%20%20%20%20background%3A%20%230f172a%3B%0A%20%20%20%20%20%20color%3A%20%23f8fafc%3B%0A%20%20%20%20%20%20border%3A%201px%20solid%20%23f59e0b%3B%0A%20%20%20%20%20%20border-radius%3A%2012px%3B%0A%20%20%20%20%20%20padding%3A%2014px%3B%0A%20%20%20%20%20%20box-shadow%3A%200%2020px%2045px%20rgba(0%2C0%2C0%2C0.65)%2C%200%200%2015px%20rgba(245%2C158%2C11%2C0.25)%3B%0A%20%20%20%20%20%20pointer-events%3A%20auto%3B%0A%20%20%20%20%20%20z-index%3A%2010000010%3B%0A%20%20%20%20%20%20font-size%3A%2013px%3B%0A%20%20%20%20%60%3B%0A%0A%20%20%20%20const%20breadcrumbsHtml%20%3D%20ancestorsList.map((node%2C%20index)%20%3D%3E%20%7B%0A%20%20%20%20%20%20const%20isSelected%20%3D%20node%20%3D%3D%3D%20currentTarget%3B%0A%20%20%20%20%20%20const%20tag%20%3D%20node.tagName.toLowerCase()%3B%0A%20%20%20%20%20%20const%20rawClass%20%3D%20getSafeClassName(node)%3B%0A%20%20%20%20%20%20const%20firstClass%20%3D%20rawClass%20%3F%20'.'%20%2B%20rawClass.split(%2F%5Cs%2B%2F)%5B0%5D%20%3A%20''%3B%0A%20%20%20%20%20%20const%20label%20%3D%20%60%24%7Btag%7D%24%7BfirstClass%7D%60%3B%0A%20%20%20%20%20%20return%20%60%0A%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22agy-crumb-btn%22%20data-index%3D%22%24%7Bindex%7D%22%20style%3D%22%0A%20%20%20%20%20%20%20%20%20%20background%3A%20%24%7BisSelected%20%3F%20'%23f59e0b'%20%3A%20'%231e293b'%7D%3B%0A%20%20%20%20%20%20%20%20%20%20color%3A%20%24%7BisSelected%20%3F%20'%230f172a'%20%3A%20'%2394a3b8'%7D%3B%0A%20%20%20%20%20%20%20%20%20%20border%3A%201px%20solid%20%24%7BisSelected%20%3F%20'%23f59e0b'%20%3A%20'%23334155'%7D%3B%0A%20%20%20%20%20%20%20%20%20%20font-weight%3A%20%24%7BisSelected%20%3F%20'700'%20%3A%20'500'%7D%3B%0A%20%20%20%20%20%20%20%20%20%20border-radius%3A%204px%3B%0A%20%20%20%20%20%20%20%20%20%20padding%3A%202px%206px%3B%0A%20%20%20%20%20%20%20%20%20%20font-size%3A%2011px%3B%0A%20%20%20%20%20%20%20%20%20%20cursor%3A%20pointer%3B%0A%20%20%20%20%20%20%20%20%20%20max-width%3A%2090px%3B%0A%20%20%20%20%20%20%20%20%20%20overflow%3A%20hidden%3B%0A%20%20%20%20%20%20%20%20%20%20text-overflow%3A%20ellipsis%3B%0A%20%20%20%20%20%20%20%20%20%20white-space%3A%20nowrap%3B%0A%20%20%20%20%20%20%20%20%20%20outline%3A%20none%3B%0A%20%20%20%20%20%20%20%20%22%3E%24%7Blabel%7D%3C%2Fbutton%3E%0A%20%20%20%20%20%20%60%3B%0A%20%20%20%20%7D).reverse().join('%3Cspan%20style%3D%22color%3A%2364748b%3Bfont-size%3A10px%3B%22%3E%E2%9E%94%3C%2Fspan%3E')%3B%0A%0A%20%20%20%20const%20initialText%20%3D%20editNoteId%20%3F%20(notes.find(n%20%3D%3E%20n.id%20%3D%3D%3D%20editNoteId)%3F.text%20%7C%7C%20'')%20%3A%20''%3B%0A%0A%20%20%20%20dialog.innerHTML%20%3D%20%60%0A%20%20%20%20%20%20%3Cdiv%20style%3D%22display%3Aflex%3Balign-items%3Acenter%3Bjustify-content%3Aspace-between%3Bmargin-bottom%3A8px%3B%22%3E%0A%20%20%20%20%20%20%20%20%3Cspan%20style%3D%22font-size%3A12px%3Bfont-weight%3A700%3Bcolor%3A%23f59e0b%3Bdisplay%3Aflex%3Balign-items%3Acenter%3Bgap%3A4px%3B%22%3E%0A%20%20%20%20%20%20%20%20%20%20%F0%9F%93%8C%20%24%7BeditNoteId%20%3F%20'%E7%B7%A8%E8%BC%AF%E4%BE%BF%E6%A2%9D%E7%B4%99%20%23'%20%2B%20editNoteId%20%3A%20'%E8%B2%BC%E4%B8%8A%E6%96%B0%E4%BE%BF%E6%A2%9D%E7%B4%99'%7D%0A%20%20%20%20%20%20%20%20%3C%2Fspan%3E%0A%20%20%20%20%20%20%20%20%3Cspan%20style%3D%22font-size%3A11px%3Bcolor%3A%2394a3b8%3B%22%3E%E8%87%AA%E7%94%B1%E5%A1%AB%E5%AF%AB%E4%BB%BB%E4%BD%95%E6%83%B3%E6%B3%95%3C%2Fspan%3E%0A%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3Cdiv%20style%3D%22font-size%3A11px%3Bcolor%3A%23cbd5e1%3Bmargin-bottom%3A8px%3Bbackground%3A%231e293b%3Bpadding%3A5px%208px%3Bborder-radius%3A6px%3Bword-break%3Abreak-all%3B%22%3E%0A%20%20%20%20%20%20%20%20%E4%BD%8D%E7%BD%AE%E9%8C%A8%E9%BB%9E%EF%BC%9A%3Cspan%20id%3D%22agy-selected-tag%22%20style%3D%22color%3A%23fbbf24%3Bfont-family%3Amonospace%3Bfont-weight%3A600%3B%22%3E%24%7BgetReadableSelector(currentTarget)%7D%3C%2Fspan%3E%0A%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%24%7BancestorsList.length%20%3E%201%20%3F%20%60%0A%20%20%20%20%20%20%20%20%3Cdiv%20style%3D%22font-size%3A10px%3Bcolor%3A%2394a3b8%3Bmargin-bottom%3A4px%3B%22%3E%E5%88%87%E6%8F%9B%E5%A4%96%E5%B1%A4%E5%AE%B9%E5%99%A8%EF%BC%9A%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20id%3D%22agy-crumbs%22%20style%3D%22display%3Aflex%3Balign-items%3Acenter%3Bgap%3A4px%3Bflex-wrap%3Awrap%3Bmargin-bottom%3A10px%3B%22%3E%0A%20%20%20%20%20%20%20%20%20%20%24%7BbreadcrumbsHtml%7D%0A%20%20%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%60%20%3A%20''%7D%0A%20%20%20%20%20%20%3Ctextarea%20id%3D%22agy-note-input%22%20placeholder%3D%22%E9%9A%A8%E5%BF%83%E6%89%80%E6%AC%B2%E6%95%98%E8%BF%B0%E4%BB%BB%E4%BD%95%E5%85%A7%E5%AE%B9%EF%BC%8C%E4%BE%8B%E5%A6%82%EF%BC%9A%26%2310%3B%E2%80%A2%20%E9%80%99%E8%A3%A1%E6%83%B3%E6%8F%92%E5%85%A5%E4%B8%80%E6%8E%92%E7%94%A8%E6%88%B6%E8%A9%95%E5%83%B9%E6%98%9F%E7%B4%9A%26%2310%3B%E2%80%A2%20%E9%80%99%E5%80%8B%E6%8C%89%E9%88%95%E6%94%B9%E6%B7%B1%E7%B4%AB%E6%BC%B8%E5%B1%A4%E4%B8%A6%E5%8A%A0%E5%A4%A7%E5%9C%93%E8%A7%92%26%2310%3B%E2%80%A2%20%E9%80%99%E6%95%B4%E5%A1%8A%E7%A9%BA%E7%99%BD%E8%99%95%E5%A4%AA%E5%AF%AC%EF%BC%8C%E7%B8%AE%E5%B0%8F%E9%96%93%E8%B7%9D%22%20style%3D%22%0A%20%20%20%20%20%20%20%20width%3A%20100%25%3B%0A%20%20%20%20%20%20%20%20box-sizing%3A%20border-box%3B%0A%20%20%20%20%20%20%20%20height%3A%2084px%3B%0A%20%20%20%20%20%20%20%20background%3A%20%23020617%3B%0A%20%20%20%20%20%20%20%20color%3A%20white%3B%0A%20%20%20%20%20%20%20%20border%3A%201px%20solid%20%23334155%3B%0A%20%20%20%20%20%20%20%20border-radius%3A%208px%3B%0A%20%20%20%20%20%20%20%20padding%3A%208px%2010px%3B%0A%20%20%20%20%20%20%20%20font-size%3A%2013px%3B%0A%20%20%20%20%20%20%20%20line-height%3A%201.45%3B%0A%20%20%20%20%20%20%20%20resize%3A%20none%3B%0A%20%20%20%20%20%20%20%20outline%3A%20none%3B%0A%20%20%20%20%20%20%22%3E%24%7BinitialText%7D%3C%2Ftextarea%3E%0A%20%20%20%20%20%20%3Cdiv%20style%3D%22display%3Aflex%3Bjustify-content%3Aflex-end%3Bgap%3A8px%3Bmargin-top%3A10px%3B%22%3E%0A%20%20%20%20%20%20%20%20%3Cbutton%20id%3D%22agy-cancel-btn%22%20style%3D%22background%3Atransparent%3Bcolor%3A%2394a3b8%3Bborder%3Anone%3Bfont-size%3A12px%3Bcursor%3Apointer%3Bpadding%3A5px%2010px%3B%22%3E%E5%8F%96%E6%B6%88%3C%2Fbutton%3E%0A%20%20%20%20%20%20%20%20%3Cbutton%20id%3D%22agy-save-btn%22%20style%3D%22background%3A%23f59e0b%3Bcolor%3A%230f172a%3Bborder%3Anone%3Bborder-radius%3A6px%3Bfont-size%3A12px%3Bfont-weight%3A700%3Bpadding%3A6px%2015px%3Bcursor%3Apointer%3B%22%3E%0A%20%20%20%20%20%20%20%20%20%20%24%7BeditNoteId%20%3F%20'%E6%9B%B4%E6%96%B0%E4%BE%BF%E6%A2%9D%E7%B4%99'%20%3A%20'%F0%9F%93%8C%20%E9%87%98%E4%B8%8A%E4%BE%BF%E6%A2%9D%E7%B4%99'%7D%0A%20%20%20%20%20%20%20%20%3C%2Fbutton%3E%0A%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%60%3B%0A%0A%20%20%20%20fixedRoot.appendChild(dialog)%3B%0A%0A%20%20%20%20const%20textarea%20%3D%20dialog.querySelector('%23agy-note-input')%3B%0A%20%20%20%20textarea.focus()%3B%0A%0A%20%20%20%20const%20crumbBtns%20%3D%20dialog.querySelectorAll('.agy-crumb-btn')%3B%0A%20%20%20%20crumbBtns.forEach(btn%20%3D%3E%20%7B%0A%20%20%20%20%20%20btn.addEventListener('click'%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20const%20idx%20%3D%20parseInt(btn.getAttribute('data-index')%2C%2010)%3B%0A%20%20%20%20%20%20%20%20currentTarget%20%3D%20ancestorsList%5Bidx%5D%3B%0A%20%20%20%20%20%20%20%20dialog.querySelector('%23agy-selected-tag').innerText%20%3D%20getReadableSelector(currentTarget)%3B%0A%20%20%20%20%20%20%20%20updateHoverBox(currentTarget)%3B%0A%20%20%20%20%20%20%20%20crumbBtns.forEach(b%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20const%20isThis%20%3D%20b%20%3D%3D%3D%20btn%3B%0A%20%20%20%20%20%20%20%20%20%20b.style.background%20%3D%20isThis%20%3F%20'%23f59e0b'%20%3A%20'%231e293b'%3B%0A%20%20%20%20%20%20%20%20%20%20b.style.color%20%3D%20isThis%20%3F%20'%230f172a'%20%3A%20'%2394a3b8'%3B%0A%20%20%20%20%20%20%20%20%20%20b.style.borderColor%20%3D%20isThis%20%3F%20'%23f59e0b'%20%3A%20'%23334155'%3B%0A%20%20%20%20%20%20%20%20%20%20b.style.fontWeight%20%3D%20isThis%20%3F%20'700'%20%3A%20'500'%3B%0A%20%20%20%20%20%20%20%20%7D)%3B%0A%20%20%20%20%20%20%7D)%3B%0A%20%20%20%20%7D)%3B%0A%0A%20%20%20%20dialog.querySelector('%23agy-cancel-btn').addEventListener('click'%2C%20closeDialog)%3B%0A%20%20%20%20dialog.querySelector('%23agy-save-btn').addEventListener('click'%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20%20%20const%20text%20%3D%20textarea.value.trim()%3B%0A%20%20%20%20%20%20if%20(!text)%20%7B%0A%20%20%20%20%20%20%20%20showToast('%E8%AB%8B%E8%BC%B8%E5%85%A5%E4%BE%BF%E6%A2%9D%E7%B4%99%E5%85%A7%E5%AE%B9'%2C%20'%23d97706')%3B%0A%20%20%20%20%20%20%20%20return%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20if%20(editNoteId)%20%7B%0A%20%20%20%20%20%20%20%20updateNote(editNoteId%2C%20text)%3B%0A%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20createStickyPin(currentTarget%2C%20getReadableSelector(currentTarget)%2C%20text%2C%20pageX%2C%20pageY)%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20closeDialog()%3B%0A%20%20%20%20%7D)%3B%0A%20%20%7D%0A%0A%20%20%2F%2F%207.%20%E9%87%98%E5%9C%A8%E7%B6%B2%E9%A0%81%E4%B8%8A%E7%9A%84%E7%B2%BE%E7%BE%8E%E4%BE%BF%E6%A2%9D%E7%B4%99%E5%9C%96%E9%87%98%EF%BC%88%E5%B1%95%E9%96%8B%E6%85%8B%E8%88%87%E7%B7%A8%E8%BC%AF%2F%E5%88%AA%E9%99%A4%EF%BC%89%0A%20%20function%20createStickyPin(target%2C%20selector%2C%20text%2C%20pageX%2C%20pageY)%20%7B%0A%20%20%20%20const%20id%20%3D%20notes.length%20%2B%201%3B%0A%20%20%20%20const%20pin%20%3D%20document.createElement('div')%3B%0A%20%20%20%20pin.className%20%3D%20'agy-sticky-pin'%3B%0A%20%20%20%20pin.style.cssText%20%3D%20%60%0A%20%20%20%20%20%20position%3A%20absolute%3B%0A%20%20%20%20%20%20top%3A%20%24%7BpageY%20-%2014%7Dpx%3B%0A%20%20%20%20%20%20left%3A%20%24%7BpageX%20-%2014%7Dpx%3B%0A%20%20%20%20%20%20width%3A%2028px%3B%0A%20%20%20%20%20%20height%3A%2028px%3B%0A%20%20%20%20%20%20background%3A%20%23f59e0b%3B%0A%20%20%20%20%20%20color%3A%20%230f172a%3B%0A%20%20%20%20%20%20border%3A%202px%20solid%20%23ffffff%3B%0A%20%20%20%20%20%20border-radius%3A%2050%25%3B%0A%20%20%20%20%20%20display%3A%20flex%3B%0A%20%20%20%20%20%20align-items%3A%20center%3B%0A%20%20%20%20%20%20justify-content%3A%20center%3B%0A%20%20%20%20%20%20font-size%3A%2012px%3B%0A%20%20%20%20%20%20font-weight%3A%20800%3B%0A%20%20%20%20%20%20box-shadow%3A%200%204px%2015px%20rgba(0%2C0%2C0%2C0.45)%2C%200%200%2010px%20rgba(245%2C158%2C11%2C0.4)%3B%0A%20%20%20%20%20%20pointer-events%3A%20auto%3B%0A%20%20%20%20%20%20cursor%3A%20pointer%3B%0A%20%20%20%20%20%20z-index%3A%2010000002%3B%0A%20%20%20%20%20%20animation%3A%20agy-pop%200.2s%20ease-out%3B%0A%20%20%20%20%20%20user-select%3A%20none%3B%0A%20%20%20%20%60%3B%0A%20%20%20%20pin.innerText%20%3D%20id%3B%0A%0A%20%20%20%20%2F%2F%20%E6%87%B8%E5%81%9C%E6%B5%AE%E7%8F%BE%E5%B0%8F%E4%BE%BF%E6%A2%9D%E5%8D%A1%0A%20%20%20%20const%20previewCard%20%3D%20document.createElement('div')%3B%0A%20%20%20%20previewCard.style.cssText%20%3D%20%60%0A%20%20%20%20%20%20position%3A%20absolute%3B%0A%20%20%20%20%20%20top%3A%2034px%3B%0A%20%20%20%20%20%20left%3A%200%3B%0A%20%20%20%20%20%20width%3A%20240px%3B%0A%20%20%20%20%20%20background%3A%20%231e293b%3B%0A%20%20%20%20%20%20color%3A%20%23f8fafc%3B%0A%20%20%20%20%20%20border%3A%201px%20solid%20%23f59e0b%3B%0A%20%20%20%20%20%20border-radius%3A%208px%3B%0A%20%20%20%20%20%20padding%3A%2010px%2012px%3B%0A%20%20%20%20%20%20font-size%3A%2012px%3B%0A%20%20%20%20%20%20line-height%3A%201.4%3B%0A%20%20%20%20%20%20box-shadow%3A%200%2010px%2025px%20rgba(0%2C0%2C0%2C0.5)%3B%0A%20%20%20%20%20%20display%3A%20none%3B%0A%20%20%20%20%20%20z-index%3A%2010000005%3B%0A%20%20%20%20%20%20pointer-events%3A%20auto%3B%0A%20%20%20%20%60%3B%0A%20%20%20%20previewCard.innerHTML%20%3D%20%60%0A%20%20%20%20%20%20%3Cdiv%20style%3D%22display%3Aflex%3Bjustify-content%3Aspace-between%3Balign-items%3Acenter%3Bmargin-bottom%3A5px%3Bborder-bottom%3A1px%20solid%20%23334155%3Bpadding-bottom%3A4px%3B%22%3E%0A%20%20%20%20%20%20%20%20%3Cspan%20style%3D%22font-weight%3A700%3Bcolor%3A%23fbbf24%3B%22%3E%F0%9F%93%8C%20%E4%BE%BF%E6%A2%9D%E7%B4%99%20%23%24%7Bid%7D%3C%2Fspan%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20style%3D%22display%3Aflex%3Bgap%3A6px%3B%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22agy-card-edit-btn%22%20style%3D%22background%3Atransparent%3Bborder%3Anone%3Bcolor%3A%2394a3b8%3Bcursor%3Apointer%3Bfont-size%3A11px%3B%22%3E%E2%9C%8F%EF%B8%8F%20%E7%B7%A8%E8%BC%AF%3C%2Fbutton%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22agy-card-del-btn%22%20style%3D%22background%3Atransparent%3Bborder%3Anone%3Bcolor%3A%23ef4444%3Bcursor%3Apointer%3Bfont-size%3A11px%3B%22%3E%F0%9F%97%91%EF%B8%8F%20%E5%88%AA%E9%99%A4%3C%2Fbutton%3E%0A%20%20%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3Cdiv%20style%3D%22font-size%3A10px%3Bcolor%3A%2394a3b8%3Bmargin-bottom%3A4px%3Bword-break%3Abreak-all%3B%22%3E%E4%BD%8D%E7%BD%AE%EF%BC%9A%24%7Bselector%7D%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22agy-card-text%22%20style%3D%22white-space%3Apre-wrap%3Bcolor%3A%23e2e8f0%3B%22%3E%24%7Btext%7D%3C%2Fdiv%3E%0A%20%20%20%20%60%3B%0A%20%20%20%20pin.appendChild(previewCard)%3B%0A%0A%20%20%20%20let%20hideTimer%20%3D%20null%3B%0A%20%20%20%20pin.addEventListener('mouseenter'%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20%20%20clearTimeout(hideTimer)%3B%0A%20%20%20%20%20%20previewCard.style.display%20%3D%20'block'%3B%0A%20%20%20%20%7D)%3B%0A%20%20%20%20pin.addEventListener('mouseleave'%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20%20%20hideTimer%20%3D%20setTimeout(()%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20previewCard.style.display%20%3D%20'none'%3B%0A%20%20%20%20%20%20%7D%2C%20250)%3B%0A%20%20%20%20%7D)%3B%0A%0A%20%20%20%20previewCard.querySelector('.agy-card-edit-btn').addEventListener('click'%2C%20(e)%20%3D%3E%20%7B%0A%20%20%20%20%20%20e.stopPropagation()%3B%0A%20%20%20%20%20%20openStickyDialog(target%2C%20pageX%2C%20pageY%2C%20pageX%20-%20window.scrollX%2C%20pageY%20-%20window.scrollY%2C%20id)%3B%0A%20%20%20%20%7D)%3B%0A%0A%20%20%20%20previewCard.querySelector('.agy-card-del-btn').addEventListener('click'%2C%20(e)%20%3D%3E%20%7B%0A%20%20%20%20%20%20e.stopPropagation()%3B%0A%20%20%20%20%20%20deleteNote(id)%3B%0A%20%20%20%20%7D)%3B%0A%0A%20%20%20%20const%20item%20%3D%20%7B%20id%2C%20target%2C%20selector%2C%20text%2C%20pageX%2C%20pageY%2C%20pinEl%3A%20pin%2C%20previewCard%20%7D%3B%0A%20%20%20%20notes.push(item)%3B%0A%20%20%20%20countSpan.innerText%20%3D%20notes.length%3B%0A%0A%20%20%20%20scrollRoot.appendChild(pin)%3B%0A%20%20%20%20showToast(%60%E2%9C%85%20%E5%B7%B2%E9%87%98%E4%B8%8A%E4%BE%BF%E6%A2%9D%E7%B4%99%20%23%24%7Bid%7D%60%2C%20'%23f59e0b')%3B%0A%20%20%7D%0A%0A%20%20function%20updateNote(id%2C%20newText)%20%7B%0A%20%20%20%20const%20item%20%3D%20notes.find(n%20%3D%3E%20n.id%20%3D%3D%3D%20id)%3B%0A%20%20%20%20if%20(!item)%20return%3B%0A%20%20%20%20item.text%20%3D%20newText%3B%0A%20%20%20%20const%20cardText%20%3D%20item.previewCard.querySelector('.agy-card-text')%3B%0A%20%20%20%20if%20(cardText)%20cardText.innerText%20%3D%20newText%3B%0A%20%20%20%20showToast(%60%E2%9C%85%20%E5%B7%B2%E6%9B%B4%E6%96%B0%E4%BE%BF%E6%A2%9D%E7%B4%99%20%23%24%7Bid%7D%60%2C%20'%23f59e0b')%3B%0A%20%20%7D%0A%0A%20%20function%20deleteNote(id)%20%7B%0A%20%20%20%20const%20item%20%3D%20notes.find(n%20%3D%3E%20n.id%20%3D%3D%3D%20id)%3B%0A%20%20%20%20if%20(!item)%20return%3B%0A%20%20%20%20item.pinEl.remove()%3B%0A%20%20%20%20notes%20%3D%20notes.filter(n%20%3D%3E%20n.id%20!%3D%3D%20id)%3B%0A%20%20%20%20countSpan.innerText%20%3D%20notes.length%3B%0A%20%20%20%20showToast(%60%F0%9F%97%91%EF%B8%8F%20%E5%B7%B2%E5%88%AA%E9%99%A4%E4%BE%BF%E6%A2%9D%E7%B4%99%20%23%24%7Bid%7D%60)%3B%0A%20%20%7D%0A%0A%20%20%2F%2F%208.%20%E8%A4%87%E8%A3%BD%E4%BE%BF%E6%A2%9D%E7%B4%99%E6%B8%85%E5%96%AE%20(%E9%9B%99%E8%BB%8C%E6%A0%BC%E5%BC%8F)%0A%20%20copyBtn.addEventListener('click'%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20if%20(notes.length%20%3D%3D%3D%200)%20%7B%0A%20%20%20%20%20%20showToast('%E7%9B%AE%E5%89%8D%E5%B0%9A%E7%84%A1%E4%BE%BF%E6%A2%9D%E7%B4%99%EF%BC%8C%E8%AB%8B%E5%85%88%E5%9C%A8%E7%95%AB%E9%9D%A2%E4%B8%8A%E9%BB%9E%E6%93%8A%E9%87%98%E4%B8%8A%E6%83%B3%E6%B3%95%EF%BC%81'%2C%20'%23d97706')%3B%0A%20%20%20%20%20%20return%3B%0A%20%20%20%20%7D%0A%0A%20%20%20%20const%20env%20%3D%20getEnvironmentContext()%3B%0A%20%20%20%20let%20text%20%3D%20%60%24%7Benv.header%7D%5Cn%5Cn%60%3B%0A%0A%20%20%20%20notes.forEach((item%2C%20index)%20%3D%3E%20%7B%0A%20%20%20%20%20%20text%20%2B%3D%20%60%F0%9F%93%8C%20**%E4%BE%BF%E6%A2%9D%E7%B4%99%20%23%24%7Bindex%20%2B%201%7D**%EF%BC%88%E4%BD%8D%E7%BD%AE%E9%8C%A8%E9%BB%9E%EF%BC%9A%5C%60%24%7Bitem.selector%7D%5C%60%EF%BC%89%5Cn%60%3B%0A%20%20%20%20%20%20text%20%2B%3D%20%60%3E%20%E3%80%8C%24%7Bitem.text.replace(%2F%5Cn%2Fg%2C%20'%5Cn%3E%20')%7D%E3%80%8D%5Cn%5Cn%60%3B%0A%20%20%20%20%7D)%3B%0A%0A%20%20%20%20if%20(env.isLocal)%20%7B%0A%20%20%20%20%20%20text%20%2B%3D%20%60%E8%AB%8B%E4%BE%9D%E6%93%9A%E4%B8%8A%E8%BF%B0%E4%BE%BF%E6%A2%9D%E7%B4%99%E5%85%A7%E5%AE%B9%E8%88%87%E4%BD%8D%E7%BD%AE%E9%8C%A8%E9%BB%9E%EF%BC%8C%E9%85%8D%E5%90%88%E6%88%91%E7%95%B6%E5%89%8D%E7%9A%84%E5%B0%8D%E8%A9%B1%E6%8C%87%E4%BB%A4%EF%BC%88%E5%A6%82%EF%BC%9A%2Fplan%20%E8%A6%8F%E5%8A%83%E3%80%81%E4%BF%AE%E6%94%B9%E5%AF%A6%E4%BD%9C%E3%80%81%E6%9E%B6%E6%A7%8B%E8%A9%95%E4%BC%B0%E7%AD%89%EF%BC%89%E9%80%B2%E8%A1%8C%E8%99%95%E7%90%86%E3%80%82%60%3B%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20text%20%2B%3D%20%60%E8%AB%8B%E5%8F%83%E8%80%83%E6%AD%A4%E7%B6%B2%E7%AB%99%E4%B9%8B%E8%A6%96%E8%A6%BA%E8%B3%AA%E6%84%9F%E8%88%87%E4%B8%8A%E8%BF%B0%E4%BE%BF%E6%A2%9D%E7%B4%99%E6%9C%9F%E6%9C%9B%EF%BC%8C%E9%85%8D%E5%90%88%E6%88%91%E7%95%B6%E5%89%8D%E7%9A%84%E5%B0%8D%E8%A9%B1%E6%8C%87%E4%BB%A4%E9%80%B2%E8%A1%8C%E8%99%95%E7%90%86%E3%80%82%60%3B%0A%20%20%20%20%7D%0A%0A%20%20%20%20navigator.clipboard.writeText(text).then(()%20%3D%3E%20%7B%0A%20%20%20%20%20%20showToast('%F0%9F%93%8B%20%E5%B7%B2%E8%A4%87%E8%A3%BD%E4%BE%BF%E6%A2%9D%E7%B4%99%E6%B8%85%E5%96%AE%EF%BC%81%E8%AB%8B%E5%9C%A8%20Antigravity%20%E5%B0%8D%E8%A9%B1%E6%A1%86%20Ctrl%2BV%20%E7%99%BC%E9%80%81')%3B%0A%20%20%20%20%7D).catch(()%20%3D%3E%20%7B%0A%20%20%20%20%20%20prompt('%E8%AB%8B%E6%89%8B%E5%8B%95%E8%A4%87%E8%A3%BD%E4%BB%A5%E4%B8%8B%E4%BE%BF%E6%A2%9D%E7%B4%99%E6%B8%85%E5%96%AE%EF%BC%9A'%2C%20text)%3B%0A%20%20%20%20%7D)%3B%0A%20%20%7D)%3B%0A%0A%20%20%2F%2F%209.%20%F0%9F%8C%90%20%E4%B8%80%E9%8D%B5%E8%90%83%E5%8F%96%E5%85%A8%E9%A0%81%E8%A8%AD%E8%A8%88%E9%A2%A8%E6%A0%BC%20(Theme%20Extractor%20Algorithm)%0A%20%20themeBtn.addEventListener('click'%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20showToast('%F0%9F%94%8D%20%E6%AD%A3%E5%9C%A8%E6%8E%83%E6%8F%8F%E5%85%A8%E9%A0%81%20Design%20Tokens...'%2C%20'%233b82f6')%3B%0A%20%20%20%20setTimeout(extractFullPageTheme%2C%20100)%3B%0A%20%20%7D)%3B%0A%0A%20%20function%20extractFullPageTheme()%20%7B%0A%20%20%20%20const%20allElements%20%3D%20Array.from(document.querySelectorAll('body%20*')).filter(el%20%3D%3E%20%7B%0A%20%20%20%20%20%20if%20(fixedRoot.contains(el)%20%7C%7C%20scrollRoot.contains(el))%20return%20false%3B%0A%20%20%20%20%20%20const%20rect%20%3D%20el.getBoundingClientRect()%3B%0A%20%20%20%20%20%20return%20rect.width%20%3E%200%20%26%26%20rect.height%20%3E%200%3B%0A%20%20%20%20%7D)%3B%0A%0A%20%20%20%20%2F%2F%20A.%20%E8%89%B2%E5%BD%A9%E7%B5%B1%E8%A8%88%0A%20%20%20%20const%20bgColors%20%3D%20%7B%7D%3B%0A%20%20%20%20const%20textColors%20%3D%20%7B%7D%3B%0A%20%20%20%20const%20accents%20%3D%20%7B%7D%3B%0A%0A%20%20%20%20allElements.forEach(el%20%3D%3E%20%7B%0A%20%20%20%20%20%20const%20style%20%3D%20window.getComputedStyle(el)%3B%0A%20%20%20%20%20%20const%20bg%20%3D%20style.backgroundColor%3B%0A%20%20%20%20%20%20const%20color%20%3D%20style.color%3B%0A%0A%20%20%20%20%20%20if%20(bg%20%26%26%20bg%20!%3D%3D%20'transparent'%20%26%26%20bg%20!%3D%3D%20'rgba(0%2C%200%2C%200%2C%200)')%20%7B%0A%20%20%20%20%20%20%20%20bgColors%5Bbg%5D%20%3D%20(bgColors%5Bbg%5D%20%7C%7C%200)%20%2B%201%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20if%20(color%20%26%26%20color%20!%3D%3D%20'transparent')%20%7B%0A%20%20%20%20%20%20%20%20textColors%5Bcolor%5D%20%3D%20(textColors%5Bcolor%5D%20%7C%7C%200)%20%2B%201%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%2F%2F%20%E6%8C%89%E9%88%95%E6%88%96%E5%BC%B7%E4%BA%A4%E4%BA%92%E5%85%83%E7%B4%A0%E7%9A%84%E9%A1%8F%E8%89%B2%E8%A6%96%E7%82%BA%20Accent%0A%20%20%20%20%20%20if%20(el.tagName%20%3D%3D%3D%20'BUTTON'%20%7C%7C%20el.tagName%20%3D%3D%3D%20'A')%20%7B%0A%20%20%20%20%20%20%20%20if%20(bg%20%26%26%20bg%20!%3D%3D%20'transparent'%20%26%26%20bg%20!%3D%3D%20'rgba(0%2C%200%2C%200%2C%200)')%20%7B%0A%20%20%20%20%20%20%20%20%20%20accents%5Bbg%5D%20%3D%20(accents%5Bbg%5D%20%7C%7C%200)%20%2B%202%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%7D)%3B%0A%0A%20%20%20%20const%20getTopKeys%20%3D%20(obj%2C%20n%20%3D%203)%20%3D%3E%20Object.entries(obj).sort((a%2C%20b)%20%3D%3E%20b%5B1%5D%20-%20a%5B1%5D).slice(0%2C%20n).map(e%20%3D%3E%20e%5B0%5D)%3B%0A%20%20%20%20const%20topBg%20%3D%20getTopKeys(bgColors%2C%203)%3B%0A%20%20%20%20const%20topText%20%3D%20getTopKeys(textColors%2C%203)%3B%0A%20%20%20%20const%20topAccent%20%3D%20getTopKeys(accents%2C%202)%3B%0A%0A%20%20%20%20%2F%2F%20B.%20%E5%AD%97%E9%AB%94%E8%88%87%E9%9A%8E%E5%B1%A4%0A%20%20%20%20const%20bodyStyle%20%3D%20window.getComputedStyle(document.body)%3B%0A%20%20%20%20const%20fontFamily%20%3D%20bodyStyle.fontFamily%3B%0A%20%20%20%20const%20headings%20%3D%20Array.from(document.querySelectorAll('h1%2C%20h2%2C%20h3')).slice(0%2C%203).map(h%20%3D%3E%20%7B%0A%20%20%20%20%20%20const%20s%20%3D%20window.getComputedStyle(h)%3B%0A%20%20%20%20%20%20return%20%60%24%7Bh.tagName.toLowerCase()%7D%3A%20%24%7Bs.fontSize%7D%20(weight%3A%20%24%7Bs.fontWeight%7D)%60%3B%0A%20%20%20%20%7D)%3B%0A%0A%20%20%20%20%2F%2F%20C.%20%E5%9C%93%E8%A7%92%E8%88%87%E9%99%B0%E5%BD%B1%0A%20%20%20%20const%20radii%20%3D%20%7B%7D%3B%0A%20%20%20%20allElements.forEach(el%20%3D%3E%20%7B%0A%20%20%20%20%20%20const%20r%20%3D%20window.getComputedStyle(el).borderRadius%3B%0A%20%20%20%20%20%20if%20(r%20%26%26%20r%20!%3D%3D%20'0px')%20radii%5Br%5D%20%3D%20(radii%5Br%5D%20%7C%7C%200)%20%2B%201%3B%0A%20%20%20%20%7D)%3B%0A%20%20%20%20const%20topRadius%20%3D%20getTopKeys(radii%2C%203)%3B%0A%0A%20%20%20%20%2F%2F%20D.%20%E9%A0%81%E9%9D%A2%E9%AA%A8%E6%9E%B6%E6%B5%81%E5%90%91%0A%20%20%20%20const%20sections%20%3D%20Array.from(document.querySelectorAll('header%2C%20nav%2C%20main%2C%20section%2C%20article%2C%20footer')).filter(el%20%3D%3E%20%7B%0A%20%20%20%20%20%20const%20rect%20%3D%20el.getBoundingClientRect()%3B%0A%20%20%20%20%20%20return%20rect.height%20%3E%2060%20%26%26%20!fixedRoot.contains(el)%3B%0A%20%20%20%20%7D).slice(0%2C%206).map((el%2C%20i)%20%3D%3E%20%7B%0A%20%20%20%20%20%20const%20tag%20%3D%20el.tagName.toLowerCase()%3B%0A%20%20%20%20%20%20const%20text%20%3D%20el.innerText%20%3F%20el.innerText.trim().slice(0%2C%2020).replace(%2F%5Cn%2Fg%2C%20'%20')%20%3A%20''%3B%0A%20%20%20%20%20%20return%20%60%24%7Bi%20%2B%201%7D.%20%3C%24%7Btag%7D%3E%3A%20%22%24%7Btext%7D%22%60%3B%0A%20%20%20%20%7D)%3B%0A%0A%20%20%20%20const%20env%20%3D%20getEnvironmentContext()%3B%0A%20%20%20%20const%20sourceInfo%20%3D%20env.isLocal%20%3F%20(window.location.protocol%20%3D%3D%3D%20'file%3A'%20%3F%20getLocalAbsolutePath()%20%3A%20window.location.href)%20%3A%20%60%24%7Bwindow.location.origin%7D%24%7Bwindow.location.pathname%7D%20(%24%7Bdocument.title%20%7C%7C%20'%E5%A4%96%E9%83%A8%E7%B6%B2%E7%AB%99'%7D)%60%3B%0A%0A%20%20%20%20const%20themeMarkdown%20%3D%20%60%E3%80%90%E5%85%A8%E9%A0%81%20UI%20%E8%A8%AD%E8%A8%88%E9%A2%A8%E6%A0%BC%E8%88%87%E5%85%A8%E7%AB%99%20Tokens%20%E8%90%83%E5%8F%96%E3%80%91%0A-%20**%E5%8F%83%E8%80%83%E4%BE%86%E6%BA%90**%EF%BC%9A%24%7BsourceInfo%7D%0A%0A%23%23%23%20%F0%9F%8E%A8%20%E5%85%A8%E7%AB%99%E8%A8%AD%E8%A8%88%E7%B3%BB%E7%B5%B1%20(Design%20Tokens)%0A1.%20**%E9%85%8D%E8%89%B2%E9%AB%94%E7%B3%BB**%EF%BC%9A%0A%20%20%20-%20%E7%95%AB%E5%B8%83%E4%B8%BB%E8%A6%81%E8%83%8C%E6%99%AF%E8%89%B2%EF%BC%9A%5C%60%24%7BtopBg%5B0%5D%20%7C%7C%20'%E9%80%8F%E6%98%8E%2F%E9%A0%90%E8%A8%AD'%7D%5C%60%0A%20%20%20-%20%E8%A1%A8%E9%9D%A2%E5%8D%A1%E7%89%87%2F%E6%AC%A1%E8%A6%81%E8%83%8C%E6%99%AF%EF%BC%9A%5C%60%24%7BtopBg%5B1%5D%20%7C%7C%20'%E5%BE%AE%E9%80%8F%E6%98%8E'%7D%5C%60%0A%20%20%20-%20%E4%B8%BB%E8%A6%81%E6%96%87%E5%AD%97%E8%89%B2%EF%BC%9A%5C%60%24%7BtopText%5B0%5D%20%7C%7C%20'%23ffffff'%7D%5C%60%20%2F%20%E6%AC%A1%E8%A6%81%E6%96%87%E5%AD%97%E8%89%B2%EF%BC%9A%5C%60%24%7BtopText%5B1%5D%20%7C%7C%20'%2394a3b8'%7D%5C%60%0A%20%20%20-%20%E5%93%81%E7%89%8C%E6%8C%89%E9%88%95%2F%E5%BC%B7%E8%AA%BF%E8%89%B2%20(Accent)%EF%BC%9A%5C%60%24%7BtopAccent%5B0%5D%20%7C%7C%20topText%5B0%5D%20%7C%7C%20'%233b82f6'%7D%5C%60%0A2.%20**%E5%AD%97%E9%AB%94%E8%88%87%E6%8E%92%E7%89%88%E8%A6%8F%E7%AF%84**%EF%BC%9A%0A%20%20%20-%20%E5%85%A8%E5%9F%9F%E5%AD%97%E5%9E%8B%EF%BC%9A%5C%60%24%7BfontFamily%7D%5C%60%0A%20%20%20-%20%E6%A8%99%E9%A1%8C%E5%B1%A4%E6%AC%A1%E7%AF%84%E4%BE%8B%EF%BC%9A%24%7Bheadings.join('%EF%BC%8C')%20%7C%7C%20'h1%3A%2036px%2C%20h2%3A%2024px'%7D%0A3.%20**%E5%B9%BE%E4%BD%95%E8%88%87%E8%B3%AA%E6%84%9F%E8%A6%8F%E7%AF%84**%EF%BC%9A%0A%20%20%20-%20%E4%B8%BB%E6%B5%81%E5%9C%93%E8%A7%92%E5%8D%8A%E5%BE%91%EF%BC%9A%5C%60%24%7BtopRadius.join('%2C%20')%20%7C%7C%20'8px%2C%2012px'%7D%5C%60%0A4.%20**%E9%A0%81%E9%9D%A2%E9%AA%A8%E6%9E%B6%E6%B5%81%E5%90%91**%EF%BC%9A%0A%24%7Bsections.length%20%3E%200%20%3F%20sections.map(s%20%3D%3E%20'%20%20%20-%20'%20%2B%20s).join('%5Cn')%20%3A%20'%20%20%20-%20Header%20%E2%9E%94%20Hero%20Banner%20%E2%9E%94%20Feature%20Section%20%E2%9E%94%20Footer'%7D%0A%0A---%0A%F0%9F%8E%AF%20**%E8%AB%8B%E5%8F%83%E8%80%83%E6%AD%A4%E5%85%A8%E7%AB%99%E8%A8%AD%E8%A8%88%E7%B3%BB%E7%B5%B1%E8%88%87%E9%A2%A8%E6%A0%BC**%EF%BC%8C%E9%85%8D%E5%90%88%E6%88%91%E7%95%B6%E5%89%8D%E7%9A%84%E5%B0%8D%E8%A9%B1%E9%9C%80%E6%B1%82%E9%80%B2%E8%A1%8C%E5%BE%8C%E7%BA%8C%E8%99%95%E7%90%86%E3%80%82%60%3B%0A%0A%20%20%20%20navigator.clipboard.writeText(themeMarkdown).then(()%20%3D%3E%20%7B%0A%20%20%20%20%20%20showToast('%E2%9C%A8%20%E5%B7%B2%E6%88%90%E5%8A%9F%E8%90%83%E5%8F%96%E5%85%A8%E9%A0%81%E8%A8%AD%E8%A8%88%E7%B3%BB%E7%B5%B1%EF%BC%81%E5%B7%B2%E8%A4%87%E8%A3%BD%E8%87%B3%E5%89%AA%E8%B2%BC%E7%B0%BF'%2C%20'%23059669')%3B%0A%20%20%20%20%7D).catch(()%20%3D%3E%20%7B%0A%20%20%20%20%20%20prompt('%E8%AB%8B%E6%89%8B%E5%8B%95%E8%A4%87%E8%A3%BD%E4%BB%A5%E4%B8%8B%E5%85%A8%E9%A0%81%E8%A8%AD%E8%A8%88%E9%A2%A8%E6%A0%BC%EF%BC%9A'%2C%20themeMarkdown)%3B%0A%20%20%20%20%7D)%3B%0A%20%20%7D%0A%0A%20%20%2F%2F%2010.%20%E5%8B%95%E7%95%AB%E6%A8%A3%E5%BC%8F%0A%20%20const%20style%20%3D%20document.createElement('style')%3B%0A%20%20style.innerText%20%3D%20%60%0A%20%20%20%20%40keyframes%20agy-pop%20%7B%0A%20%20%20%20%20%200%25%20%7B%20transform%3A%20scale(0.3)%3B%20opacity%3A%200%3B%20%7D%0A%20%20%20%20%20%20100%25%20%7B%20transform%3A%20scale(1)%3B%20opacity%3A%201%3B%20%7D%0A%20%20%20%20%7D%0A%20%20%60%3B%0A%20%20document.head.appendChild(style)%3B%0A%7D)()%3B%0A})();" 
+      <a id="bookmarkletLink" href="javascript:%2F**%0A%20*%20Antigravity%20Universal%20Sticky%20Notes%20%26%20Theme%20Extractor%20(v3.2.0)%0A%20*%20%E5%85%A8%E8%83%BD%E8%87%AA%E7%94%B1%E4%BE%BF%E6%A2%9D%E7%B4%99%E8%88%87%E6%95%B4%E9%A0%81%E8%A8%AD%E8%A8%88%E9%A2%A8%E6%A0%BC%E8%90%83%E5%8F%96%E8%85%B3%E6%9C%AC%EF%BC%9A%0A%20*%20-%20%E4%BB%BB%E6%84%8F%E4%BD%8D%E7%BD%AE%E8%B2%BC%E4%BE%BF%E6%A2%9D%E7%B4%99%EF%BC%88%E6%94%AF%E6%8F%B4%E5%85%83%E7%B4%A0%E9%8C%A8%E9%BB%9E%E3%80%81%E7%A9%BA%E7%99%BD%E9%96%93%E9%9A%99%E3%80%81%E8%87%AA%E9%81%B8%E9%9A%8E%E5%B1%A4%E9%BA%B5%E5%8C%85%E5%B1%91%EF%BC%89%0A%20*%20-%20%E8%87%AA%E7%94%B1%E6%95%98%E8%BF%B0%E4%BB%BB%E6%84%8F%E6%83%B3%E6%B3%95%EF%BC%88%E4%B8%8D%E9%99%90%E4%BF%AE%E6%94%B9%E3%80%81%E6%8F%92%E5%85%A5%E6%96%B0%E7%B5%84%E4%BB%B6%E3%80%81%E9%9D%88%E6%84%9F%E5%80%9F%E9%8F%A1%E3%80%81%E5%88%AA%E9%99%A4%EF%BC%89%0A%20*%20-%20%E6%99%BA%E6%85%A7%E7%92%B0%E5%A2%83%E9%9B%99%E8%BB%8C%E8%BE%A8%E8%AD%98%EF%BC%88%E6%9C%AC%E5%9C%B0%E5%B0%88%E6%A1%88%E7%9B%B4%E6%8C%87%E6%AA%94%E6%A1%88%2F%E8%B7%AF%E7%94%B1%20vs%20%E5%A4%96%E7%AB%99%E8%87%AA%E5%8B%95%E5%B8%B6%E5%85%A5%E7%B6%B2%E5%9D%80%E8%88%87%E5%93%81%E7%89%8C%E8%AA%9E%E5%A2%83%EF%BC%89%0A%20*%20-%20%F0%9F%8C%90%20%E4%B8%80%E9%8D%B5%E8%90%83%E5%8F%96%E5%85%A8%E9%A0%81%E8%A8%AD%E8%A8%88%E7%B3%BB%E7%B5%B1%EF%BC%88%E9%85%8D%E8%89%B2%E7%9B%A4%E3%80%81%E5%AD%97%E9%AB%94%E9%9A%8E%E5%B1%A4%E3%80%81%E5%9C%93%E8%A7%92%E9%99%B0%E5%BD%B1%E3%80%81%E9%A0%81%E9%9D%A2%E9%AA%A8%E6%9E%B6%EF%BC%89%0A%20*%20-%20%E7%B2%BE%E7%B7%BB%E5%9C%96%E9%87%98%E6%87%B8%E5%81%9C%E5%B1%95%E9%96%8B%E3%80%81%E5%B0%B1%E5%9C%B0%E7%B7%A8%E8%BC%AF%E3%80%81%E5%88%AA%E9%99%A4%0A%20*%20-%20%E9%9B%B6%E5%A4%96%E9%83%A8%E4%BE%9D%E8%B3%B4%E3%80%81%E7%B4%94%E5%8E%9F%E7%94%9F%20JS%EF%BC%9B%E5%9F%B7%E8%A1%8C%E4%BB%8D%E5%8F%97%E7%9B%AE%E6%A8%99%E7%B6%B2%E7%AB%99%20CSP%20%E9%99%90%E5%88%B6%0A%20*%2F%0A(function%20()%20%7B%0A%20%20const%20cleanup%20%3D%20%5B%5D%3B%0A%20%20function%20teardown()%20%7B%0A%20%20%20%20for%20(const%20release%20of%20cleanup.reverse())%20%7B%20try%20%7B%20release()%3B%20%7D%20catch%20%7B%20%2F*%20Continue%20releasing%20other%20resources.%20*%2F%20%7D%20%7D%0A%20%20%20%20cleanup.length%20%3D%200%3B%0A%20%20%20%20window.__AGY_STICKY_LOADED__%20%3D%20false%3B%0A%20%20%7D%0A%20%20try%20%7B%0A%20%20if%20(window.__AGY_STICKY_LOADED__)%20%7B%0A%20%20%20%20const%20toggle%20%3D%20document.getElementById(%27agy-toggle-btn%27)%3B%0A%20%20%20%20if%20(toggle)%20%7B%20toggle.click()%3B%20return%3B%20%7D%0A%20%20%20%20%2F%2F%20Recover%20from%20older%20versions%20that%20marked%20a%20partial%20initialization%20as%20loaded.%0A%20%20%20%20document.getElementById(%27agy-fixed-root%27)%3F.remove()%3B%0A%20%20%20%20document.getElementById(%27agy-scroll-root%27)%3F.remove()%3B%0A%20%20%20%20window.__AGY_STICKY_LOADED__%20%3D%20false%3B%0A%20%20%7D%0A%20%20if%20(!document.body)%20throw%20new%20Error(%27%E9%A0%81%E9%9D%A2%E5%B0%9A%E6%9C%AA%E6%BA%96%E5%82%99%E5%A5%BD%EF%BC%8C%E8%AB%8B%E8%BC%89%E5%85%A5%E5%AE%8C%E6%88%90%E5%BE%8C%E9%87%8D%E8%A9%A6%27)%3B%0A%0A%20%20let%20isAnnotating%20%3D%20false%3B%0A%20%20let%20notes%20%3D%20%5B%5D%3B%0A%20%20let%20currentTarget%20%3D%20null%3B%0A%20%20let%20ancestorsList%20%3D%20%5B%5D%3B%0A%20%20let%20nextId%20%3D%201%3B%0A%20%20let%20disposed%20%3D%20false%3B%0A%20%20let%20restoring%20%3D%20false%3B%0A%20%20let%20unsaved%20%3D%20false%3B%0A%20%20let%20screenshot%20%3D%20null%3B%0A%20%20let%20route%20%3D%20location.href%3B%0A%20%20const%20originalCursor%20%3D%20document.body.style.cursor%3B%0A%20%20const%20listeners%20%3D%20new%20AbortController()%3B%0A%20%20const%20timers%20%3D%20new%20Set()%3B%0A%20%20const%20objectUrls%20%3D%20new%20Set()%3B%0A%20%20cleanup.push(()%20%3D%3E%20%7B%20disposed%20%3D%20true%3B%20isAnnotating%20%3D%20false%3B%20listeners.abort()%3B%20%7D)%3B%0A%20%20cleanup.push(()%20%3D%3E%20timers.forEach(clearTimeout))%3B%0A%20%20cleanup.push(()%20%3D%3E%20objectUrls.forEach(url%20%3D%3E%20URL.revokeObjectURL(url)))%3B%0A%20%20cleanup.push(()%20%3D%3E%20%7B%20document.body.style.cursor%20%3D%20originalCursor%3B%20%7D)%3B%0A%20%20function%20later(fn%2C%20ms)%20%7B%0A%20%20%20%20const%20timer%20%3D%20setTimeout(()%20%3D%3E%20%7B%20timers.delete(timer)%3B%20if%20(!disposed)%20fn()%3B%20%7D%2C%20ms)%3B%0A%20%20%20%20timers.add(timer)%3B%0A%20%20%20%20return%20timer%3B%0A%20%20%7D%0A%20%20function%20ui(tag%2C%20attrs%20%3D%20%7B%7D%2C%20...children)%20%7B%0A%20%20%20%20const%20node%20%3D%20document.createElement(tag)%3B%0A%20%20%20%20if%20(tag%20%3D%3D%3D%20%27button%27)%20node.type%20%3D%20%27button%27%3B%0A%20%20%20%20for%20(const%20%5Bkey%2C%20value%5D%20of%20Object.entries(attrs))%20%7B%0A%20%20%20%20%20%20if%20(key%20%3D%3D%3D%20%27style%27)%20node.style.cssText%20%3D%20value%3B%0A%20%20%20%20%20%20else%20node.setAttribute(key%2C%20value)%3B%0A%20%20%20%20%7D%0A%20%20%20%20node.append(...children)%3B%0A%20%20%20%20return%20node%3B%0A%20%20%7D%0A%20%20function%20fingerprint(el)%20%7B%0A%20%20%20%20return%20%7B%20tag%3A%20el.tagName%2C%20id%3A%20el.id%2C%20text%3A%20el%20%3D%3D%3D%20document.body%20%7C%7C%20el%20%3D%3D%3D%20document.documentElement%20%3F%20%27%27%20%3A%20(el.textContent%20%7C%7C%20%27%27).trim().slice(0%2C%20120)%20%7D%3B%0A%20%20%7D%0A%20%20function%20makeAnchor(el%2C%20x%2C%20y)%20%7B%0A%20%20%20%20const%20parts%20%3D%20%5B%5D%3B%0A%20%20%20%20let%20node%20%3D%20el%3B%0A%20%20%20%20while%20(node%20%26%26%20node%20!%3D%3D%20document.documentElement)%20%7B%0A%20%20%20%20%20%20if%20(node.id%20%26%26%20document.querySelectorAll(%27%23%27%20%2B%20CSS.escape(node.id)).length%20%3D%3D%3D%201)%20%7B%0A%20%20%20%20%20%20%20%20parts.unshift(%27%23%27%20%2B%20CSS.escape(node.id))%3B%20break%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20const%20siblings%20%3D%20node.parentElement%20%3F%20Array.from(node.parentElement.children).filter(n%20%3D%3E%20n.tagName%20%3D%3D%3D%20node.tagName)%20%3A%20%5Bnode%5D%3B%0A%20%20%20%20%20%20parts.unshift(node.tagName.toLowerCase()%20%2B%20%27%3Anth-of-type(%27%20%2B%20(siblings.indexOf(node)%20%2B%201)%20%2B%20%27)%27)%3B%0A%20%20%20%20%20%20node%20%3D%20node.parentElement%3B%0A%20%20%20%20%7D%0A%20%20%20%20const%20rect%20%3D%20el.getBoundingClientRect()%3B%0A%20%20%20%20return%20%7B%20css%3A%20parts.join(%27%20%3E%20%27)%2C%20fingerprint%3A%20fingerprint(el)%2C%0A%20%20%20%20%20%20rx%3A%20rect.width%20%3F%20(x%20-%20scrollX%20-%20rect.left)%20%2F%20rect.width%20%3A%200%2C%0A%20%20%20%20%20%20ry%3A%20rect.height%20%3F%20(y%20-%20scrollY%20-%20rect.top)%20%2F%20rect.height%20%3A%200%20%7D%3B%0A%20%20%7D%0A%20%20function%20resolveAnchor(anchor)%20%7B%0A%20%20%20%20try%20%7B%0A%20%20%20%20%20%20const%20matches%20%3D%20document.querySelectorAll(anchor.css)%3B%0A%20%20%20%20%20%20if%20(matches.length%20!%3D%3D%201)%20return%20null%3B%0A%20%20%20%20%20%20const%20el%20%3D%20matches%5B0%5D%2C%20expected%20%3D%20anchor.fingerprint%2C%20actual%20%3D%20fingerprint(el)%3B%0A%20%20%20%20%20%20return%20actual.tag%20%3D%3D%3D%20expected.tag%20%26%26%20actual.id%20%3D%3D%3D%20expected.id%20%26%26%20actual.text%20%3D%3D%3D%20expected.text%20%3F%20el%20%3A%20null%3B%0A%20%20%20%20%7D%20catch%20%7B%20return%20null%3B%20%7D%0A%20%20%7D%0A%20%20function%20refreshPins()%20%7B%0A%20%20%20%20notes.forEach(item%20%3D%3E%20%7B%0A%20%20%20%20%20%20if%20(!item.target%3F.isConnected)%20item.target%20%3D%20resolveAnchor(item.anchor)%3B%0A%20%20%20%20%20%20const%20rect%20%3D%20item.target%3F.getBoundingClientRect()%3B%0A%20%20%20%20%20%20item.missing%20%3D%20!rect%20%7C%7C%20!rect.width%20%7C%7C%20!rect.height%3B%0A%20%20%20%20%20%20if%20(!item.missing)%20%7B%0A%20%20%20%20%20%20%20%20item.pageX%20%3D%20rect.left%20%2B%20scrollX%20%2B%20rect.width%20*%20item.anchor.rx%3B%0A%20%20%20%20%20%20%20%20item.pageY%20%3D%20rect.top%20%2B%20scrollY%20%2B%20rect.height%20*%20item.anchor.ry%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20item.pinEl.style.left%20%3D%20(item.pageX%20-%20scrollX%20-%2014)%20%2B%20%27px%27%3B%0A%20%20%20%20%20%20item.pinEl.style.top%20%3D%20(item.pageY%20-%20scrollY%20-%2014)%20%2B%20%27px%27%3B%0A%20%20%20%20%20%20item.pinEl.style.background%20%3D%20item.missing%20%3F%20%27%2364748b%27%20%3A%20%27%23f59e0b%27%3B%0A%20%20%20%20%20%20item.pinEl.title%20%3D%20item.missing%20%3F%20%27%E7%9B%AE%E6%A8%99%E5%B7%B2%E5%A4%B1%E6%95%88%EF%BC%8C%E8%AB%8B%E5%88%AA%E9%99%A4%E5%BE%8C%E9%87%8D%E6%96%B0%E6%A8%99%E8%A8%BB%27%20%3A%20item.selector%3B%0A%20%20%20%20%7D)%3B%0A%20%20%7D%0A%20%20function%20noteData(item)%20%7B%0A%20%20%20%20return%20%7B%20id%3A%20item.id%2C%20text%3A%20item.text%2C%20selector%3A%20item.selector%2C%20anchor%3A%20item.anchor%2C%20pageX%3A%20item.pageX%2C%20pageY%3A%20item.pageY%20%7D%3B%0A%20%20%7D%0A%20%20function%20storageKey()%20%7B%20return%20%27agy-notes-v1%3A%27%20%2B%20route%3B%20%7D%0A%20%20function%20saveDraft()%20%7B%0A%20%20%20%20if%20(restoring)%20return%3B%0A%20%20%20%20try%20%7B%0A%20%20%20%20%20%20if%20(notes.length)%20localStorage.setItem(storageKey()%2C%20JSON.stringify(%7B%20schemaVersion%3A%201%2C%20notes%3A%20notes.map(noteData)%20%7D))%3B%0A%20%20%20%20%20%20else%20localStorage.removeItem(storageKey())%3B%0A%20%20%20%20%20%20unsaved%20%3D%20false%3B%0A%20%20%20%20%7D%20catch%20%7B%20unsaved%20%3D%20true%3B%20showToast(%27%E8%8D%89%E7%A8%BF%E4%BF%9D%E5%AD%98%E5%A4%B1%E6%95%97%EF%BC%8C%E8%AB%8B%E5%8C%AF%E5%87%BA%20JSON%20%E5%82%99%E4%BB%BD%27%2C%20%27%23dc2626%27)%3B%20%7D%0A%20%20%7D%0A%20%20function%20validateNotes(data)%20%7B%0A%20%20%20%20if%20(data.schemaVersion%20!%3D%3D%201%20%7C%7C%20!Array.isArray(data.notes)%20%7C%7C%20data.notes.length%20%3E%20500)%20throw%20new%20Error(%27%E4%B8%8D%E6%94%AF%E6%8F%B4%E7%9A%84%E4%BE%BF%E6%A2%9D%E7%B4%99%E6%A0%BC%E5%BC%8F%27)%3B%0A%20%20%20%20const%20ids%20%3D%20new%20Set()%3B%0A%20%20%20%20for%20(const%20n%20of%20data.notes)%20%7B%0A%20%20%20%20%20%20if%20(!Number.isSafeInteger(n.id)%20%7C%7C%20n.id%20%3C%201%20%7C%7C%20ids.has(n.id)%20%7C%7C%20typeof%20n.text%20!%3D%3D%20%27string%27%20%7C%7C%20n.text.length%20%3E%2050000%20%7C%7C%0A%20%20%20%20%20%20%20%20%20%20typeof%20n.selector%20!%3D%3D%20%27string%27%20%7C%7C%20typeof%20n.anchor%3F.css%20!%3D%3D%20%27string%27%20%7C%7C%20typeof%20n.anchor%3F.fingerprint%3F.tag%20!%3D%3D%20%27string%27%20%7C%7C%0A%20%20%20%20%20%20%20%20%20%20typeof%20n.anchor.fingerprint.id%20!%3D%3D%20%27string%27%20%7C%7C%20typeof%20n.anchor.fingerprint.text%20!%3D%3D%20%27string%27%20%7C%7C%0A%20%20%20%20%20%20%20%20%20%20!%5Bn.pageX%2C%20n.pageY%2C%20n.anchor.rx%2C%20n.anchor.ry%5D.every(Number.isFinite))%20throw%20new%20Error(%27%E4%BE%BF%E6%A2%9D%E7%B4%99%E8%B3%87%E6%96%99%E4%B8%8D%E5%AE%8C%E6%95%B4%27)%3B%0A%20%20%20%20%20%20ids.add(n.id)%3B%0A%20%20%20%20%7D%0A%20%20%20%20return%20data.notes%3B%0A%20%20%7D%0A%20%20function%20loadNotes(data)%20%7B%0A%20%20%20%20const%20entries%20%3D%20validateNotes(data)%3B%0A%20%20%20%20restoring%20%3D%20true%3B%0A%20%20%20%20try%20%7B%0A%20%20%20%20%20%20notes.forEach(n%20%3D%3E%20n.pinEl.remove())%3B%20notes%20%3D%20%5B%5D%3B%20nextId%20%3D%201%3B%0A%20%20%20%20%20%20entries.forEach(n%20%3D%3E%20createStickyPin(resolveAnchor(n.anchor)%2C%20n.selector%2C%20n.text%2C%20n.pageX%2C%20n.pageY%2C%20n))%3B%0A%20%20%20%20%20%20countSpan.innerText%20%3D%20notes.length%3B%0A%20%20%20%20%20%20refreshPins()%3B%0A%20%20%20%20%7D%20finally%20%7B%20restoring%20%3D%20false%3B%20%7D%0A%20%20%7D%0A%20%20function%20restoreDraft()%20%7B%0A%20%20%20%20try%20%7B%0A%20%20%20%20%20%20const%20raw%20%3D%20localStorage.getItem(storageKey())%3B%0A%20%20%20%20%20%20if%20(raw)%20%7B%20loadNotes(JSON.parse(raw))%3B%20showToast(%27%E5%B7%B2%E6%81%A2%E5%BE%A9%20%27%20%2B%20notes.length%20%2B%20%27%20%E5%BC%B5%E4%BE%BF%E6%A2%9D%E7%B4%99%27)%3B%20%7D%0A%20%20%20%20%7D%20catch%20%7B%20showToast(%27%E7%84%A1%E6%B3%95%E6%81%A2%E5%BE%A9%E8%8D%89%E7%A8%BF%EF%BC%9B%E5%8E%9F%E8%B3%87%E6%96%99%E6%9C%AA%E8%A6%86%E5%AF%AB%27%2C%20%27%23d97706%27)%3B%20%7D%0A%20%20%7D%0A%20%20async%20function%20copyText(text%2C%20success)%20%7B%0A%20%20%20%20try%20%7B%20await%20navigator.clipboard.writeText(text)%3B%20if%20(!disposed)%20showToast(success)%3B%20%7D%0A%20%20%20%20catch%20%7B%20if%20(!disposed)%20prompt(%27%E8%AB%8B%E6%89%8B%E5%8B%95%E8%A4%87%E8%A3%BD%E4%BB%A5%E4%B8%8B%E5%85%A7%E5%AE%B9%EF%BC%9A%27%2C%20text)%3B%20%7D%0A%20%20%7D%0A%0A%20%20%2F%2F%201.%20%E5%BB%BA%E7%AB%8B%20UI%20%E6%A0%B9%E5%AE%B9%E5%99%A8%0A%20%20const%20fixedRoot%20%3D%20document.createElement(%27div%27)%3B%0A%20%20fixedRoot.id%20%3D%20%27agy-fixed-root%27%3B%0A%20%20fixedRoot.style.cssText%20%3D%20%27position%3Afixed%3Btop%3A0%3Bleft%3A0%3Bwidth%3A100%25%3Bheight%3A100%25%3Bpointer-events%3Anone%3Bz-index%3A9999999%3Bfont-family%3Asystem-ui%2C-apple-system%2CBlinkMacSystemFont%2C%22Segoe%20UI%22%2CRoboto%2Csans-serif%3B%27%3B%0A%20%20document.body.appendChild(fixedRoot)%3B%0A%20%20cleanup.push(()%20%3D%3E%20fixedRoot.remove())%3B%0A%0A%20%20const%20scrollRoot%20%3D%20document.createElement(%27div%27)%3B%0A%20%20scrollRoot.id%20%3D%20%27agy-scroll-root%27%3B%0A%20%20scrollRoot.style.cssText%20%3D%20%27position%3Aabsolute%3Btop%3A0%3Bleft%3A0%3Bwidth%3A100%25%3Bmin-height%3A100%25%3Bpointer-events%3Anone%3Bz-index%3A9999990%3B%27%3B%0A%20%20document.body.appendChild(scrollRoot)%3B%0A%20%20cleanup.push(()%20%3D%3E%20scrollRoot.remove())%3B%0A%0A%20%20%2F%2F%20%E6%87%B8%E5%81%9C%E9%AB%98%E4%BA%AE%E6%A1%86%0A%20%20const%20hoverBox%20%3D%20document.createElement(%27div%27)%3B%0A%20%20hoverBox.style.cssText%20%3D%20%27position%3Afixed%3Bpointer-events%3Anone%3Bborder%3A2px%20dashed%20%23f59e0b%3Bbackground%3Argba(245%2C158%2C11%2C0.12)%3Bdisplay%3Anone%3Bz-index%3A10000000%3Bborder-radius%3A6px%3Bbox-sizing%3Aborder-box%3Btransition%3Atop%200.04s%20ease%2C%20left%200.04s%20ease%2C%20width%200.04s%20ease%2C%20height%200.04s%20ease%3B%27%3B%0A%20%20fixedRoot.appendChild(hoverBox)%3B%0A%0A%20%20%2F%2F%20%E5%90%90%E5%8F%B8%E9%80%9A%E7%9F%A5%0A%20%20const%20toast%20%3D%20document.createElement(%27div%27)%3B%0A%20%20toast.style.cssText%20%3D%20%60%0A%20%20%20%20position%3A%20fixed%3B%0A%20%20%20%20top%3A%2024px%3B%0A%20%20%20%20left%3A%2050%25%3B%0A%20%20%20%20transform%3A%20translateX(-50%25)%3B%0A%20%20%20%20background%3A%20%23059669%3B%0A%20%20%20%20color%3A%20white%3B%0A%20%20%20%20font-size%3A%2013px%3B%0A%20%20%20%20font-weight%3A%20600%3B%0A%20%20%20%20padding%3A%209px%2020px%3B%0A%20%20%20%20border-radius%3A%209999px%3B%0A%20%20%20%20box-shadow%3A%200%208px%2024px%20rgba(0%2C0%2C0%2C0.4)%3B%0A%20%20%20%20pointer-events%3A%20none%3B%0A%20%20%20%20opacity%3A%200%3B%0A%20%20%20%20transition%3A%20opacity%200.25s%20ease%2C%20transform%200.25s%20ease%3B%0A%20%20%20%20z-index%3A%2010000020%3B%0A%20%20%20%20white-space%3A%20normal%3B%0A%20%20%20%20max-width%3A%20calc(100vw%20-%2032px)%3B%0A%20%20%20%20box-sizing%3A%20border-box%3B%0A%20%20%60%3B%0A%20%20fixedRoot.appendChild(toast)%3B%0A%0A%20%20let%20toastTimer%20%3D%20null%3B%0A%20%20function%20showToast(msg%2C%20bg%20%3D%20%27%23059669%27)%20%7B%0A%20%20%20%20clearTimeout(toastTimer)%3B%0A%20%20%20%20toast.innerText%20%3D%20msg%3B%0A%20%20%20%20toast.style.background%20%3D%20bg%3B%0A%20%20%20%20toast.style.opacity%20%3D%20%271%27%3B%0A%20%20%20%20toast.style.transform%20%3D%20%27translateX(-50%25)%20translateY(4px)%27%3B%0A%20%20%20%20toastTimer%20%3D%20later(()%20%3D%3E%20%7B%0A%20%20%20%20%20%20toast.style.opacity%20%3D%20%270%27%3B%0A%20%20%20%20%20%20toast.style.transform%20%3D%20%27translateX(-50%25)%20translateY(0)%27%3B%0A%20%20%20%20%7D%2C%202800)%3B%0A%20%20%7D%0A%0A%20%20%2F%2F%202.%20%E6%87%B8%E6%B5%AE%E5%B7%A5%E5%85%B7%E5%88%97%0A%20%20const%20toolbar%20%3D%20document.createElement(%27div%27)%3B%0A%20%20toolbar.id%20%3D%20%27agy-main-toolbar%27%3B%0A%20%20toolbar.style.cssText%20%3D%20%60%0A%20%20%20%20position%3A%20fixed%3B%0A%20%20%20%20bottom%3A%2024px%3B%0A%20%20%20%20right%3A%2024px%3B%0A%20%20%20%20display%3A%20flex%3B%0A%20%20%20%20align-items%3A%20center%3B%0A%20%20%20%20gap%3A%208px%3B%0A%20%20%20%20background%3A%20rgba(15%2C%2023%2C%2042%2C%200.95)%3B%0A%20%20%20%20backdrop-filter%3A%20blur(14px)%3B%0A%20%20%20%20-webkit-backdrop-filter%3A%20blur(14px)%3B%0A%20%20%20%20border%3A%201px%20solid%20rgba(255%2C%20255%2C%20255%2C%200.16)%3B%0A%20%20%20%20padding%3A%207px%2012px%3B%0A%20%20%20%20border-radius%3A%209999px%3B%0A%20%20%20%20box-shadow%3A%200%2012px%2035px%20rgba(0%2C0%2C0%2C0.55)%3B%0A%20%20%20%20pointer-events%3A%20auto%3B%0A%20%20%20%20z-index%3A%2010000005%3B%0A%20%20%20%20user-select%3A%20none%3B%0A%20%20%20%20transition%3A%20transform%200.2s%20ease%3B%0A%20%20%60%3B%0A%20%20const%20toolbarButtonStyle%20%3D%20%27background%3Argba(255%2C255%2C255%2C0.1)%3Bcolor%3A%23f8fafc%3Bborder%3A1px%20solid%20rgba(255%2C255%2C255%2C0.2)%3Bpadding%3A7px%2013px%3Bborder-radius%3A9999px%3Bfont-size%3A13px%3Bfont-weight%3A500%3Bcursor%3Apointer%3Bdisplay%3Aflex%3Balign-items%3Acenter%3Bgap%3A5px%27%3B%0A%20%20toolbar.append(%0A%20%20%20%20ui(%27button%27%2C%20%7B%20id%3A%20%27agy-toggle-btn%27%2C%20style%3A%20toolbarButtonStyle%20%2B%20%27%3Bbackground%3A%23f59e0b%3Bcolor%3A%230f172a%3Bfont-weight%3A700%27%20%7D%2C%0A%20%20%20%20%20%20%27%F0%9F%93%8C%20%27%2C%20ui(%27span%27%2C%20%7B%20id%3A%20%27agy-btn-text%27%20%7D%2C%20%27%E8%B2%BC%E4%BE%BF%E6%A2%9D%E7%B4%99%E6%A8%A1%E5%BC%8F%27))%2C%0A%20%20%20%20ui(%27button%27%2C%20%7B%20id%3A%20%27agy-theme-btn%27%2C%20title%3A%20%27%E6%8E%83%E6%8F%8F%E7%9B%AE%E5%89%8D%E9%A0%81%E9%9D%A2%E9%A2%A8%E6%A0%BC%E6%91%98%E8%A6%81%27%2C%20style%3A%20toolbarButtonStyle%20%7D%2C%20%27%F0%9F%8C%90%20%E8%90%83%E5%8F%96%E6%95%B4%E9%A0%81%E9%A2%A8%E6%A0%BC%27)%2C%0A%20%20%20%20ui(%27button%27%2C%20%7B%20id%3A%20%27agy-copy-btn%27%2C%20style%3A%20toolbarButtonStyle%20%7D%2C%20%27%F0%9F%93%8B%20%E8%A4%87%E8%A3%BD%E4%BE%BF%E6%A2%9D%E7%B4%99%20(%27%2C%20ui(%27span%27%2C%20%7B%20id%3A%20%27agy-count%27%20%7D%2C%20%270%27)%2C%20%27)%27)%2C%0A%20%20%20%20ui(%27button%27%2C%20%7B%20id%3A%20%27agy-exit-btn%27%2C%20title%3A%20%27%E5%AE%8C%E5%85%A8%E9%9B%A2%E9%96%8B%E4%B8%A6%E9%97%9C%E9%96%89%E5%B7%A5%E5%85%B7%27%2C%20style%3A%20toolbarButtonStyle%20%2B%20%27%3Bwidth%3A28px%3Bheight%3A28px%3Bpadding%3A0%3Bjustify-content%3Acenter%3Bcolor%3A%2394a3b8%27%20%7D%2C%20%27%E2%9C%95%27)%0A%20%20)%3B%0A%20%20fixedRoot.appendChild(toolbar)%3B%0A%0A%20%20const%20toggleBtn%20%3D%20toolbar.querySelector(%27%23agy-toggle-btn%27)%3B%0A%20%20const%20btnText%20%3D%20toolbar.querySelector(%27%23agy-btn-text%27)%3B%0A%20%20const%20themeBtn%20%3D%20toolbar.querySelector(%27%23agy-theme-btn%27)%3B%0A%20%20const%20copyBtn%20%3D%20toolbar.querySelector(%27%23agy-copy-btn%27)%3B%0A%20%20const%20countSpan%20%3D%20toolbar.querySelector(%27%23agy-count%27)%3B%0A%20%20const%20exitBtn%20%3D%20toolbar.querySelector(%27%23agy-exit-btn%27)%3B%0A%0A%20%20%2F%2F%20%E5%B7%A5%E5%85%B7%E5%88%97%E6%A8%A3%E5%BC%8F%E4%BA%92%E5%8B%95%0A%20%20%5BthemeBtn%2C%20copyBtn%5D.forEach(btn%20%3D%3E%20%7B%0A%20%20%20%20btn.addEventListener(%27mouseenter%27%2C%20()%20%3D%3E%20btn.style.background%20%3D%20%27rgba(255%2C255%2C255%2C0.18)%27)%3B%0A%20%20%20%20btn.addEventListener(%27mouseleave%27%2C%20()%20%3D%3E%20btn.style.background%20%3D%20%27rgba(255%2C255%2C255%2C0.1)%27)%3B%0A%20%20%7D)%3B%0A%0A%20%20exitBtn.addEventListener(%27mouseenter%27%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20exitBtn.style.background%20%3D%20%27%23dc2626%27%3B%0A%20%20%20%20exitBtn.style.color%20%3D%20%27%23ffffff%27%3B%0A%20%20%20%20exitBtn.style.borderColor%20%3D%20%27%23ef4444%27%3B%0A%20%20%7D)%3B%0A%20%20exitBtn.addEventListener(%27mouseleave%27%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20exitBtn.style.background%20%3D%20%27rgba(255%2C255%2C255%2C0.08)%27%3B%0A%20%20%20%20exitBtn.style.color%20%3D%20%27%2394a3b8%27%3B%0A%20%20%20%20exitBtn.style.borderColor%20%3D%20%27rgba(255%2C255%2C255%2C0.12)%27%3B%0A%20%20%7D)%3B%0A%0A%20%20%2F%2F%20%E5%AE%8C%E5%85%A8%E9%80%80%E5%87%BA%0A%20%20exitBtn.addEventListener(%27click%27%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20if%20(unsaved%20%26%26%20!confirm(%27%E8%8D%89%E7%A8%BF%E6%9C%AA%E8%83%BD%E4%BF%9D%E5%AD%98%EF%BC%8C%E8%AB%8B%E5%85%88%E5%8C%AF%E5%87%BA%20JSON%E3%80%82%E4%BB%8D%E8%A6%81%E9%97%9C%E9%96%89%E5%97%8E%EF%BC%9F%27))%20return%3B%0A%20%20%20%20closeDialog()%3B%0A%20%20%20%20teardown()%3B%0A%20%20%7D)%3B%0A%0A%20%20%2F%2F%20%E5%88%87%E6%8F%9B%E4%BE%BF%E6%A2%9D%E7%B4%99%E6%A8%A1%E5%BC%8F%0A%20%20toggleBtn.addEventListener(%27click%27%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20isAnnotating%20%3D%20!isAnnotating%3B%0A%20%20%20%20if%20(isAnnotating)%20%7B%0A%20%20%20%20%20%20toggleBtn.style.background%20%3D%20%27%23dc2626%27%3B%0A%20%20%20%20%20%20toggleBtn.style.color%20%3D%20%27%23ffffff%27%3B%0A%20%20%20%20%20%20toggleBtn.style.boxShadow%20%3D%20%270%202px%2010px%20rgba(220%2C38%2C38%2C0.4)%27%3B%0A%20%20%20%20%20%20btnText.innerText%20%3D%20%27%E9%80%80%E5%87%BA%E8%B2%BC%E7%B4%99%E6%A8%A1%E5%BC%8F%27%3B%0A%20%20%20%20%20%20document.body.style.cursor%20%3D%20%27crosshair%27%3B%0A%20%20%20%20%20%20showToast(%27%F0%9F%93%8C%20%E4%BE%BF%E6%A2%9D%E7%B4%99%E6%A8%A1%E5%BC%8F%E5%B7%B2%E9%96%8B%E5%95%9F%EF%BC%9A%E9%BB%9E%E6%93%8A%E7%95%AB%E9%9D%A2%E4%B8%8A%E4%BB%BB%E4%BD%95%E5%85%83%E7%B4%A0%E6%88%96%E7%A9%BA%E7%99%BD%E8%99%95%E5%8D%B3%E5%8F%AF%E8%B2%BC%E7%B4%99%EF%BC%81%27%2C%20%27%23d97706%27)%3B%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20toggleBtn.style.background%20%3D%20%27%23f59e0b%27%3B%0A%20%20%20%20%20%20toggleBtn.style.color%20%3D%20%27%230f172a%27%3B%0A%20%20%20%20%20%20toggleBtn.style.boxShadow%20%3D%20%270%202px%2010px%20rgba(245%2C158%2C11%2C0.4)%27%3B%0A%20%20%20%20%20%20btnText.innerText%20%3D%20%27%E8%B2%BC%E4%BE%BF%E6%A2%9D%E7%B4%99%E6%A8%A1%E5%BC%8F%27%3B%0A%20%20%20%20%20%20document.body.style.cursor%20%3D%20originalCursor%3B%0A%20%20%20%20%20%20hoverBox.style.display%20%3D%20%27none%27%3B%0A%20%20%20%20%20%20closeDialog()%3B%0A%20%20%20%20%7D%0A%20%20%7D)%3B%0A%0A%20%20%2F%2F%203.%20%E6%99%BA%E6%85%A7%E7%92%B0%E5%A2%83%E9%9B%99%E8%BB%8C%E8%BE%A8%E8%AD%98%E8%88%87%E7%B5%95%E5%B0%8D%E8%B7%AF%E5%BE%91%E8%A7%A3%E6%9E%90%0A%20%20function%20getLocalAbsolutePath()%20%7B%0A%20%20%20%20let%20p%20%3D%20decodeURIComponent(window.location.pathname)%3B%0A%20%20%20%20%2F%2F%20Windows%20%E8%B7%AF%E5%BE%91%E6%AD%A3%E8%A6%8F%E5%8C%96%EF%BC%9A%E5%8E%BB%E9%99%A4%E9%96%8B%E9%A0%AD%E6%96%9C%E7%B7%9A%20(%E5%A6%82%20%2FC%3A%2F...%20%E8%BD%89%E7%82%BA%20C%3A%2F...)%0A%20%20%20%20if%20(%2F%5E%5C%2F%5Ba-zA-Z%5D%3A%2F.test(p))%20%7B%0A%20%20%20%20%20%20p%20%3D%20p.substring(1)%3B%0A%20%20%20%20%7D%0A%20%20%20%20return%20p%3B%0A%20%20%7D%0A%0A%20%20function%20getEnvironmentContext()%20%7B%0A%20%20%20%20const%20loc%20%3D%20window.location%3B%0A%20%20%20%20const%20isLocalhost%20%3D%20loc.hostname%20%3D%3D%3D%20%27localhost%27%20%7C%7C%20loc.hostname%20%3D%3D%3D%20%27127.0.0.1%27%3B%0A%20%20%20%20const%20isFile%20%3D%20loc.protocol%20%3D%3D%3D%20%27file%3A%27%3B%0A%0A%20%20%20%20if%20(isFile)%20%7B%0A%20%20%20%20%20%20const%20absPath%20%3D%20getLocalAbsolutePath()%3B%0A%20%20%20%20%20%20return%20%7B%0A%20%20%20%20%20%20%20%20isLocal%3A%20true%2C%0A%20%20%20%20%20%20%20%20type%3A%20%27local-file%27%2C%0A%20%20%20%20%20%20%20%20header%3A%20%60%E3%80%90%E6%9C%AC%E5%9C%B0%E6%AA%94%E6%A1%88%E8%A6%96%E8%A6%BA%E4%BE%BF%E6%A2%9D%E7%B4%99%E3%80%91%5Cn-%20**%E6%AA%94%E6%A1%88%E8%B7%AF%E5%BE%91**%EF%BC%9A%5C%60%24%7BabsPath%7D%5C%60%60%0A%20%20%20%20%20%20%7D%3B%0A%20%20%20%20%7D%20else%20if%20(isLocalhost)%20%7B%0A%20%20%20%20%20%20const%20fullUrl%20%3D%20%60%24%7Bloc.origin%7D%24%7Bloc.pathname%7D%24%7Bloc.search%7D%24%7Bloc.hash%7D%60%3B%0A%20%20%20%20%20%20return%20%7B%0A%20%20%20%20%20%20%20%20isLocal%3A%20true%2C%0A%20%20%20%20%20%20%20%20type%3A%20%27localhost%27%2C%0A%20%20%20%20%20%20%20%20header%3A%20%60%E3%80%90%E6%9C%AC%E5%9C%B0%E4%BC%BA%E6%9C%8D%E5%99%A8%E8%A6%96%E8%A6%BA%E4%BE%BF%E6%A2%9D%E7%B4%99%E3%80%91%5Cn-%20**%E4%BC%BA%E6%9C%8D%E5%99%A8%E8%B7%AF%E7%94%B1**%EF%BC%9A%5C%60%24%7BfullUrl%7D%5C%60%60%0A%20%20%20%20%20%20%7D%3B%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20return%20%7B%0A%20%20%20%20%20%20%20%20isLocal%3A%20false%2C%0A%20%20%20%20%20%20%20%20type%3A%20%27public-web%27%2C%0A%20%20%20%20%20%20%20%20header%3A%20%60%E3%80%90%E5%A4%96%E9%83%A8%E7%B6%B2%E7%AB%99%E5%8F%83%E8%80%83%E4%BE%BF%E6%A2%9D%E7%B4%99%E3%80%91%5Cn-%20**%E4%BE%86%E6%BA%90%E7%B6%B2%E5%9D%80**%EF%BC%9A%24%7Bloc.origin%7D%24%7Bloc.pathname%7D%5Cn-%20**%E7%B6%B2%E9%A0%81%E6%A8%99%E9%A1%8C**%EF%BC%9A%24%7Bdocument.title%20%7C%7C%20%27%E5%A4%96%E9%83%A8%E7%B6%B2%E9%A0%81%27%7D%60%0A%20%20%20%20%20%20%7D%3B%0A%20%20%20%20%7D%0A%20%20%7D%0A%0A%20%20%2F%2F%204.%20%E5%8F%96%E5%BE%97%E5%85%83%E7%B4%A0%E8%AA%9E%E6%84%8F%E6%A8%99%E7%B1%A4%E8%88%87%E6%A8%A3%E5%BC%8F%E8%BC%94%E5%8A%A9%0A%20%20function%20getSafeClassName(el)%20%7B%0A%20%20%20%20if%20(!el)%20return%20%27%27%3B%0A%20%20%20%20if%20(typeof%20el.className%20%3D%3D%3D%20%27string%27)%20return%20el.className.trim()%3B%0A%20%20%20%20if%20(el.className%20%26%26%20typeof%20el.className.baseVal%20%3D%3D%3D%20%27string%27)%20return%20el.className.baseVal.trim()%3B%0A%20%20%20%20return%20%27%27%3B%0A%20%20%7D%0A%0A%20%20function%20getReadableSelector(el)%20%7B%0A%20%20%20%20if%20(!el%20%7C%7C%20el%20%3D%3D%3D%20document.body%20%7C%7C%20el%20%3D%3D%3D%20document.documentElement)%20return%20%27%E9%A0%81%E9%9D%A2%E5%AE%B9%E5%99%A8%2F%E7%A9%BA%E7%99%BD%E7%B8%AB%E9%9A%99%27%3B%0A%20%20%20%20const%20tag%20%3D%20el.tagName.toLowerCase()%3B%0A%20%20%20%20const%20id%20%3D%20el.id%20%3F%20%60%23%24%7Bel.id%7D%60%20%3A%20%27%27%3B%0A%20%20%20%20let%20classSnippet%20%3D%20%27%27%3B%0A%20%20%20%20const%20rawClass%20%3D%20getSafeClassName(el)%3B%0A%20%20%20%20if%20(rawClass)%20%7B%0A%20%20%20%20%20%20const%20parts%20%3D%20rawClass.split(%2F%5Cs%2B%2F).filter(c%20%3D%3E%20!c.startsWith(%27agy-%27)%20%26%26%20c.length%20%3C%2030).slice(0%2C%202)%3B%0A%20%20%20%20%20%20if%20(parts.length%20%3E%200)%20classSnippet%20%3D%20%27.%27%20%2B%20parts.join(%27.%27)%3B%0A%20%20%20%20%7D%0A%20%20%20%20const%20textSnippet%20%3D%20el.innerText%20%26%26%20el.innerText.trim()%20%3F%20%60%20%22%24%7Bel.innerText.trim().slice(0%2C%2016)%7D%22%60%20%3A%20%27%27%3B%0A%20%20%20%20return%20%60%3C%24%7Btag%7D%24%7Bid%7D%24%7BclassSnippet%7D%3E%24%7BtextSnippet%7D%60%3B%0A%20%20%7D%0A%0A%20%20function%20getAncestors(el)%20%7B%0A%20%20%20%20const%20list%20%3D%20%5B%5D%3B%0A%20%20%20%20let%20cur%20%3D%20el%3B%0A%20%20%20%20while%20(cur%20%26%26%20cur%20!%3D%3D%20document.body%20%26%26%20cur%20!%3D%3D%20document.documentElement%20%26%26%20list.length%20%3C%205)%20%7B%0A%20%20%20%20%20%20if%20(!fixedRoot.contains(cur)%20%26%26%20!scrollRoot.contains(cur))%20%7B%0A%20%20%20%20%20%20%20%20list.push(cur)%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20cur%20%3D%20cur.parentElement%3B%0A%20%20%20%20%7D%0A%20%20%20%20return%20list%3B%0A%20%20%7D%0A%0A%20%20function%20updateHoverBox(el)%20%7B%0A%20%20%20%20if%20(!el%20%7C%7C%20!isAnnotating%20%7C%7C%20el%20%3D%3D%3D%20document.body%20%7C%7C%20el%20%3D%3D%3D%20document.documentElement)%20%7B%0A%20%20%20%20%20%20hoverBox.style.display%20%3D%20%27none%27%3B%0A%20%20%20%20%20%20return%3B%0A%20%20%20%20%7D%0A%20%20%20%20const%20rect%20%3D%20el.getBoundingClientRect()%3B%0A%20%20%20%20if%20(rect.width%20%3D%3D%3D%200%20%26%26%20rect.height%20%3D%3D%3D%200)%20%7B%0A%20%20%20%20%20%20hoverBox.style.display%20%3D%20%27none%27%3B%0A%20%20%20%20%20%20return%3B%0A%20%20%20%20%7D%0A%20%20%20%20hoverBox.style.display%20%3D%20%27block%27%3B%0A%20%20%20%20hoverBox.style.top%20%3D%20rect.top%20%2B%20%27px%27%3B%0A%20%20%20%20hoverBox.style.left%20%3D%20rect.left%20%2B%20%27px%27%3B%0A%20%20%20%20hoverBox.style.width%20%3D%20rect.width%20%2B%20%27px%27%3B%0A%20%20%20%20hoverBox.style.height%20%3D%20rect.height%20%2B%20%27px%27%3B%0A%20%20%7D%0A%0A%20%20document.addEventListener(%27mousemove%27%2C%20(e)%20%3D%3E%20%7B%0A%20%20%20%20if%20(!isAnnotating)%20return%3B%0A%20%20%20%20if%20(fixedRoot.contains(e.target)%20%7C%7C%20scrollRoot.contains(e.target))%20return%3B%0A%20%20%20%20updateHoverBox(e.target)%3B%0A%20%20%7D%2C%20%7B%20capture%3A%20true%2C%20signal%3A%20listeners.signal%20%7D)%3B%0A%0A%20%20window.addEventListener(%27scroll%27%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20if%20(isAnnotating%20%26%26%20currentTarget)%20updateHoverBox(currentTarget)%3B%0A%20%20%20%20refreshPins()%3B%0A%20%20%7D%2C%20%7B%20passive%3A%20true%2C%20capture%3A%20true%2C%20signal%3A%20listeners.signal%20%7D)%3B%0A%0A%20%20%2F%2F%205.%20%E9%BB%9E%E6%93%8A%E8%B2%BC%E4%BE%BF%E6%A2%9D%E7%B4%99%0A%20%20document.addEventListener(%27click%27%2C%20(e)%20%3D%3E%20%7B%0A%20%20%20%20if%20(!isAnnotating)%20return%3B%0A%20%20%20%20if%20(fixedRoot.contains(e.target)%20%7C%7C%20scrollRoot.contains(e.target))%20return%3B%0A%0A%20%20%20%20e.preventDefault()%3B%0A%20%20%20%20e.stopPropagation()%3B%0A%0A%20%20%20%20currentTarget%20%3D%20e.target%3B%0A%20%20%20%20ancestorsList%20%3D%20getAncestors(currentTarget)%3B%0A%0A%20%20%20%20const%20clickPageX%20%3D%20e.pageX%3B%0A%20%20%20%20const%20clickPageY%20%3D%20e.pageY%3B%0A%20%20%20%20const%20clickClientX%20%3D%20e.clientX%3B%0A%20%20%20%20const%20clickClientY%20%3D%20e.clientY%3B%0A%0A%20%20%20%20openStickyDialog(currentTarget%2C%20clickPageX%2C%20clickPageY%2C%20clickClientX%2C%20clickClientY)%3B%0A%20%20%7D%2C%20%7B%20capture%3A%20true%2C%20signal%3A%20listeners.signal%20%7D)%3B%0A%0A%20%20function%20closeDialog()%20%7B%0A%20%20%20%20const%20existing%20%3D%20document.getElementById(%27agy-active-dialog%27)%3B%0A%20%20%20%20if%20(existing)%20existing.remove()%3B%0A%20%20%7D%0A%0A%20%20%2F%2F%206.%20%E4%BE%BF%E6%A2%9D%E7%B4%99%E8%BC%B8%E5%85%A5%E5%8D%A1%E7%89%87%0A%20%20function%20openStickyDialog(target%2C%20pageX%2C%20pageY%2C%20clientX%2C%20clientY%2C%20editNoteId%20%3D%20null)%20%7B%0A%20%20%20%20closeDialog()%3B%0A%20%20%20%20currentTarget%20%3D%20target%3B%0A%20%20%20%20ancestorsList%20%3D%20getAncestors(target)%3B%0A%20%20%20%20updateHoverBox(currentTarget)%3B%0A%0A%20%20%20%20const%20dialog%20%3D%20document.createElement(%27div%27)%3B%0A%20%20%20%20dialog.id%20%3D%20%27agy-active-dialog%27%3B%0A%0A%20%20%20%20let%20top%20%3D%20clientY%20%2B%2012%3B%0A%20%20%20%20let%20left%20%3D%20clientX%20%2B%2012%3B%0A%20%20%20%20if%20(left%20%2B%20330%20%3E%20window.innerWidth)%20left%20%3D%20window.innerWidth%20-%20340%3B%0A%20%20%20%20if%20(top%20%2B%20280%20%3E%20window.innerHeight)%20top%20%3D%20clientY%20-%20280%3B%0A%20%20%20%20if%20(top%20%3C%2010)%20top%20%3D%2010%3B%0A%20%20%20%20if%20(left%20%3C%2010)%20left%20%3D%2010%3B%0A%0A%20%20%20%20dialog.style.cssText%20%3D%20%60%0A%20%20%20%20%20%20position%3A%20fixed%3B%0A%20%20%20%20%20%20top%3A%20%24%7Btop%7Dpx%3B%0A%20%20%20%20%20%20left%3A%20%24%7Bleft%7Dpx%3B%0A%20%20%20%20%20%20width%3A%20320px%3B%0A%20%20%20%20%20%20max-width%3A%20calc(100vw%20-%2020px)%3B%0A%20%20%20%20%20%20box-sizing%3A%20border-box%3B%0A%20%20%20%20%20%20background%3A%20%230f172a%3B%0A%20%20%20%20%20%20color%3A%20%23f8fafc%3B%0A%20%20%20%20%20%20border%3A%201px%20solid%20%23f59e0b%3B%0A%20%20%20%20%20%20border-radius%3A%2012px%3B%0A%20%20%20%20%20%20padding%3A%2014px%3B%0A%20%20%20%20%20%20box-shadow%3A%200%2020px%2045px%20rgba(0%2C0%2C0%2C0.65)%2C%200%200%2015px%20rgba(245%2C158%2C11%2C0.25)%3B%0A%20%20%20%20%20%20pointer-events%3A%20auto%3B%0A%20%20%20%20%20%20z-index%3A%2010000010%3B%0A%20%20%20%20%20%20font-size%3A%2013px%3B%0A%20%20%20%20%60%3B%0A%0A%20%20%20%20const%20initialText%20%3D%20editNoteId%20%3F%20(notes.find(n%20%3D%3E%20n.id%20%3D%3D%3D%20editNoteId)%3F.text%20%7C%7C%20%27%27)%20%3A%20%27%27%3B%0A%20%20%20%20dialog.append(%0A%20%20%20%20%20%20ui(%27div%27%2C%20%7B%20style%3A%20%27display%3Aflex%3Bjustify-content%3Aspace-between%3Bmargin-bottom%3A8px%27%20%7D%2C%0A%20%20%20%20%20%20%20%20ui(%27span%27%2C%20%7B%20style%3A%20%27font-size%3A12px%3Bfont-weight%3A700%3Bcolor%3A%23f59e0b%27%20%7D%2C%20%27%F0%9F%93%8C%20%27%20%2B%20(editNoteId%20%3F%20%27%E7%B7%A8%E8%BC%AF%E4%BE%BF%E6%A2%9D%E7%B4%99%20%23%27%20%2B%20editNoteId%20%3A%20%27%E8%B2%BC%E4%B8%8A%E6%96%B0%E4%BE%BF%E6%A2%9D%E7%B4%99%27))%2C%0A%20%20%20%20%20%20%20%20ui(%27span%27%2C%20%7B%20style%3A%20%27font-size%3A11px%3Bcolor%3A%2394a3b8%27%20%7D%2C%20%27%E8%87%AA%E7%94%B1%E5%A1%AB%E5%AF%AB%E4%BB%BB%E4%BD%95%E6%83%B3%E6%B3%95%27))%2C%0A%20%20%20%20%20%20ui(%27div%27%2C%20%7B%20style%3A%20%27font-size%3A11px%3Bcolor%3A%23cbd5e1%3Bmargin-bottom%3A8px%3Bbackground%3A%231e293b%3Bpadding%3A5px%208px%3Bborder-radius%3A6px%3Bword-break%3Abreak-all%27%20%7D%2C%0A%20%20%20%20%20%20%20%20%27%E4%BD%8D%E7%BD%AE%E9%8C%A8%E9%BB%9E%EF%BC%9A%27%2C%20ui(%27span%27%2C%20%7B%20id%3A%20%27agy-selected-tag%27%2C%20style%3A%20%27color%3A%23fbbf24%3Bfont-family%3Amonospace%3Bfont-weight%3A600%27%20%7D%2C%20getReadableSelector(currentTarget)))%0A%20%20%20%20)%3B%0A%20%20%20%20if%20(ancestorsList.length%20%3E%201)%20%7B%0A%20%20%20%20%20%20const%20crumbs%20%3D%20ui(%27div%27%2C%20%7B%20id%3A%20%27agy-crumbs%27%2C%20style%3A%20%27display%3Aflex%3Balign-items%3Acenter%3Bgap%3A4px%3Bflex-wrap%3Awrap%3Bmargin-bottom%3A10px%27%20%7D)%3B%0A%20%20%20%20%20%20ancestorsList.map((node%2C%20index)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20const%20selected%20%3D%20node%20%3D%3D%3D%20currentTarget%3B%0A%20%20%20%20%20%20%20%20const%20rawClass%20%3D%20getSafeClassName(node)%3B%0A%20%20%20%20%20%20%20%20return%20ui(%27button%27%2C%20%7B%20class%3A%20%27agy-crumb-btn%27%2C%20%27data-index%27%3A%20index%2C%0A%20%20%20%20%20%20%20%20%20%20style%3A%20%27border%3A1px%20solid%20%23334155%3Bborder-radius%3A4px%3Bpadding%3A2px%206px%3Bfont-size%3A11px%3Bcursor%3Apointer%3Bmax-width%3A90px%3Boverflow%3Ahidden%3Btext-overflow%3Aellipsis%3Bwhite-space%3Anowrap%3B%27%20%2B%0A%20%20%20%20%20%20%20%20%20%20%20%20(selected%20%3F%20%27background%3A%23f59e0b%3Bcolor%3A%230f172a%3Bfont-weight%3A700%27%20%3A%20%27background%3A%231e293b%3Bcolor%3A%2394a3b8%27)%0A%20%20%20%20%20%20%20%20%7D%2C%20node.tagName.toLowerCase()%20%2B%20(rawClass%20%3F%20%27.%27%20%2B%20rawClass.split(%2F%5Cs%2B%2F)%5B0%5D%20%3A%20%27%27))%3B%0A%20%20%20%20%20%20%7D).reverse().forEach((button%2C%20index)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20if%20(index)%20crumbs.append(ui(%27span%27%2C%20%7B%20style%3A%20%27color%3A%2364748b%3Bfont-size%3A10px%27%20%7D%2C%20%27%E2%9E%94%27))%3B%0A%20%20%20%20%20%20%20%20crumbs.append(button)%3B%0A%20%20%20%20%20%20%7D)%3B%0A%20%20%20%20%20%20dialog.append(ui(%27div%27%2C%20%7B%20style%3A%20%27font-size%3A10px%3Bcolor%3A%2394a3b8%3Bmargin-bottom%3A4px%27%20%7D%2C%20%27%E5%88%87%E6%8F%9B%E5%A4%96%E5%B1%A4%E5%AE%B9%E5%99%A8%EF%BC%9A%27)%2C%20crumbs)%3B%0A%20%20%20%20%7D%0A%20%20%20%20dialog.append(%0A%20%20%20%20%20%20ui(%27textarea%27%2C%20%7B%20id%3A%20%27agy-note-input%27%2C%20placeholder%3A%20%27%E6%8F%8F%E8%BF%B0%E6%83%B3%E4%BF%AE%E6%94%B9%E7%9A%84%E5%85%A7%E5%AE%B9%E3%80%81%E6%8F%92%E5%85%A5%E5%85%83%E4%BB%B6%E6%88%96%E5%8F%83%E8%80%83%E9%A2%A8%E6%A0%BC%27%2C%0A%20%20%20%20%20%20%20%20style%3A%20%27width%3A100%25%3Bbox-sizing%3Aborder-box%3Bheight%3A84px%3Bbackground%3A%23020617%3Bcolor%3Awhite%3Bborder%3A1px%20solid%20%23334155%3Bborder-radius%3A8px%3Bpadding%3A8px%2010px%3Bfont-size%3A13px%3Bline-height%3A1.45%3Bresize%3Anone%27%20%7D)%2C%0A%20%20%20%20%20%20ui(%27div%27%2C%20%7B%20style%3A%20%27display%3Aflex%3Bjustify-content%3Aflex-end%3Bgap%3A8px%3Bmargin-top%3A10px%27%20%7D%2C%0A%20%20%20%20%20%20%20%20ui(%27button%27%2C%20%7B%20id%3A%20%27agy-cancel-btn%27%2C%20style%3A%20%27background%3Atransparent%3Bcolor%3A%2394a3b8%3Bborder%3Anone%3Bfont-size%3A12px%3Bcursor%3Apointer%3Bpadding%3A5px%2010px%27%20%7D%2C%20%27%E5%8F%96%E6%B6%88%27)%2C%0A%20%20%20%20%20%20%20%20ui(%27button%27%2C%20%7B%20id%3A%20%27agy-save-btn%27%2C%20style%3A%20%27background%3A%23f59e0b%3Bcolor%3A%230f172a%3Bborder%3Anone%3Bborder-radius%3A6px%3Bfont-size%3A12px%3Bfont-weight%3A700%3Bpadding%3A6px%2015px%3Bcursor%3Apointer%27%20%7D%2C%20editNoteId%20%3F%20%27%E6%9B%B4%E6%96%B0%E4%BE%BF%E6%A2%9D%E7%B4%99%27%20%3A%20%27%F0%9F%93%8C%20%E9%87%98%E4%B8%8A%E4%BE%BF%E6%A2%9D%E7%B4%99%27))%0A%20%20%20%20)%3B%0A%0A%20%20%20%20fixedRoot.appendChild(dialog)%3B%0A%0A%20%20%20%20const%20textarea%20%3D%20dialog.querySelector(%27%23agy-note-input%27)%3B%0A%20%20%20%20textarea.value%20%3D%20initialText%3B%0A%20%20%20%20textarea.focus()%3B%0A%0A%20%20%20%20const%20crumbBtns%20%3D%20dialog.querySelectorAll(%27.agy-crumb-btn%27)%3B%0A%20%20%20%20crumbBtns.forEach(btn%20%3D%3E%20%7B%0A%20%20%20%20%20%20btn.addEventListener(%27click%27%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20const%20idx%20%3D%20parseInt(btn.getAttribute(%27data-index%27)%2C%2010)%3B%0A%20%20%20%20%20%20%20%20currentTarget%20%3D%20ancestorsList%5Bidx%5D%3B%0A%20%20%20%20%20%20%20%20dialog.querySelector(%27%23agy-selected-tag%27).innerText%20%3D%20getReadableSelector(currentTarget)%3B%0A%20%20%20%20%20%20%20%20updateHoverBox(currentTarget)%3B%0A%20%20%20%20%20%20%20%20crumbBtns.forEach(b%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20const%20isThis%20%3D%20b%20%3D%3D%3D%20btn%3B%0A%20%20%20%20%20%20%20%20%20%20b.style.background%20%3D%20isThis%20%3F%20%27%23f59e0b%27%20%3A%20%27%231e293b%27%3B%0A%20%20%20%20%20%20%20%20%20%20b.style.color%20%3D%20isThis%20%3F%20%27%230f172a%27%20%3A%20%27%2394a3b8%27%3B%0A%20%20%20%20%20%20%20%20%20%20b.style.borderColor%20%3D%20isThis%20%3F%20%27%23f59e0b%27%20%3A%20%27%23334155%27%3B%0A%20%20%20%20%20%20%20%20%20%20b.style.fontWeight%20%3D%20isThis%20%3F%20%27700%27%20%3A%20%27500%27%3B%0A%20%20%20%20%20%20%20%20%7D)%3B%0A%20%20%20%20%20%20%7D)%3B%0A%20%20%20%20%7D)%3B%0A%0A%20%20%20%20dialog.querySelector(%27%23agy-cancel-btn%27).addEventListener(%27click%27%2C%20closeDialog)%3B%0A%20%20%20%20dialog.querySelector(%27%23agy-save-btn%27).addEventListener(%27click%27%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20%20%20const%20text%20%3D%20textarea.value.trim()%3B%0A%20%20%20%20%20%20if%20(!text)%20%7B%0A%20%20%20%20%20%20%20%20showToast(%27%E8%AB%8B%E8%BC%B8%E5%85%A5%E4%BE%BF%E6%A2%9D%E7%B4%99%E5%85%A7%E5%AE%B9%27%2C%20%27%23d97706%27)%3B%0A%20%20%20%20%20%20%20%20return%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20if%20(editNoteId)%20%7B%0A%20%20%20%20%20%20%20%20updateNote(editNoteId%2C%20text%2C%20currentTarget%2C%20pageX%2C%20pageY)%3B%0A%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20createStickyPin(currentTarget%2C%20getReadableSelector(currentTarget)%2C%20text%2C%20pageX%2C%20pageY)%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20closeDialog()%3B%0A%20%20%20%20%7D)%3B%0A%20%20%7D%0A%0A%20%20%2F%2F%207.%20%E9%87%98%E5%9C%A8%E7%B6%B2%E9%A0%81%E4%B8%8A%E7%9A%84%E7%B2%BE%E7%BE%8E%E4%BE%BF%E6%A2%9D%E7%B4%99%E5%9C%96%E9%87%98%EF%BC%88%E5%B1%95%E9%96%8B%E6%85%8B%E8%88%87%E7%B7%A8%E8%BC%AF%2F%E5%88%AA%E9%99%A4%EF%BC%89%0A%20%20function%20createStickyPin(target%2C%20selector%2C%20text%2C%20pageX%2C%20pageY%2C%20restored%20%3D%20null)%20%7B%0A%20%20%20%20const%20id%20%3D%20restored%20%3F%20restored.id%20%3A%20nextId%2B%2B%3B%0A%20%20%20%20nextId%20%3D%20Math.max(nextId%2C%20id%20%2B%201)%3B%0A%20%20%20%20const%20pin%20%3D%20document.createElement(%27div%27)%3B%0A%20%20%20%20pin.className%20%3D%20%27agy-sticky-pin%27%3B%0A%20%20%20%20pin.style.cssText%20%3D%20%60%0A%20%20%20%20%20%20position%3A%20fixed%3B%0A%20%20%20%20%20%20top%3A%20%24%7BpageY%20-%2014%7Dpx%3B%0A%20%20%20%20%20%20left%3A%20%24%7BpageX%20-%2014%7Dpx%3B%0A%20%20%20%20%20%20width%3A%2028px%3B%0A%20%20%20%20%20%20height%3A%2028px%3B%0A%20%20%20%20%20%20background%3A%20%23f59e0b%3B%0A%20%20%20%20%20%20color%3A%20%230f172a%3B%0A%20%20%20%20%20%20border%3A%202px%20solid%20%23ffffff%3B%0A%20%20%20%20%20%20border-radius%3A%2050%25%3B%0A%20%20%20%20%20%20display%3A%20flex%3B%0A%20%20%20%20%20%20align-items%3A%20center%3B%0A%20%20%20%20%20%20justify-content%3A%20center%3B%0A%20%20%20%20%20%20font-size%3A%2012px%3B%0A%20%20%20%20%20%20font-weight%3A%20800%3B%0A%20%20%20%20%20%20box-shadow%3A%200%204px%2015px%20rgba(0%2C0%2C0%2C0.45)%2C%200%200%2010px%20rgba(245%2C158%2C11%2C0.4)%3B%0A%20%20%20%20%20%20pointer-events%3A%20auto%3B%0A%20%20%20%20%20%20cursor%3A%20pointer%3B%0A%20%20%20%20%20%20z-index%3A%2010000002%3B%0A%20%20%20%20%20%20animation%3A%20agy-pop%200.2s%20ease-out%3B%0A%20%20%20%20%20%20user-select%3A%20none%3B%0A%20%20%20%20%60%3B%0A%20%20%20%20pin.innerText%20%3D%20id%3B%0A%0A%20%20%20%20%2F%2F%20%E6%87%B8%E5%81%9C%E6%B5%AE%E7%8F%BE%E5%B0%8F%E4%BE%BF%E6%A2%9D%E5%8D%A1%0A%20%20%20%20const%20previewCard%20%3D%20document.createElement(%27div%27)%3B%0A%20%20%20%20previewCard.style.cssText%20%3D%20%60%0A%20%20%20%20%20%20position%3A%20absolute%3B%0A%20%20%20%20%20%20top%3A%2034px%3B%0A%20%20%20%20%20%20left%3A%200%3B%0A%20%20%20%20%20%20width%3A%20240px%3B%0A%20%20%20%20%20%20background%3A%20%231e293b%3B%0A%20%20%20%20%20%20color%3A%20%23f8fafc%3B%0A%20%20%20%20%20%20border%3A%201px%20solid%20%23f59e0b%3B%0A%20%20%20%20%20%20border-radius%3A%208px%3B%0A%20%20%20%20%20%20padding%3A%2010px%2012px%3B%0A%20%20%20%20%20%20font-size%3A%2012px%3B%0A%20%20%20%20%20%20line-height%3A%201.4%3B%0A%20%20%20%20%20%20box-shadow%3A%200%2010px%2025px%20rgba(0%2C0%2C0%2C0.5)%3B%0A%20%20%20%20%20%20display%3A%20none%3B%0A%20%20%20%20%20%20z-index%3A%2010000005%3B%0A%20%20%20%20%20%20pointer-events%3A%20auto%3B%0A%20%20%20%20%60%3B%0A%20%20%20%20previewCard.append(%0A%20%20%20%20%20%20ui(%27div%27%2C%20%7B%20style%3A%20%27display%3Aflex%3Bjustify-content%3Aspace-between%3Balign-items%3Acenter%3Bmargin-bottom%3A5px%3Bborder-bottom%3A1px%20solid%20%23334155%3Bpadding-bottom%3A4px%27%20%7D%2C%0A%20%20%20%20%20%20%20%20ui(%27span%27%2C%20%7B%20style%3A%20%27font-weight%3A700%3Bcolor%3A%23fbbf24%27%20%7D%2C%20%27%F0%9F%93%8C%20%E4%BE%BF%E6%A2%9D%E7%B4%99%20%23%27%20%2B%20id)%2C%0A%20%20%20%20%20%20%20%20ui(%27div%27%2C%20%7B%20style%3A%20%27display%3Aflex%3Bgap%3A6px%27%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20ui(%27button%27%2C%20%7B%20class%3A%20%27agy-card-edit-btn%27%2C%20style%3A%20%27background%3Atransparent%3Bborder%3Anone%3Bcolor%3A%2394a3b8%3Bcursor%3Apointer%3Bfont-size%3A11px%27%20%7D%2C%20%27%E2%9C%8F%EF%B8%8F%20%E7%B7%A8%E8%BC%AF%27)%2C%0A%20%20%20%20%20%20%20%20%20%20ui(%27button%27%2C%20%7B%20class%3A%20%27agy-card-del-btn%27%2C%20style%3A%20%27background%3Atransparent%3Bborder%3Anone%3Bcolor%3A%23ef4444%3Bcursor%3Apointer%3Bfont-size%3A11px%27%20%7D%2C%20%27%F0%9F%97%91%EF%B8%8F%20%E5%88%AA%E9%99%A4%27)))%2C%0A%20%20%20%20%20%20ui(%27div%27%2C%20%7B%20class%3A%20%27agy-card-selector%27%2C%20style%3A%20%27font-size%3A10px%3Bcolor%3A%2394a3b8%3Bmargin-bottom%3A4px%3Bword-break%3Abreak-all%27%20%7D%2C%20%27%E4%BD%8D%E7%BD%AE%EF%BC%9A%27%20%2B%20selector)%2C%0A%20%20%20%20%20%20ui(%27div%27%2C%20%7B%20class%3A%20%27agy-card-text%27%2C%20style%3A%20%27white-space%3Apre-wrap%3Bcolor%3A%23e2e8f0%27%20%7D%2C%20text)%0A%20%20%20%20)%3B%0A%20%20%20%20pin.appendChild(previewCard)%3B%0A%0A%20%20%20%20let%20hideTimer%20%3D%20null%3B%0A%20%20%20%20pin.addEventListener(%27mouseenter%27%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20%20%20clearTimeout(hideTimer)%3B%0A%20%20%20%20%20%20previewCard.style.display%20%3D%20%27block%27%3B%0A%20%20%20%20%7D)%3B%0A%20%20%20%20pin.addEventListener(%27mouseleave%27%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20%20%20hideTimer%20%3D%20later(()%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20previewCard.style.display%20%3D%20%27none%27%3B%0A%20%20%20%20%20%20%7D%2C%20250)%3B%0A%20%20%20%20%7D)%3B%0A%0A%20%20%20%20previewCard.querySelector(%27.agy-card-edit-btn%27).addEventListener(%27click%27%2C%20(e)%20%3D%3E%20%7B%0A%20%20%20%20%20%20e.stopPropagation()%3B%0A%20%20%20%20%20%20if%20(item.missing)%20%7B%20showToast(%27%E7%9B%AE%E6%A8%99%E5%B7%B2%E5%A4%B1%E6%95%88%EF%BC%8C%E8%AB%8B%E9%87%8D%E6%96%B0%E6%A8%99%E8%A8%BB%27%2C%20%27%23d97706%27)%3B%20return%3B%20%7D%0A%20%20%20%20%20%20openStickyDialog(item.target%2C%20item.pageX%2C%20item.pageY%2C%20item.pageX%20-%20window.scrollX%2C%20item.pageY%20-%20window.scrollY%2C%20id)%3B%0A%20%20%20%20%7D)%3B%0A%0A%20%20%20%20previewCard.querySelector(%27.agy-card-del-btn%27).addEventListener(%27click%27%2C%20(e)%20%3D%3E%20%7B%0A%20%20%20%20%20%20e.stopPropagation()%3B%0A%20%20%20%20%20%20deleteNote(id)%3B%0A%20%20%20%20%7D)%3B%0A%0A%20%20%20%20const%20item%20%3D%20%7B%20id%2C%20target%2C%20selector%2C%20text%2C%20pageX%2C%20pageY%2C%20anchor%3A%20restored%3F.anchor%20%7C%7C%20makeAnchor(target%2C%20pageX%2C%20pageY)%2C%20pinEl%3A%20pin%2C%20previewCard%20%7D%3B%0A%20%20%20%20notes.push(item)%3B%0A%20%20%20%20countSpan.innerText%20%3D%20notes.length%3B%0A%0A%20%20%20%20scrollRoot.appendChild(pin)%3B%0A%20%20%20%20refreshPins()%3B%0A%20%20%20%20if%20(!restoring)%20showToast(%60%E2%9C%85%20%E5%B7%B2%E9%87%98%E4%B8%8A%E4%BE%BF%E6%A2%9D%E7%B4%99%20%23%24%7Bid%7D%60%2C%20%27%23f59e0b%27)%3B%0A%20%20%20%20saveDraft()%3B%0A%20%20%7D%0A%0A%20%20function%20updateNote(id%2C%20newText%2C%20target%2C%20pageX%2C%20pageY)%20%7B%0A%20%20%20%20const%20item%20%3D%20notes.find(n%20%3D%3E%20n.id%20%3D%3D%3D%20id)%3B%0A%20%20%20%20if%20(!item)%20return%3B%0A%20%20%20%20item.text%20%3D%20newText%3B%0A%20%20%20%20item.target%20%3D%20target%3B%0A%20%20%20%20item.selector%20%3D%20getReadableSelector(target)%3B%0A%20%20%20%20item.anchor%20%3D%20makeAnchor(target%2C%20pageX%2C%20pageY)%3B%0A%20%20%20%20item.previewCard.querySelector(%27.agy-card-selector%27).textContent%20%3D%20%27%E4%BD%8D%E7%BD%AE%EF%BC%9A%27%20%2B%20item.selector%3B%0A%20%20%20%20const%20cardText%20%3D%20item.previewCard.querySelector(%27.agy-card-text%27)%3B%0A%20%20%20%20if%20(cardText)%20cardText.innerText%20%3D%20newText%3B%0A%20%20%20%20refreshPins()%3B%0A%20%20%20%20showToast(%60%E2%9C%85%20%E5%B7%B2%E6%9B%B4%E6%96%B0%E4%BE%BF%E6%A2%9D%E7%B4%99%20%23%24%7Bid%7D%60%2C%20%27%23f59e0b%27)%3B%0A%20%20%20%20saveDraft()%3B%0A%20%20%7D%0A%0A%20%20function%20deleteNote(id)%20%7B%0A%20%20%20%20const%20item%20%3D%20notes.find(n%20%3D%3E%20n.id%20%3D%3D%3D%20id)%3B%0A%20%20%20%20if%20(!item)%20return%3B%0A%20%20%20%20item.pinEl.remove()%3B%0A%20%20%20%20notes%20%3D%20notes.filter(n%20%3D%3E%20n.id%20!%3D%3D%20id)%3B%0A%20%20%20%20countSpan.innerText%20%3D%20notes.length%3B%0A%20%20%20%20showToast(%60%F0%9F%97%91%EF%B8%8F%20%E5%B7%B2%E5%88%AA%E9%99%A4%E4%BE%BF%E6%A2%9D%E7%B4%99%20%23%24%7Bid%7D%60)%3B%0A%20%20%20%20saveDraft()%3B%0A%20%20%7D%0A%0A%20%20%2F%2F%208.%20%E8%A4%87%E8%A3%BD%E4%BE%BF%E6%A2%9D%E7%B4%99%E6%B8%85%E5%96%AE%20(%E9%9B%99%E8%BB%8C%E6%A0%BC%E5%BC%8F)%0A%20%20copyBtn.addEventListener(%27click%27%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20if%20(notes.length%20%3D%3D%3D%200)%20%7B%0A%20%20%20%20%20%20showToast(%27%E7%9B%AE%E5%89%8D%E5%B0%9A%E7%84%A1%E4%BE%BF%E6%A2%9D%E7%B4%99%EF%BC%8C%E8%AB%8B%E5%85%88%E5%9C%A8%E7%95%AB%E9%9D%A2%E4%B8%8A%E9%BB%9E%E6%93%8A%E9%87%98%E4%B8%8A%E6%83%B3%E6%B3%95%EF%BC%81%27%2C%20%27%23d97706%27)%3B%0A%20%20%20%20%20%20return%3B%0A%20%20%20%20%7D%0A%0A%20%20%20%20const%20env%20%3D%20getEnvironmentContext()%3B%0A%20%20%20%20refreshPins()%3B%0A%20%20%20%20let%20text%20%3D%20%60%24%7Benv.header%7D%5Cn-%20**%E7%95%AB%E9%9D%A2%E5%B0%BA%E5%AF%B8**%EF%BC%9A%24%7BinnerWidth%7D%20%C3%97%20%24%7BinnerHeight%7D%EF%BC%88DPR%20%24%7BdevicePixelRatio%7D%EF%BC%89%5Cn-%20**%E5%AE%8C%E6%95%B4%E8%B7%AF%E7%94%B1**%EF%BC%9A%24%7Blocation.href%7D%5Cn-%20**%E6%88%AA%E5%9C%96**%EF%BC%9A%24%7Bscreenshot%20%3F%20%27%E5%B7%B2%E9%99%84%E6%96%BC%20JSON%20%E5%9B%9E%E9%A5%8B%E5%8C%85%27%20%3A%20%27%E6%9C%AA%E9%99%84%EF%BC%9B%E5%8F%AF%E7%94%A8%E3%80%8C%E9%99%84%E6%88%AA%E5%9C%96%E3%80%8D%E9%81%B8%E5%8F%96%E5%9C%96%E7%89%87%27%7D%5Cn%5Cn%60%3B%0A%0A%20%20%20%20notes.forEach((item%2C%20index)%20%3D%3E%20%7B%0A%20%20%20%20%20%20text%20%2B%3D%20%60%F0%9F%93%8C%20**%E4%BE%BF%E6%A2%9D%E7%B4%99%20%23%24%7Bitem.id%7D**%EF%BC%88%E4%BD%8D%E7%BD%AE%E9%8C%A8%E9%BB%9E%EF%BC%9A%5C%60%24%7Bitem.selector%7D%5C%60%EF%BC%89%5Cn%60%3B%0A%20%20%20%20%20%20text%20%2B%3D%20%60-%20CSS%20%E5%AE%9A%E4%BD%8D%EF%BC%9A%5C%60%24%7Bitem.anchor.css%7D%5C%60%5Cn-%20%E7%8B%80%E6%85%8B%EF%BC%9A%24%7Bitem.missing%20%3F%20%27%E7%9B%AE%E6%A8%99%E5%B7%B2%E5%A4%B1%E6%95%88%EF%BC%8C%E8%AB%8B%E4%BA%BA%E5%B7%A5%E7%A2%BA%E8%AA%8D%27%20%3A%20%27%E5%B7%B2%E5%AE%9A%E4%BD%8D%27%7D%5Cn-%20%E6%A8%A3%E5%BC%8F%E6%91%98%E8%A6%81%EF%BC%9A%24%7BJSON.stringify(styleSnapshot(item.target))%7D%5Cn%60%3B%0A%20%20%20%20%20%20text%20%2B%3D%20%60%3E%20%E3%80%8C%24%7Bitem.text.replace(%2F%5Cn%2Fg%2C%20%27%5Cn%3E%20%27)%7D%E3%80%8D%5Cn%5Cn%60%3B%0A%20%20%20%20%7D)%3B%0A%0A%20%20%20%20if%20(env.isLocal)%20%7B%0A%20%20%20%20%20%20text%20%2B%3D%20%60%E8%AB%8B%E4%BE%9D%E6%93%9A%E4%B8%8A%E8%BF%B0%E4%BE%BF%E6%A2%9D%E7%B4%99%E5%85%A7%E5%AE%B9%E8%88%87%E4%BD%8D%E7%BD%AE%E9%8C%A8%E9%BB%9E%EF%BC%8C%E9%85%8D%E5%90%88%E6%88%91%E7%95%B6%E5%89%8D%E7%9A%84%E5%B0%8D%E8%A9%B1%E6%8C%87%E4%BB%A4%EF%BC%88%E5%A6%82%EF%BC%9A%2Fplan%20%E8%A6%8F%E5%8A%83%E3%80%81%E4%BF%AE%E6%94%B9%E5%AF%A6%E4%BD%9C%E3%80%81%E6%9E%B6%E6%A7%8B%E8%A9%95%E4%BC%B0%E7%AD%89%EF%BC%89%E9%80%B2%E8%A1%8C%E8%99%95%E7%90%86%E3%80%82%60%3B%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20text%20%2B%3D%20%60%E8%AB%8B%E5%8F%83%E8%80%83%E6%AD%A4%E7%B6%B2%E7%AB%99%E4%B9%8B%E8%A6%96%E8%A6%BA%E8%B3%AA%E6%84%9F%E8%88%87%E4%B8%8A%E8%BF%B0%E4%BE%BF%E6%A2%9D%E7%B4%99%E6%9C%9F%E6%9C%9B%EF%BC%8C%E9%85%8D%E5%90%88%E6%88%91%E7%95%B6%E5%89%8D%E7%9A%84%E5%B0%8D%E8%A9%B1%E6%8C%87%E4%BB%A4%E9%80%B2%E8%A1%8C%E8%99%95%E7%90%86%E3%80%82%60%3B%0A%20%20%20%20%7D%0A%0A%20%20%20%20copyText(text%2C%20%27%F0%9F%93%8B%20%E5%B7%B2%E8%A4%87%E8%A3%BD%20AI%20%E5%9B%9E%E9%A5%8B%E5%8C%85%EF%BC%9B%E9%99%84%E5%9C%96%E8%AB%8B%E5%8F%A6%E5%A4%96%E5%8C%AF%E5%87%BA%20JSON%27)%3B%0A%20%20%7D)%3B%0A%0A%20%20%2F%2F%209.%20%F0%9F%8C%90%20%E4%B8%80%E9%8D%B5%E8%90%83%E5%8F%96%E5%85%A8%E9%A0%81%E8%A8%AD%E8%A8%88%E9%A2%A8%E6%A0%BC%20(Theme%20Extractor%20Algorithm)%0A%20%20themeBtn.addEventListener(%27click%27%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20showToast(%27%F0%9F%94%8D%20%E6%AD%A3%E5%9C%A8%E6%8E%83%E6%8F%8F%E5%85%A8%E9%A0%81%20Design%20Tokens...%27%2C%20%27%233b82f6%27)%3B%0A%20%20%20%20later(extractFullPageTheme%2C%20100)%3B%0A%20%20%7D)%3B%0A%0A%20%20function%20extractFullPageTheme()%20%7B%0A%20%20%20%20const%20allElements%20%3D%20Array.from(document.querySelectorAll(%27body%20*%27)).filter(el%20%3D%3E%20%7B%0A%20%20%20%20%20%20if%20(fixedRoot.contains(el)%20%7C%7C%20scrollRoot.contains(el))%20return%20false%3B%0A%20%20%20%20%20%20const%20rect%20%3D%20el.getBoundingClientRect()%3B%0A%20%20%20%20%20%20return%20rect.width%20%3E%200%20%26%26%20rect.height%20%3E%200%3B%0A%20%20%20%20%7D)%3B%0A%0A%20%20%20%20%2F%2F%20A.%20%E8%89%B2%E5%BD%A9%E7%B5%B1%E8%A8%88%0A%20%20%20%20const%20bgColors%20%3D%20%7B%7D%3B%0A%20%20%20%20const%20textColors%20%3D%20%7B%7D%3B%0A%20%20%20%20const%20accents%20%3D%20%7B%7D%3B%0A%0A%20%20%20%20allElements.forEach(el%20%3D%3E%20%7B%0A%20%20%20%20%20%20const%20style%20%3D%20window.getComputedStyle(el)%3B%0A%20%20%20%20%20%20const%20bg%20%3D%20style.backgroundColor%3B%0A%20%20%20%20%20%20const%20color%20%3D%20style.color%3B%0A%0A%20%20%20%20%20%20if%20(bg%20%26%26%20bg%20!%3D%3D%20%27transparent%27%20%26%26%20bg%20!%3D%3D%20%27rgba(0%2C%200%2C%200%2C%200)%27)%20%7B%0A%20%20%20%20%20%20%20%20bgColors%5Bbg%5D%20%3D%20(bgColors%5Bbg%5D%20%7C%7C%200)%20%2B%201%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20if%20(color%20%26%26%20color%20!%3D%3D%20%27transparent%27)%20%7B%0A%20%20%20%20%20%20%20%20textColors%5Bcolor%5D%20%3D%20(textColors%5Bcolor%5D%20%7C%7C%200)%20%2B%201%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%2F%2F%20%E6%8C%89%E9%88%95%E6%88%96%E5%BC%B7%E4%BA%A4%E4%BA%92%E5%85%83%E7%B4%A0%E7%9A%84%E9%A1%8F%E8%89%B2%E8%A6%96%E7%82%BA%20Accent%0A%20%20%20%20%20%20if%20(el.tagName%20%3D%3D%3D%20%27BUTTON%27%20%7C%7C%20el.tagName%20%3D%3D%3D%20%27A%27)%20%7B%0A%20%20%20%20%20%20%20%20if%20(bg%20%26%26%20bg%20!%3D%3D%20%27transparent%27%20%26%26%20bg%20!%3D%3D%20%27rgba(0%2C%200%2C%200%2C%200)%27)%20%7B%0A%20%20%20%20%20%20%20%20%20%20accents%5Bbg%5D%20%3D%20(accents%5Bbg%5D%20%7C%7C%200)%20%2B%202%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%7D)%3B%0A%0A%20%20%20%20const%20getTopKeys%20%3D%20(obj%2C%20n%20%3D%203)%20%3D%3E%20Object.entries(obj).sort((a%2C%20b)%20%3D%3E%20b%5B1%5D%20-%20a%5B1%5D).slice(0%2C%20n).map(e%20%3D%3E%20e%5B0%5D)%3B%0A%20%20%20%20const%20topBg%20%3D%20getTopKeys(bgColors%2C%203)%3B%0A%20%20%20%20const%20topText%20%3D%20getTopKeys(textColors%2C%203)%3B%0A%20%20%20%20const%20topAccent%20%3D%20getTopKeys(accents%2C%202)%3B%0A%0A%20%20%20%20%2F%2F%20B.%20%E5%AD%97%E9%AB%94%E8%88%87%E9%9A%8E%E5%B1%A4%0A%20%20%20%20const%20bodyStyle%20%3D%20window.getComputedStyle(document.body)%3B%0A%20%20%20%20const%20fontFamily%20%3D%20bodyStyle.fontFamily%3B%0A%20%20%20%20const%20headings%20%3D%20Array.from(document.querySelectorAll(%27h1%2C%20h2%2C%20h3%27)).slice(0%2C%203).map(h%20%3D%3E%20%7B%0A%20%20%20%20%20%20const%20s%20%3D%20window.getComputedStyle(h)%3B%0A%20%20%20%20%20%20return%20%60%24%7Bh.tagName.toLowerCase()%7D%3A%20%24%7Bs.fontSize%7D%20(weight%3A%20%24%7Bs.fontWeight%7D)%60%3B%0A%20%20%20%20%7D)%3B%0A%0A%20%20%20%20%2F%2F%20C.%20%E5%9C%93%E8%A7%92%E8%88%87%E9%99%B0%E5%BD%B1%0A%20%20%20%20const%20radii%20%3D%20%7B%7D%3B%0A%20%20%20%20allElements.forEach(el%20%3D%3E%20%7B%0A%20%20%20%20%20%20const%20r%20%3D%20window.getComputedStyle(el).borderRadius%3B%0A%20%20%20%20%20%20if%20(r%20%26%26%20r%20!%3D%3D%20%270px%27)%20radii%5Br%5D%20%3D%20(radii%5Br%5D%20%7C%7C%200)%20%2B%201%3B%0A%20%20%20%20%7D)%3B%0A%20%20%20%20const%20topRadius%20%3D%20getTopKeys(radii%2C%203)%3B%0A%0A%20%20%20%20%2F%2F%20D.%20%E9%A0%81%E9%9D%A2%E9%AA%A8%E6%9E%B6%E6%B5%81%E5%90%91%0A%20%20%20%20const%20sections%20%3D%20Array.from(document.querySelectorAll(%27header%2C%20nav%2C%20main%2C%20section%2C%20article%2C%20footer%27)).filter(el%20%3D%3E%20%7B%0A%20%20%20%20%20%20const%20rect%20%3D%20el.getBoundingClientRect()%3B%0A%20%20%20%20%20%20return%20rect.height%20%3E%2060%20%26%26%20!fixedRoot.contains(el)%3B%0A%20%20%20%20%7D).slice(0%2C%206).map((el%2C%20i)%20%3D%3E%20%7B%0A%20%20%20%20%20%20const%20tag%20%3D%20el.tagName.toLowerCase()%3B%0A%20%20%20%20%20%20const%20text%20%3D%20el.innerText%20%3F%20el.innerText.trim().slice(0%2C%2020).replace(%2F%5Cn%2Fg%2C%20%27%20%27)%20%3A%20%27%27%3B%0A%20%20%20%20%20%20return%20%60%24%7Bi%20%2B%201%7D.%20%3C%24%7Btag%7D%3E%3A%20%22%24%7Btext%7D%22%60%3B%0A%20%20%20%20%7D)%3B%0A%0A%20%20%20%20const%20env%20%3D%20getEnvironmentContext()%3B%0A%20%20%20%20const%20sourceInfo%20%3D%20env.isLocal%20%3F%20(window.location.protocol%20%3D%3D%3D%20%27file%3A%27%20%3F%20getLocalAbsolutePath()%20%3A%20window.location.href)%20%3A%20%60%24%7Bwindow.location.origin%7D%24%7Bwindow.location.pathname%7D%20(%24%7Bdocument.title%20%7C%7C%20%27%E5%A4%96%E9%83%A8%E7%B6%B2%E7%AB%99%27%7D)%60%3B%0A%0A%20%20%20%20const%20themeMarkdown%20%3D%20%60%E3%80%90%E5%85%A8%E9%A0%81%20UI%20%E8%A8%AD%E8%A8%88%E9%A2%A8%E6%A0%BC%E8%88%87%E5%85%A8%E7%AB%99%20Tokens%20%E8%90%83%E5%8F%96%E3%80%91%0A-%20**%E5%8F%83%E8%80%83%E4%BE%86%E6%BA%90**%EF%BC%9A%24%7BsourceInfo%7D%0A%0A%23%23%23%20%F0%9F%8E%A8%20%E5%85%A8%E7%AB%99%E8%A8%AD%E8%A8%88%E7%B3%BB%E7%B5%B1%20(Design%20Tokens)%0A1.%20**%E9%85%8D%E8%89%B2%E9%AB%94%E7%B3%BB**%EF%BC%9A%0A%20%20%20-%20%E7%95%AB%E5%B8%83%E4%B8%BB%E8%A6%81%E8%83%8C%E6%99%AF%E8%89%B2%EF%BC%9A%5C%60%24%7BtopBg%5B0%5D%20%7C%7C%20%27%E9%80%8F%E6%98%8E%2F%E9%A0%90%E8%A8%AD%27%7D%5C%60%0A%20%20%20-%20%E8%A1%A8%E9%9D%A2%E5%8D%A1%E7%89%87%2F%E6%AC%A1%E8%A6%81%E8%83%8C%E6%99%AF%EF%BC%9A%5C%60%24%7BtopBg%5B1%5D%20%7C%7C%20%27%E5%BE%AE%E9%80%8F%E6%98%8E%27%7D%5C%60%0A%20%20%20-%20%E4%B8%BB%E8%A6%81%E6%96%87%E5%AD%97%E8%89%B2%EF%BC%9A%5C%60%24%7BtopText%5B0%5D%20%7C%7C%20%27%23ffffff%27%7D%5C%60%20%2F%20%E6%AC%A1%E8%A6%81%E6%96%87%E5%AD%97%E8%89%B2%EF%BC%9A%5C%60%24%7BtopText%5B1%5D%20%7C%7C%20%27%2394a3b8%27%7D%5C%60%0A%20%20%20-%20%E5%93%81%E7%89%8C%E6%8C%89%E9%88%95%2F%E5%BC%B7%E8%AA%BF%E8%89%B2%20(Accent)%EF%BC%9A%5C%60%24%7BtopAccent%5B0%5D%20%7C%7C%20topText%5B0%5D%20%7C%7C%20%27%233b82f6%27%7D%5C%60%0A2.%20**%E5%AD%97%E9%AB%94%E8%88%87%E6%8E%92%E7%89%88%E8%A6%8F%E7%AF%84**%EF%BC%9A%0A%20%20%20-%20%E5%85%A8%E5%9F%9F%E5%AD%97%E5%9E%8B%EF%BC%9A%5C%60%24%7BfontFamily%7D%5C%60%0A%20%20%20-%20%E6%A8%99%E9%A1%8C%E5%B1%A4%E6%AC%A1%E7%AF%84%E4%BE%8B%EF%BC%9A%24%7Bheadings.join(%27%EF%BC%8C%27)%20%7C%7C%20%27h1%3A%2036px%2C%20h2%3A%2024px%27%7D%0A3.%20**%E5%B9%BE%E4%BD%95%E8%88%87%E8%B3%AA%E6%84%9F%E8%A6%8F%E7%AF%84**%EF%BC%9A%0A%20%20%20-%20%E4%B8%BB%E6%B5%81%E5%9C%93%E8%A7%92%E5%8D%8A%E5%BE%91%EF%BC%9A%5C%60%24%7BtopRadius.join(%27%2C%20%27)%20%7C%7C%20%278px%2C%2012px%27%7D%5C%60%0A4.%20**%E9%A0%81%E9%9D%A2%E9%AA%A8%E6%9E%B6%E6%B5%81%E5%90%91**%EF%BC%9A%0A%24%7Bsections.length%20%3E%200%20%3F%20sections.map(s%20%3D%3E%20%27%20%20%20-%20%27%20%2B%20s).join(%27%5Cn%27)%20%3A%20%27%20%20%20-%20Header%20%E2%9E%94%20Hero%20Banner%20%E2%9E%94%20Feature%20Section%20%E2%9E%94%20Footer%27%7D%0A%0A---%0A%F0%9F%8E%AF%20**%E8%AB%8B%E5%8F%83%E8%80%83%E6%AD%A4%E5%85%A8%E7%AB%99%E8%A8%AD%E8%A8%88%E7%B3%BB%E7%B5%B1%E8%88%87%E9%A2%A8%E6%A0%BC**%EF%BC%8C%E9%85%8D%E5%90%88%E6%88%91%E7%95%B6%E5%89%8D%E7%9A%84%E5%B0%8D%E8%A9%B1%E9%9C%80%E6%B1%82%E9%80%B2%E8%A1%8C%E5%BE%8C%E7%BA%8C%E8%99%95%E7%90%86%E3%80%82%60%3B%0A%0A%20%20%20%20copyText(themeMarkdown%2C%20%27%E2%9C%A8%20%E5%B7%B2%E8%A4%87%E8%A3%BD%E7%9B%AE%E5%89%8D%E9%A0%81%E9%9D%A2%E7%9A%84%E9%A2%A8%E6%A0%BC%E6%91%98%E8%A6%81%27)%3B%0A%20%20%7D%0A%0A%20%20%2F%2F%2010.%20%E5%8B%95%E7%95%AB%E6%A8%A3%E5%BC%8F%0A%20%20function%20styleSnapshot(el)%20%7B%0A%20%20%20%20if%20(!el%3F.isConnected)%20return%20null%3B%0A%20%20%20%20const%20computed%20%3D%20getComputedStyle(el)%3B%0A%20%20%20%20return%20Object.fromEntries(%5B%27color%27%2C%20%27backgroundColor%27%2C%20%27fontFamily%27%2C%20%27fontSize%27%2C%20%27fontWeight%27%2C%20%27lineHeight%27%2C%0A%20%20%20%20%20%20%27padding%27%2C%20%27margin%27%2C%20%27gap%27%2C%20%27borderRadius%27%2C%20%27boxShadow%27%2C%20%27display%27%5D.map(key%20%3D%3E%20%5Bkey%2C%20computed%5Bkey%5D%5D))%3B%0A%20%20%7D%0A%20%20function%20feedbackPackage()%20%7B%0A%20%20%20%20refreshPins()%3B%0A%20%20%20%20return%20%7B%20schemaVersion%3A%201%2C%20toolVersion%3A%20%273.2.0%27%2C%20url%3A%20route%2C%20title%3A%20document.title%2C%20createdAt%3A%20new%20Date().toISOString()%2C%0A%20%20%20%20%20%20viewport%3A%20%7B%20width%3A%20innerWidth%2C%20height%3A%20innerHeight%2C%20devicePixelRatio%2C%20scrollX%2C%20scrollY%20%7D%2C%20screenshot%2C%0A%20%20%20%20%20%20notes%3A%20notes.map(item%20%3D%3E%20(%7B%20...noteData(item)%2C%20status%3A%20item.missing%20%3F%20%27missing%27%20%3A%20%27resolved%27%2C%20styles%3A%20styleSnapshot(item.target)%20%7D))%20%7D%3B%0A%20%20%7D%0A%20%20function%20addAction(label%2C%20action)%20%7B%0A%20%20%20%20const%20button%20%3D%20document.createElement(%27button%27)%3B%0A%20%20%20%20button.type%20%3D%20%27button%27%3B%0A%20%20%20%20button.textContent%20%3D%20label%3B%0A%20%20%20%20button.style.cssText%20%3D%20%27background%3A%23334155%3Bcolor%3Awhite%3Bborder%3A1px%20solid%20%2364748b%3Bborder-radius%3A8px%3Bpadding%3A7px%3Bcursor%3Apointer%3Bfont-size%3A12px%27%3B%0A%20%20%20%20button.addEventListener(%27click%27%2C%20action)%3B%0A%20%20%20%20toolbar.insertBefore(button%2C%20exitBtn)%3B%0A%20%20%20%20return%20button%3B%0A%20%20%7D%0A%20%20toolbar.style.flexWrap%20%3D%20%27wrap%27%3B%0A%20%20toolbar.style.maxWidth%20%3D%20%27calc(100vw%20-%2048px)%27%3B%0A%20%20toolbar.style.boxSizing%20%3D%20%27border-box%27%3B%0A%20%20toolbar.style.borderRadius%20%3D%20%2716px%27%3B%0A%20%20addAction(%27%E5%8C%AF%E5%87%BA%20JSON%27%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20const%20url%20%3D%20URL.createObjectURL(new%20Blob(%5BJSON.stringify(feedbackPackage()%2C%20null%2C%202)%5D%2C%20%7B%20type%3A%20%27application%2Fjson%27%20%7D))%3B%0A%20%20%20%20objectUrls.add(url)%3B%0A%20%20%20%20const%20link%20%3D%20document.createElement(%27a%27)%3B%0A%20%20%20%20link.href%20%3D%20url%3B%20link.download%20%3D%20%27ui-feedback.json%27%3B%20fixedRoot.appendChild(link)%3B%20link.click()%3B%20link.remove()%3B%0A%20%20%20%20later(()%20%3D%3E%20%7B%20URL.revokeObjectURL(url)%3B%20objectUrls.delete(url)%3B%20%7D%2C%2030000)%3B%0A%20%20%7D)%3B%0A%20%20const%20importInput%20%3D%20document.createElement(%27input%27)%3B%0A%20%20importInput.type%20%3D%20%27file%27%3B%20importInput.accept%20%3D%20%27.json%2Capplication%2Fjson%27%3B%20importInput.hidden%20%3D%20true%3B%0A%20%20fixedRoot.appendChild(importInput)%3B%0A%20%20importInput.addEventListener(%27change%27%2C%20async%20()%20%3D%3E%20%7B%0A%20%20%20%20const%20file%20%3D%20importInput.files%5B0%5D%3B%0A%20%20%20%20try%20%7B%0A%20%20%20%20%20%20if%20(!file)%20return%3B%0A%20%20%20%20%20%20if%20(file.size%20%3E%2010%20*%201024%20*%201024)%20throw%20new%20Error(%27JSON%20%E4%B8%8D%E5%8F%AF%E8%B6%85%E9%81%8E%2010%20MB%27)%3B%0A%20%20%20%20%20%20const%20data%20%3D%20JSON.parse(await%20file.text())%3B%0A%20%20%20%20%20%20if%20(disposed)%20return%3B%0A%20%20%20%20%20%20if%20(data.url%20!%3D%3D%20route)%20throw%20new%20Error(%27%E8%AB%8B%E5%9C%A8%E5%9B%9E%E9%A5%8B%E5%8C%85%E7%9A%84%E5%8E%9F%E5%A7%8B%E7%B6%B2%E5%9D%80%E5%8C%AF%E5%85%A5%27)%3B%0A%20%20%20%20%20%20validateNotes(data)%3B%0A%20%20%20%20%20%20if%20(notes.length%20%26%26%20!confirm(%27%E5%8C%AF%E5%85%A5%E5%B0%87%E5%8F%96%E4%BB%A3%E7%9B%AE%E5%89%8D%E4%BE%BF%E6%A2%9D%E7%B4%99%EF%BC%8C%E6%98%AF%E5%90%A6%E7%B9%BC%E7%BA%8C%EF%BC%9F%27))%20return%3B%0A%20%20%20%20%20%20loadNotes(data)%3B%0A%20%20%20%20%20%20screenshot%20%3D%20typeof%20data.screenshot%20%3D%3D%3D%20%27string%27%20%26%26%20%2F%5Edata%3Aimage%5C%2F(png%7Cjpeg%7Cwebp)%3Bbase64%2C%5BA-Za-z0-9%2B%2F%3D%5D%2B%24%2F.test(data.screenshot)%20%3F%20data.screenshot%20%3A%20null%3B%0A%20%20%20%20%20%20screenshotBtn.textContent%20%3D%20screenshot%20%3F%20%27%E6%9B%B4%E6%8F%9B%E6%88%AA%E5%9C%96%20%E2%9C%93%27%20%3A%20%27%E9%99%84%E6%88%AA%E5%9C%96%27%3B%0A%20%20%20%20%20%20showToast(%27%E5%B7%B2%E5%8C%AF%E5%85%A5%E4%BE%BF%E6%A2%9D%E7%B4%99%27)%3B%20saveDraft()%3B%0A%20%20%20%20%7D%20catch%20(error)%20%7B%20showToast(%27%E5%8C%AF%E5%85%A5%E5%A4%B1%E6%95%97%EF%BC%9A%27%20%2B%20error.message%2C%20%27%23dc2626%27)%3B%20%7D%0A%20%20%20%20finally%20%7B%20importInput.value%20%3D%20%27%27%3B%20%7D%0A%20%20%7D)%3B%0A%20%20addAction(%27%E5%8C%AF%E5%85%A5%20JSON%27%2C%20()%20%3D%3E%20importInput.click())%3B%0A%20%20const%20imageInput%20%3D%20document.createElement(%27input%27)%3B%0A%20%20imageInput.type%20%3D%20%27file%27%3B%20imageInput.accept%20%3D%20%27image%2Fpng%2Cimage%2Fjpeg%2Cimage%2Fwebp%27%3B%20imageInput.hidden%20%3D%20true%3B%0A%20%20fixedRoot.appendChild(imageInput)%3B%0A%20%20const%20screenshotBtn%20%3D%20addAction(%27%E9%99%84%E6%88%AA%E5%9C%96%27%2C%20()%20%3D%3E%20imageInput.click())%3B%0A%20%20imageInput.addEventListener(%27change%27%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20const%20file%20%3D%20imageInput.files%5B0%5D%2C%20capturedRoute%20%3D%20route%3B%0A%20%20%20%20if%20(!file)%20return%3B%0A%20%20%20%20if%20(!%5B%27image%2Fpng%27%2C%20%27image%2Fjpeg%27%2C%20%27image%2Fwebp%27%5D.includes(file.type)%20%7C%7C%20file.size%20%3E%205%20*%201024%20*%201024)%20%7B%0A%20%20%20%20%20%20showToast(%27%E8%AB%8B%E9%81%B8%E6%93%87%205%20MB%20%E4%BB%A5%E4%B8%8B%E7%9A%84%20PNG%E3%80%81JPEG%20%E6%88%96%20WebP%27%2C%20%27%23d97706%27)%3B%20imageInput.value%20%3D%20%27%27%3B%20return%3B%0A%20%20%20%20%7D%0A%20%20%20%20const%20reader%20%3D%20new%20FileReader()%3B%0A%20%20%20%20reader.onload%20%3D%20()%20%3D%3E%20%7B%0A%20%20%20%20%20%20if%20(disposed%20%7C%7C%20route%20!%3D%3D%20capturedRoute)%20return%3B%0A%20%20%20%20%20%20screenshot%20%3D%20reader.result%3B%0A%20%20%20%20%20%20screenshotBtn.textContent%20%3D%20%27%E6%9B%B4%E6%8F%9B%E6%88%AA%E5%9C%96%20%E2%9C%93%27%3B%0A%20%20%20%20%20%20showToast(%27%E5%B7%B2%E9%99%84%E6%88%AA%E5%9C%96%EF%BC%8C%E5%8C%AF%E5%87%BA%20JSON%20%E5%8D%B3%E5%8F%AF%E5%B8%B6%E5%87%BA%EF%BC%9B%E6%88%AA%E5%9C%96%E4%B8%8D%E5%AD%98%E5%85%A5%E8%8D%89%E7%A8%BF%27)%3B%0A%20%20%20%20%7D%3B%0A%20%20%20%20reader.onerror%20%3D%20()%20%3D%3E%20%7B%20if%20(!disposed)%20showToast(%27%E8%AE%80%E5%8F%96%E6%88%AA%E5%9C%96%E5%A4%B1%E6%95%97%27%2C%20%27%23dc2626%27)%3B%20%7D%3B%0A%20%20%20%20reader.readAsDataURL(file)%3B%20imageInput.value%20%3D%20%27%27%3B%0A%20%20%7D)%3B%0A%20%20addAction(%27%E6%B8%85%E9%99%A4%E8%8D%89%E7%A8%BF%27%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20if%20(!confirm(%27%E6%B8%85%E9%99%A4%E6%9C%AC%E9%A0%81%E6%89%80%E6%9C%89%E4%BE%BF%E6%A2%9D%E7%B4%99%E8%88%87%E5%B7%B2%E9%99%84%E6%88%AA%E5%9C%96%EF%BC%9F%27))%20return%3B%0A%20%20%20%20closeDialog()%3B%20notes.forEach(n%20%3D%3E%20n.pinEl.remove())%3B%20notes%20%3D%20%5B%5D%3B%20screenshot%20%3D%20null%3B%0A%20%20%20%20screenshotBtn.textContent%20%3D%20%27%E9%99%84%E6%88%AA%E5%9C%96%27%3B%20countSpan.innerText%20%3D%20%270%27%3B%20saveDraft()%3B%0A%20%20%7D)%3B%0A%20%20window.addEventListener(%27resize%27%2C%20refreshPins%2C%20%7B%20signal%3A%20listeners.signal%20%7D)%3B%0A%20%20document.addEventListener(%27keydown%27%2C%20event%20%3D%3E%20%7B%0A%20%20%20%20if%20(event.key%20%3D%3D%3D%20%27Escape%27)%20%7B%20closeDialog()%3B%20if%20(isAnnotating)%20toggleBtn.click()%3B%20%7D%0A%20%20%7D%2C%20%7B%20signal%3A%20listeners.signal%20%7D)%3B%0A%20%20%2F%2F%20Also%20covers%20layout%20shifts%2C%20SPA%20replacement%20and%20sticky%2Ffixed%20targets%20without%20observing%20our%20own%20DOM%20writes.%0A%20%20const%20trackingTimer%20%3D%20setInterval(()%20%3D%3E%20%7B%0A%20%20%20%20if%20(location.href%20!%3D%3D%20route)%20%7B%0A%20%20%20%20%20%20closeDialog()%3B%20currentTarget%20%3D%20null%3B%0A%20%20%20%20%20%20notes.forEach(n%20%3D%3E%20n.pinEl.remove())%3B%20notes%20%3D%20%5B%5D%3B%20countSpan.innerText%20%3D%20%270%27%3B%0A%20%20%20%20%20%20screenshot%20%3D%20null%3B%20screenshotBtn.textContent%20%3D%20%27%E9%99%84%E6%88%AA%E5%9C%96%27%3B%20route%20%3D%20location.href%3B%20restoreDraft()%3B%0A%20%20%20%20%7D%0A%20%20%20%20refreshPins()%3B%0A%20%20%7D%2C%20250)%3B%0A%20%20cleanup.push(()%20%3D%3E%20clearInterval(trackingTimer))%3B%0A%20%20restoreDraft()%3B%0A%20%20const%20style%20%3D%20document.createElement(%27style%27)%3B%0A%20%20style.innerText%20%3D%20%60%0A%20%20%20%20%40keyframes%20agy-pop%20%7B%0A%20%20%20%20%20%200%25%20%7B%20transform%3A%20scale(0.3)%3B%20opacity%3A%200%3B%20%7D%0A%20%20%20%20%20%20100%25%20%7B%20transform%3A%20scale(1)%3B%20opacity%3A%201%3B%20%7D%0A%20%20%20%20%7D%0A%20%20%60%3B%0A%20%20document.head.appendChild(style)%3B%0A%20%20cleanup.push(()%20%3D%3E%20style.remove())%3B%0A%20%20window.__AGY_STICKY_LOADED__%20%3D%20true%3B%0A%20%20showToast(%27%F0%9F%93%8C%20%E6%A8%99%E8%A8%BB%E5%99%A8%20v3.2.0%20%E5%B7%B2%E5%95%9F%E5%8B%95%27)%3B%0A%20%20%7D%20catch%20(error)%20%7B%0A%20%20%20%20teardown()%3B%0A%20%20%20%20console.error(%27%5BFrontend%20UI%20Annotator%5D%20%E5%95%9F%E5%8B%95%E5%A4%B1%E6%95%97%27%2C%20error)%3B%0A%20%20%20%20alert(%27%E6%A8%99%E8%A8%BB%E5%99%A8%E5%95%9F%E5%8B%95%E5%A4%B1%E6%95%97%EF%BC%9A%27%20%2B%20(error%3F.message%20%7C%7C%20String(error))%20%2B%20%27%5Cn%E8%AB%8B%E9%87%8D%E6%96%B0%E6%95%B4%E7%90%86%E9%A0%81%E9%9D%A2%E5%BE%8C%E9%87%8D%E8%A9%A6%E3%80%82%27)%3B%0A%20%20%7D%0A%7D)()%3B%0A" 
          class="inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-lg shadow-lg hover:from-amber-400 hover:to-amber-500 transition-all transform hover:-translate-y-0.5 cursor-grab active:cursor-grabbing glow-hover border border-white/20 select-none">
         <span class="text-2xl">📌</span>
-        <span>Antigravity 便條紙與風格萃取器</span>
+        <span>Antigravity 便條紙 v3.2.0</span>
       </a>
     </div>
 
@@ -45,6 +55,7 @@
       💡 提示：若瀏覽器未顯示書籤列，請按快捷鍵 <kbd class="px-2 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300">Ctrl + Shift + B</kbd> (Mac 為 Cmd + Shift + B) 開啟。
     </p>
 
+    <p style="font-size:13px;color:#fbbf24;margin:16px 0">書籤若無法在目標頁面啟動，請使用上方擴充功能版。此連結包含程式碼，舊書籤不會自動更新。</p>
     <!-- 備用手動複製 -->
     <div class="mt-8 pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
       <span class="text-xs text-slate-400">無法拖曳？您也可以一鍵複製代碼手動建立書籤：</span>
@@ -68,7 +79,7 @@
       <div class="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-sm mb-3">2</div>
       <h3 class="font-bold text-white text-base mb-1">🌐 一鍵萃取全頁風格</h3>
       <p class="text-slate-400 text-xs leading-relaxed">
-        看到優秀的網站，點擊「萃取整頁風格」，1 秒自動掃描全站調色盤、字體排版、圓角陰影與頁面骨架，直接格式化成 Design Tokens！
+        看到優秀的網站，點擊「萃取整頁風格」，掃描目前頁面調色盤、字體排版、圓角與頁面骨架，直接格式化成 Design Tokens！
       </p>
     </div>
 
@@ -84,7 +95,8 @@
   <!-- 在此頁面即時測試區 -->
   <div class="max-w-4xl mx-auto w-full my-6 bg-slate-900/40 border border-dashed border-slate-800 rounded-xl p-6 text-center">
     <div class="text-sm font-semibold text-slate-300 mb-2">🧪 您可以在此頁面直接體驗便條紙與風格萃取</div>
-    <p class="text-xs text-slate-400 mb-4">右下角懸浮列已常駐！點擊「📌 貼便條紙模式」或「🌐 萃取整頁風格」試試看：</p>
+    <p class="text-xs text-slate-400 mb-4">此示範只作用於本分頁，不會安裝到 Chrome 或啟用其他分頁。</p>
+    <button id="tryDemoBtn" type="button" style="padding:10px 18px;background:#f59e0b;color:#0f172a;border-radius:8px;margin:12px">僅在此頁試用</button>
     <div class="flex flex-wrap justify-center gap-3">
       <button class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold">範例主按鈕 (Primary)</button>
       <button class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-semibold border border-slate-700">次要按鈕 (Secondary)</button>
@@ -109,39 +121,167 @@
 
   <!-- 內嵌即時運行的腳本邏輯 -->
   <script>
+document.getElementById("tryDemoBtn").addEventListener("click", () => {
 /**
- * Antigravity Universal Sticky Notes & Theme Extractor (v3.0)
+ * Antigravity Universal Sticky Notes & Theme Extractor (v3.2.0)
  * 全能自由便條紙與整頁設計風格萃取腳本：
  * - 任意位置貼便條紙（支援元素錨點、空白間隙、自選階層麵包屑）
  * - 自由敘述任意想法（不限修改、插入新組件、靈感借鏡、刪除）
  * - 智慧環境雙軌辨識（本地專案直指檔案/路由 vs 外站自動帶入網址與品牌語境）
  * - 🌐 一鍵萃取全頁設計系統（配色盤、字體階層、圓角陰影、頁面骨架）
  * - 精緻圖釘懸停展開、就地編輯、刪除
- * - 零外部依賴、純原生 JS、相容 CSP
+ * - 零外部依賴、純原生 JS；執行仍受目標網站 CSP 限制
  */
 (function () {
+  const cleanup = [];
+  function teardown() {
+    for (const release of cleanup.reverse()) { try { release(); } catch { /* Continue releasing other resources. */ } }
+    cleanup.length = 0;
+    window.__AGY_STICKY_LOADED__ = false;
+  }
+  try {
   if (window.__AGY_STICKY_LOADED__) {
     const toggle = document.getElementById('agy-toggle-btn');
-    if (toggle) toggle.click();
-    return;
+    if (toggle) { toggle.click(); return; }
+    // Recover from older versions that marked a partial initialization as loaded.
+    document.getElementById('agy-fixed-root')?.remove();
+    document.getElementById('agy-scroll-root')?.remove();
+    window.__AGY_STICKY_LOADED__ = false;
   }
-  window.__AGY_STICKY_LOADED__ = true;
+  if (!document.body) throw new Error('頁面尚未準備好，請載入完成後重試');
 
   let isAnnotating = false;
   let notes = [];
   let currentTarget = null;
   let ancestorsList = [];
+  let nextId = 1;
+  let disposed = false;
+  let restoring = false;
+  let unsaved = false;
+  let screenshot = null;
+  let route = location.href;
+  const originalCursor = document.body.style.cursor;
+  const listeners = new AbortController();
+  const timers = new Set();
+  const objectUrls = new Set();
+  cleanup.push(() => { disposed = true; isAnnotating = false; listeners.abort(); });
+  cleanup.push(() => timers.forEach(clearTimeout));
+  cleanup.push(() => objectUrls.forEach(url => URL.revokeObjectURL(url)));
+  cleanup.push(() => { document.body.style.cursor = originalCursor; });
+  function later(fn, ms) {
+    const timer = setTimeout(() => { timers.delete(timer); if (!disposed) fn(); }, ms);
+    timers.add(timer);
+    return timer;
+  }
+  function ui(tag, attrs = {}, ...children) {
+    const node = document.createElement(tag);
+    if (tag === 'button') node.type = 'button';
+    for (const [key, value] of Object.entries(attrs)) {
+      if (key === 'style') node.style.cssText = value;
+      else node.setAttribute(key, value);
+    }
+    node.append(...children);
+    return node;
+  }
+  function fingerprint(el) {
+    return { tag: el.tagName, id: el.id, text: el === document.body || el === document.documentElement ? '' : (el.textContent || '').trim().slice(0, 120) };
+  }
+  function makeAnchor(el, x, y) {
+    const parts = [];
+    let node = el;
+    while (node && node !== document.documentElement) {
+      if (node.id && document.querySelectorAll('#' + CSS.escape(node.id)).length === 1) {
+        parts.unshift('#' + CSS.escape(node.id)); break;
+      }
+      const siblings = node.parentElement ? Array.from(node.parentElement.children).filter(n => n.tagName === node.tagName) : [node];
+      parts.unshift(node.tagName.toLowerCase() + ':nth-of-type(' + (siblings.indexOf(node) + 1) + ')');
+      node = node.parentElement;
+    }
+    const rect = el.getBoundingClientRect();
+    return { css: parts.join(' > '), fingerprint: fingerprint(el),
+      rx: rect.width ? (x - scrollX - rect.left) / rect.width : 0,
+      ry: rect.height ? (y - scrollY - rect.top) / rect.height : 0 };
+  }
+  function resolveAnchor(anchor) {
+    try {
+      const matches = document.querySelectorAll(anchor.css);
+      if (matches.length !== 1) return null;
+      const el = matches[0], expected = anchor.fingerprint, actual = fingerprint(el);
+      return actual.tag === expected.tag && actual.id === expected.id && actual.text === expected.text ? el : null;
+    } catch { return null; }
+  }
+  function refreshPins() {
+    notes.forEach(item => {
+      if (!item.target?.isConnected) item.target = resolveAnchor(item.anchor);
+      const rect = item.target?.getBoundingClientRect();
+      item.missing = !rect || !rect.width || !rect.height;
+      if (!item.missing) {
+        item.pageX = rect.left + scrollX + rect.width * item.anchor.rx;
+        item.pageY = rect.top + scrollY + rect.height * item.anchor.ry;
+      }
+      item.pinEl.style.left = (item.pageX - scrollX - 14) + 'px';
+      item.pinEl.style.top = (item.pageY - scrollY - 14) + 'px';
+      item.pinEl.style.background = item.missing ? '#64748b' : '#f59e0b';
+      item.pinEl.title = item.missing ? '目標已失效，請刪除後重新標註' : item.selector;
+    });
+  }
+  function noteData(item) {
+    return { id: item.id, text: item.text, selector: item.selector, anchor: item.anchor, pageX: item.pageX, pageY: item.pageY };
+  }
+  function storageKey() { return 'agy-notes-v1:' + route; }
+  function saveDraft() {
+    if (restoring) return;
+    try {
+      if (notes.length) localStorage.setItem(storageKey(), JSON.stringify({ schemaVersion: 1, notes: notes.map(noteData) }));
+      else localStorage.removeItem(storageKey());
+      unsaved = false;
+    } catch { unsaved = true; showToast('草稿保存失敗，請匯出 JSON 備份', '#dc2626'); }
+  }
+  function validateNotes(data) {
+    if (data.schemaVersion !== 1 || !Array.isArray(data.notes) || data.notes.length > 500) throw new Error('不支援的便條紙格式');
+    const ids = new Set();
+    for (const n of data.notes) {
+      if (!Number.isSafeInteger(n.id) || n.id < 1 || ids.has(n.id) || typeof n.text !== 'string' || n.text.length > 50000 ||
+          typeof n.selector !== 'string' || typeof n.anchor?.css !== 'string' || typeof n.anchor?.fingerprint?.tag !== 'string' ||
+          typeof n.anchor.fingerprint.id !== 'string' || typeof n.anchor.fingerprint.text !== 'string' ||
+          ![n.pageX, n.pageY, n.anchor.rx, n.anchor.ry].every(Number.isFinite)) throw new Error('便條紙資料不完整');
+      ids.add(n.id);
+    }
+    return data.notes;
+  }
+  function loadNotes(data) {
+    const entries = validateNotes(data);
+    restoring = true;
+    try {
+      notes.forEach(n => n.pinEl.remove()); notes = []; nextId = 1;
+      entries.forEach(n => createStickyPin(resolveAnchor(n.anchor), n.selector, n.text, n.pageX, n.pageY, n));
+      countSpan.innerText = notes.length;
+      refreshPins();
+    } finally { restoring = false; }
+  }
+  function restoreDraft() {
+    try {
+      const raw = localStorage.getItem(storageKey());
+      if (raw) { loadNotes(JSON.parse(raw)); showToast('已恢復 ' + notes.length + ' 張便條紙'); }
+    } catch { showToast('無法恢復草稿；原資料未覆寫', '#d97706'); }
+  }
+  async function copyText(text, success) {
+    try { await navigator.clipboard.writeText(text); if (!disposed) showToast(success); }
+    catch { if (!disposed) prompt('請手動複製以下內容：', text); }
+  }
 
   // 1. 建立 UI 根容器
   const fixedRoot = document.createElement('div');
   fixedRoot.id = 'agy-fixed-root';
   fixedRoot.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999999;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;';
   document.body.appendChild(fixedRoot);
+  cleanup.push(() => fixedRoot.remove());
 
   const scrollRoot = document.createElement('div');
   scrollRoot.id = 'agy-scroll-root';
   scrollRoot.style.cssText = 'position:absolute;top:0;left:0;width:100%;min-height:100%;pointer-events:none;z-index:9999990;';
   document.body.appendChild(scrollRoot);
+  cleanup.push(() => scrollRoot.remove());
 
   // 懸停高亮框
   const hoverBox = document.createElement('div');
@@ -166,7 +306,9 @@
     opacity: 0;
     transition: opacity 0.25s ease, transform 0.25s ease;
     z-index: 10000020;
-    white-space: nowrap;
+    white-space: normal;
+    max-width: calc(100vw - 32px);
+    box-sizing: border-box;
   `;
   fixedRoot.appendChild(toast);
 
@@ -177,7 +319,7 @@
     toast.style.background = bg;
     toast.style.opacity = '1';
     toast.style.transform = 'translateX(-50%) translateY(4px)';
-    toastTimer = setTimeout(() => {
+    toastTimer = later(() => {
       toast.style.opacity = '0';
       toast.style.transform = 'translateX(-50%) translateY(0)';
     }, 2800);
@@ -205,77 +347,14 @@
     user-select: none;
     transition: transform 0.2s ease;
   `;
-  toolbar.innerHTML = `
-    <button id="agy-toggle-btn" style="
-      background: #f59e0b;
-      color: #0f172a;
-      border: none;
-      padding: 7px 14px;
-      border-radius: 9999px;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 2px 10px rgba(245,158,11,0.4);
-      outline: none;
-      transition: all 0.2s;
-    ">
-      <span>📌</span> <span id="agy-btn-text">貼便條紙模式</span>
-    </button>
-    <button id="agy-theme-btn" title="一秒掃描整頁配色、字體、圓角與佈局骨架" style="
-      background: rgba(255,255,255,0.1);
-      color: #f8fafc;
-      border: 1px solid rgba(255,255,255,0.2);
-      padding: 7px 13px;
-      border-radius: 9999px;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      outline: none;
-      transition: background 0.2s;
-    ">
-      <span>🌐</span> 萃取整頁風格
-    </button>
-    <button id="agy-copy-btn" style="
-      background: rgba(255,255,255,0.1);
-      color: #f8fafc;
-      border: 1px solid rgba(255,255,255,0.2);
-      padding: 7px 13px;
-      border-radius: 9999px;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      outline: none;
-      transition: background 0.2s;
-    ">
-      <span>📋</span> 複製便條紙 (<span id="agy-count">0</span>)
-    </button>
-    <button id="agy-exit-btn" title="完全離開並關閉工具" style="
-      background: rgba(255,255,255,0.08);
-      color: #94a3b8;
-      border: 1px solid rgba(255,255,255,0.12);
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      font-size: 13px;
-      font-weight: bold;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-left: 2px;
-      outline: none;
-      transition: all 0.15s ease;
-    ">✕</button>
-  `;
+  const toolbarButtonStyle = 'background:rgba(255,255,255,0.1);color:#f8fafc;border:1px solid rgba(255,255,255,0.2);padding:7px 13px;border-radius:9999px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:5px';
+  toolbar.append(
+    ui('button', { id: 'agy-toggle-btn', style: toolbarButtonStyle + ';background:#f59e0b;color:#0f172a;font-weight:700' },
+      '📌 ', ui('span', { id: 'agy-btn-text' }, '貼便條紙模式')),
+    ui('button', { id: 'agy-theme-btn', title: '掃描目前頁面風格摘要', style: toolbarButtonStyle }, '🌐 萃取整頁風格'),
+    ui('button', { id: 'agy-copy-btn', style: toolbarButtonStyle }, '📋 複製便條紙 (', ui('span', { id: 'agy-count' }, '0'), ')'),
+    ui('button', { id: 'agy-exit-btn', title: '完全離開並關閉工具', style: toolbarButtonStyle + ';width:28px;height:28px;padding:0;justify-content:center;color:#94a3b8' }, '✕')
+  );
   fixedRoot.appendChild(toolbar);
 
   const toggleBtn = toolbar.querySelector('#agy-toggle-btn');
@@ -304,16 +383,9 @@
 
   // 完全退出
   exitBtn.addEventListener('click', () => {
-    if (notes.length > 0) {
-      if (!confirm(`目前畫面上還有 ${notes.length} 張便條紙尚未複製，確定要完全關閉嗎？`)) {
-        return;
-      }
-    }
+    if (unsaved && !confirm('草稿未能保存，請先匯出 JSON。仍要關閉嗎？')) return;
     closeDialog();
-    fixedRoot.remove();
-    scrollRoot.remove();
-    document.body.style.cursor = '';
-    window.__AGY_STICKY_LOADED__ = false;
+    teardown();
   });
 
   // 切換便條紙模式
@@ -331,7 +403,7 @@
       toggleBtn.style.color = '#0f172a';
       toggleBtn.style.boxShadow = '0 2px 10px rgba(245,158,11,0.4)';
       btnText.innerText = '貼便條紙模式';
-      document.body.style.cursor = '';
+      document.body.style.cursor = originalCursor;
       hoverBox.style.display = 'none';
       closeDialog();
     }
@@ -430,12 +502,12 @@
     if (!isAnnotating) return;
     if (fixedRoot.contains(e.target) || scrollRoot.contains(e.target)) return;
     updateHoverBox(e.target);
-  }, true);
+  }, { capture: true, signal: listeners.signal });
 
   window.addEventListener('scroll', () => {
-    if (!isAnnotating) return;
-    if (currentTarget) updateHoverBox(currentTarget);
-  }, { passive: true });
+    if (isAnnotating && currentTarget) updateHoverBox(currentTarget);
+    refreshPins();
+  }, { passive: true, capture: true, signal: listeners.signal });
 
   // 5. 點擊貼便條紙
   document.addEventListener('click', (e) => {
@@ -454,7 +526,7 @@
     const clickClientY = e.clientY;
 
     openStickyDialog(currentTarget, clickPageX, clickPageY, clickClientX, clickClientY);
-  }, true);
+  }, { capture: true, signal: listeners.signal });
 
   function closeDialog() {
     const existing = document.getElementById('agy-active-dialog');
@@ -465,6 +537,7 @@
   function openStickyDialog(target, pageX, pageY, clientX, clientY, editNoteId = null) {
     closeDialog();
     currentTarget = target;
+    ancestorsList = getAncestors(target);
     updateHoverBox(currentTarget);
 
     const dialog = document.createElement('div');
@@ -482,6 +555,8 @@
       top: ${top}px;
       left: ${left}px;
       width: 320px;
+      max-width: calc(100vw - 20px);
+      box-sizing: border-box;
       background: #0f172a;
       color: #f8fafc;
       border: 1px solid #f59e0b;
@@ -493,74 +568,41 @@
       font-size: 13px;
     `;
 
-    const breadcrumbsHtml = ancestorsList.map((node, index) => {
-      const isSelected = node === currentTarget;
-      const tag = node.tagName.toLowerCase();
-      const rawClass = getSafeClassName(node);
-      const firstClass = rawClass ? '.' + rawClass.split(/\s+/)[0] : '';
-      const label = `${tag}${firstClass}`;
-      return `
-        <button class="agy-crumb-btn" data-index="${index}" style="
-          background: ${isSelected ? '#f59e0b' : '#1e293b'};
-          color: ${isSelected ? '#0f172a' : '#94a3b8'};
-          border: 1px solid ${isSelected ? '#f59e0b' : '#334155'};
-          font-weight: ${isSelected ? '700' : '500'};
-          border-radius: 4px;
-          padding: 2px 6px;
-          font-size: 11px;
-          cursor: pointer;
-          max-width: 90px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          outline: none;
-        ">${label}</button>
-      `;
-    }).reverse().join('<span style="color:#64748b;font-size:10px;">➔</span>');
-
     const initialText = editNoteId ? (notes.find(n => n.id === editNoteId)?.text || '') : '';
-
-    dialog.innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-        <span style="font-size:12px;font-weight:700;color:#f59e0b;display:flex;align-items:center;gap:4px;">
-          📌 ${editNoteId ? '編輯便條紙 #' + editNoteId : '貼上新便條紙'}
-        </span>
-        <span style="font-size:11px;color:#94a3b8;">自由填寫任何想法</span>
-      </div>
-      <div style="font-size:11px;color:#cbd5e1;margin-bottom:8px;background:#1e293b;padding:5px 8px;border-radius:6px;word-break:break-all;">
-        位置錨點：<span id="agy-selected-tag" style="color:#fbbf24;font-family:monospace;font-weight:600;">${getReadableSelector(currentTarget)}</span>
-      </div>
-      ${ancestorsList.length > 1 ? `
-        <div style="font-size:10px;color:#94a3b8;margin-bottom:4px;">切換外層容器：</div>
-        <div id="agy-crumbs" style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-bottom:10px;">
-          ${breadcrumbsHtml}
-        </div>
-      ` : ''}
-      <textarea id="agy-note-input" placeholder="隨心所欲敘述任何內容，例如：&#10;• 這裡想插入一排用戶評價星級&#10;• 這個按鈕改深紫漸層並加大圓角&#10;• 這整塊空白處太寬，縮小間距" style="
-        width: 100%;
-        box-sizing: border-box;
-        height: 84px;
-        background: #020617;
-        color: white;
-        border: 1px solid #334155;
-        border-radius: 8px;
-        padding: 8px 10px;
-        font-size: 13px;
-        line-height: 1.45;
-        resize: none;
-        outline: none;
-      ">${initialText}</textarea>
-      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px;">
-        <button id="agy-cancel-btn" style="background:transparent;color:#94a3b8;border:none;font-size:12px;cursor:pointer;padding:5px 10px;">取消</button>
-        <button id="agy-save-btn" style="background:#f59e0b;color:#0f172a;border:none;border-radius:6px;font-size:12px;font-weight:700;padding:6px 15px;cursor:pointer;">
-          ${editNoteId ? '更新便條紙' : '📌 釘上便條紙'}
-        </button>
-      </div>
-    `;
+    dialog.append(
+      ui('div', { style: 'display:flex;justify-content:space-between;margin-bottom:8px' },
+        ui('span', { style: 'font-size:12px;font-weight:700;color:#f59e0b' }, '📌 ' + (editNoteId ? '編輯便條紙 #' + editNoteId : '貼上新便條紙')),
+        ui('span', { style: 'font-size:11px;color:#94a3b8' }, '自由填寫任何想法')),
+      ui('div', { style: 'font-size:11px;color:#cbd5e1;margin-bottom:8px;background:#1e293b;padding:5px 8px;border-radius:6px;word-break:break-all' },
+        '位置錨點：', ui('span', { id: 'agy-selected-tag', style: 'color:#fbbf24;font-family:monospace;font-weight:600' }, getReadableSelector(currentTarget)))
+    );
+    if (ancestorsList.length > 1) {
+      const crumbs = ui('div', { id: 'agy-crumbs', style: 'display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-bottom:10px' });
+      ancestorsList.map((node, index) => {
+        const selected = node === currentTarget;
+        const rawClass = getSafeClassName(node);
+        return ui('button', { class: 'agy-crumb-btn', 'data-index': index,
+          style: 'border:1px solid #334155;border-radius:4px;padding:2px 6px;font-size:11px;cursor:pointer;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;' +
+            (selected ? 'background:#f59e0b;color:#0f172a;font-weight:700' : 'background:#1e293b;color:#94a3b8')
+        }, node.tagName.toLowerCase() + (rawClass ? '.' + rawClass.split(/\s+/)[0] : ''));
+      }).reverse().forEach((button, index) => {
+        if (index) crumbs.append(ui('span', { style: 'color:#64748b;font-size:10px' }, '➔'));
+        crumbs.append(button);
+      });
+      dialog.append(ui('div', { style: 'font-size:10px;color:#94a3b8;margin-bottom:4px' }, '切換外層容器：'), crumbs);
+    }
+    dialog.append(
+      ui('textarea', { id: 'agy-note-input', placeholder: '描述想修改的內容、插入元件或參考風格',
+        style: 'width:100%;box-sizing:border-box;height:84px;background:#020617;color:white;border:1px solid #334155;border-radius:8px;padding:8px 10px;font-size:13px;line-height:1.45;resize:none' }),
+      ui('div', { style: 'display:flex;justify-content:flex-end;gap:8px;margin-top:10px' },
+        ui('button', { id: 'agy-cancel-btn', style: 'background:transparent;color:#94a3b8;border:none;font-size:12px;cursor:pointer;padding:5px 10px' }, '取消'),
+        ui('button', { id: 'agy-save-btn', style: 'background:#f59e0b;color:#0f172a;border:none;border-radius:6px;font-size:12px;font-weight:700;padding:6px 15px;cursor:pointer' }, editNoteId ? '更新便條紙' : '📌 釘上便條紙'))
+    );
 
     fixedRoot.appendChild(dialog);
 
     const textarea = dialog.querySelector('#agy-note-input');
+    textarea.value = initialText;
     textarea.focus();
 
     const crumbBtns = dialog.querySelectorAll('.agy-crumb-btn');
@@ -588,7 +630,7 @@
         return;
       }
       if (editNoteId) {
-        updateNote(editNoteId, text);
+        updateNote(editNoteId, text, currentTarget, pageX, pageY);
       } else {
         createStickyPin(currentTarget, getReadableSelector(currentTarget), text, pageX, pageY);
       }
@@ -597,12 +639,13 @@
   }
 
   // 7. 釘在網頁上的精美便條紙圖釘（展開態與編輯/刪除）
-  function createStickyPin(target, selector, text, pageX, pageY) {
-    const id = notes.length + 1;
+  function createStickyPin(target, selector, text, pageX, pageY, restored = null) {
+    const id = restored ? restored.id : nextId++;
+    nextId = Math.max(nextId, id + 1);
     const pin = document.createElement('div');
     pin.className = 'agy-sticky-pin';
     pin.style.cssText = `
-      position: absolute;
+      position: fixed;
       top: ${pageY - 14}px;
       left: ${pageX - 14}px;
       width: 28px;
@@ -644,17 +687,15 @@
       z-index: 10000005;
       pointer-events: auto;
     `;
-    previewCard.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;border-bottom:1px solid #334155;padding-bottom:4px;">
-        <span style="font-weight:700;color:#fbbf24;">📌 便條紙 #${id}</span>
-        <div style="display:flex;gap:6px;">
-          <button class="agy-card-edit-btn" style="background:transparent;border:none;color:#94a3b8;cursor:pointer;font-size:11px;">✏️ 編輯</button>
-          <button class="agy-card-del-btn" style="background:transparent;border:none;color:#ef4444;cursor:pointer;font-size:11px;">🗑️ 刪除</button>
-        </div>
-      </div>
-      <div style="font-size:10px;color:#94a3b8;margin-bottom:4px;word-break:break-all;">位置：${selector}</div>
-      <div class="agy-card-text" style="white-space:pre-wrap;color:#e2e8f0;">${text}</div>
-    `;
+    previewCard.append(
+      ui('div', { style: 'display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;border-bottom:1px solid #334155;padding-bottom:4px' },
+        ui('span', { style: 'font-weight:700;color:#fbbf24' }, '📌 便條紙 #' + id),
+        ui('div', { style: 'display:flex;gap:6px' },
+          ui('button', { class: 'agy-card-edit-btn', style: 'background:transparent;border:none;color:#94a3b8;cursor:pointer;font-size:11px' }, '✏️ 編輯'),
+          ui('button', { class: 'agy-card-del-btn', style: 'background:transparent;border:none;color:#ef4444;cursor:pointer;font-size:11px' }, '🗑️ 刪除'))),
+      ui('div', { class: 'agy-card-selector', style: 'font-size:10px;color:#94a3b8;margin-bottom:4px;word-break:break-all' }, '位置：' + selector),
+      ui('div', { class: 'agy-card-text', style: 'white-space:pre-wrap;color:#e2e8f0' }, text)
+    );
     pin.appendChild(previewCard);
 
     let hideTimer = null;
@@ -663,14 +704,15 @@
       previewCard.style.display = 'block';
     });
     pin.addEventListener('mouseleave', () => {
-      hideTimer = setTimeout(() => {
+      hideTimer = later(() => {
         previewCard.style.display = 'none';
       }, 250);
     });
 
     previewCard.querySelector('.agy-card-edit-btn').addEventListener('click', (e) => {
       e.stopPropagation();
-      openStickyDialog(target, pageX, pageY, pageX - window.scrollX, pageY - window.scrollY, id);
+      if (item.missing) { showToast('目標已失效，請重新標註', '#d97706'); return; }
+      openStickyDialog(item.target, item.pageX, item.pageY, item.pageX - window.scrollX, item.pageY - window.scrollY, id);
     });
 
     previewCard.querySelector('.agy-card-del-btn').addEventListener('click', (e) => {
@@ -678,21 +720,29 @@
       deleteNote(id);
     });
 
-    const item = { id, target, selector, text, pageX, pageY, pinEl: pin, previewCard };
+    const item = { id, target, selector, text, pageX, pageY, anchor: restored?.anchor || makeAnchor(target, pageX, pageY), pinEl: pin, previewCard };
     notes.push(item);
     countSpan.innerText = notes.length;
 
     scrollRoot.appendChild(pin);
-    showToast(`✅ 已釘上便條紙 #${id}`, '#f59e0b');
+    refreshPins();
+    if (!restoring) showToast(`✅ 已釘上便條紙 #${id}`, '#f59e0b');
+    saveDraft();
   }
 
-  function updateNote(id, newText) {
+  function updateNote(id, newText, target, pageX, pageY) {
     const item = notes.find(n => n.id === id);
     if (!item) return;
     item.text = newText;
+    item.target = target;
+    item.selector = getReadableSelector(target);
+    item.anchor = makeAnchor(target, pageX, pageY);
+    item.previewCard.querySelector('.agy-card-selector').textContent = '位置：' + item.selector;
     const cardText = item.previewCard.querySelector('.agy-card-text');
     if (cardText) cardText.innerText = newText;
+    refreshPins();
     showToast(`✅ 已更新便條紙 #${id}`, '#f59e0b');
+    saveDraft();
   }
 
   function deleteNote(id) {
@@ -702,6 +752,7 @@
     notes = notes.filter(n => n.id !== id);
     countSpan.innerText = notes.length;
     showToast(`🗑️ 已刪除便條紙 #${id}`);
+    saveDraft();
   }
 
   // 8. 複製便條紙清單 (雙軌格式)
@@ -712,10 +763,12 @@
     }
 
     const env = getEnvironmentContext();
-    let text = `${env.header}\n\n`;
+    refreshPins();
+    let text = `${env.header}\n- **畫面尺寸**：${innerWidth} × ${innerHeight}（DPR ${devicePixelRatio}）\n- **完整路由**：${location.href}\n- **截圖**：${screenshot ? '已附於 JSON 回饋包' : '未附；可用「附截圖」選取圖片'}\n\n`;
 
     notes.forEach((item, index) => {
-      text += `📌 **便條紙 #${index + 1}**（位置錨點：\`${item.selector}\`）\n`;
+      text += `📌 **便條紙 #${item.id}**（位置錨點：\`${item.selector}\`）\n`;
+      text += `- CSS 定位：\`${item.anchor.css}\`\n- 狀態：${item.missing ? '目標已失效，請人工確認' : '已定位'}\n- 樣式摘要：${JSON.stringify(styleSnapshot(item.target))}\n`;
       text += `> 「${item.text.replace(/\n/g, '\n> ')}」\n\n`;
     });
 
@@ -725,17 +778,13 @@
       text += `請參考此網站之視覺質感與上述便條紙期望，配合我當前的對話指令進行處理。`;
     }
 
-    navigator.clipboard.writeText(text).then(() => {
-      showToast('📋 已複製便條紙清單！請在 Antigravity 對話框 Ctrl+V 發送');
-    }).catch(() => {
-      prompt('請手動複製以下便條紙清單：', text);
-    });
+    copyText(text, '📋 已複製 AI 回饋包；附圖請另外匯出 JSON');
   });
 
   // 9. 🌐 一鍵萃取全頁設計風格 (Theme Extractor Algorithm)
   themeBtn.addEventListener('click', () => {
     showToast('🔍 正在掃描全頁 Design Tokens...', '#3b82f6');
-    setTimeout(extractFullPageTheme, 100);
+    later(extractFullPageTheme, 100);
   });
 
   function extractFullPageTheme() {
@@ -823,14 +872,103 @@ ${sections.length > 0 ? sections.map(s => '   - ' + s).join('\n') : '   - Header
 ---
 🎯 **請參考此全站設計系統與風格**，配合我當前的對話需求進行後續處理。`;
 
-    navigator.clipboard.writeText(themeMarkdown).then(() => {
-      showToast('✨ 已成功萃取全頁設計系統！已複製至剪貼簿', '#059669');
-    }).catch(() => {
-      prompt('請手動複製以下全頁設計風格：', themeMarkdown);
-    });
+    copyText(themeMarkdown, '✨ 已複製目前頁面的風格摘要');
   }
 
   // 10. 動畫樣式
+  function styleSnapshot(el) {
+    if (!el?.isConnected) return null;
+    const computed = getComputedStyle(el);
+    return Object.fromEntries(['color', 'backgroundColor', 'fontFamily', 'fontSize', 'fontWeight', 'lineHeight',
+      'padding', 'margin', 'gap', 'borderRadius', 'boxShadow', 'display'].map(key => [key, computed[key]]));
+  }
+  function feedbackPackage() {
+    refreshPins();
+    return { schemaVersion: 1, toolVersion: '3.2.0', url: route, title: document.title, createdAt: new Date().toISOString(),
+      viewport: { width: innerWidth, height: innerHeight, devicePixelRatio, scrollX, scrollY }, screenshot,
+      notes: notes.map(item => ({ ...noteData(item), status: item.missing ? 'missing' : 'resolved', styles: styleSnapshot(item.target) })) };
+  }
+  function addAction(label, action) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = label;
+    button.style.cssText = 'background:#334155;color:white;border:1px solid #64748b;border-radius:8px;padding:7px;cursor:pointer;font-size:12px';
+    button.addEventListener('click', action);
+    toolbar.insertBefore(button, exitBtn);
+    return button;
+  }
+  toolbar.style.flexWrap = 'wrap';
+  toolbar.style.maxWidth = 'calc(100vw - 48px)';
+  toolbar.style.boxSizing = 'border-box';
+  toolbar.style.borderRadius = '16px';
+  addAction('匯出 JSON', () => {
+    const url = URL.createObjectURL(new Blob([JSON.stringify(feedbackPackage(), null, 2)], { type: 'application/json' }));
+    objectUrls.add(url);
+    const link = document.createElement('a');
+    link.href = url; link.download = 'ui-feedback.json'; fixedRoot.appendChild(link); link.click(); link.remove();
+    later(() => { URL.revokeObjectURL(url); objectUrls.delete(url); }, 30000);
+  });
+  const importInput = document.createElement('input');
+  importInput.type = 'file'; importInput.accept = '.json,application/json'; importInput.hidden = true;
+  fixedRoot.appendChild(importInput);
+  importInput.addEventListener('change', async () => {
+    const file = importInput.files[0];
+    try {
+      if (!file) return;
+      if (file.size > 10 * 1024 * 1024) throw new Error('JSON 不可超過 10 MB');
+      const data = JSON.parse(await file.text());
+      if (disposed) return;
+      if (data.url !== route) throw new Error('請在回饋包的原始網址匯入');
+      validateNotes(data);
+      if (notes.length && !confirm('匯入將取代目前便條紙，是否繼續？')) return;
+      loadNotes(data);
+      screenshot = typeof data.screenshot === 'string' && /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(data.screenshot) ? data.screenshot : null;
+      screenshotBtn.textContent = screenshot ? '更換截圖 ✓' : '附截圖';
+      showToast('已匯入便條紙'); saveDraft();
+    } catch (error) { showToast('匯入失敗：' + error.message, '#dc2626'); }
+    finally { importInput.value = ''; }
+  });
+  addAction('匯入 JSON', () => importInput.click());
+  const imageInput = document.createElement('input');
+  imageInput.type = 'file'; imageInput.accept = 'image/png,image/jpeg,image/webp'; imageInput.hidden = true;
+  fixedRoot.appendChild(imageInput);
+  const screenshotBtn = addAction('附截圖', () => imageInput.click());
+  imageInput.addEventListener('change', () => {
+    const file = imageInput.files[0], capturedRoute = route;
+    if (!file) return;
+    if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type) || file.size > 5 * 1024 * 1024) {
+      showToast('請選擇 5 MB 以下的 PNG、JPEG 或 WebP', '#d97706'); imageInput.value = ''; return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (disposed || route !== capturedRoute) return;
+      screenshot = reader.result;
+      screenshotBtn.textContent = '更換截圖 ✓';
+      showToast('已附截圖，匯出 JSON 即可帶出；截圖不存入草稿');
+    };
+    reader.onerror = () => { if (!disposed) showToast('讀取截圖失敗', '#dc2626'); };
+    reader.readAsDataURL(file); imageInput.value = '';
+  });
+  addAction('清除草稿', () => {
+    if (!confirm('清除本頁所有便條紙與已附截圖？')) return;
+    closeDialog(); notes.forEach(n => n.pinEl.remove()); notes = []; screenshot = null;
+    screenshotBtn.textContent = '附截圖'; countSpan.innerText = '0'; saveDraft();
+  });
+  window.addEventListener('resize', refreshPins, { signal: listeners.signal });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') { closeDialog(); if (isAnnotating) toggleBtn.click(); }
+  }, { signal: listeners.signal });
+  // Also covers layout shifts, SPA replacement and sticky/fixed targets without observing our own DOM writes.
+  const trackingTimer = setInterval(() => {
+    if (location.href !== route) {
+      closeDialog(); currentTarget = null;
+      notes.forEach(n => n.pinEl.remove()); notes = []; countSpan.innerText = '0';
+      screenshot = null; screenshotBtn.textContent = '附截圖'; route = location.href; restoreDraft();
+    }
+    refreshPins();
+  }, 250);
+  cleanup.push(() => clearInterval(trackingTimer));
+  restoreDraft();
   const style = document.createElement('style');
   style.innerText = `
     @keyframes agy-pop {
@@ -839,8 +977,17 @@ ${sections.length > 0 ? sections.map(s => '   - ' + s).join('\n') : '   - Header
     }
   `;
   document.head.appendChild(style);
+  cleanup.push(() => style.remove());
+  window.__AGY_STICKY_LOADED__ = true;
+  showToast('📌 標註器 v3.2.0 已啟動');
+  } catch (error) {
+    teardown();
+    console.error('[Frontend UI Annotator] 啟動失敗', error);
+    alert('標註器啟動失敗：' + (error?.message || String(error)) + '\n請重新整理頁面後重試。');
+  }
 })();
 
+});
   </script>
 </body>
 </html>
