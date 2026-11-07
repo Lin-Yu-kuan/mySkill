@@ -257,7 +257,7 @@ python "<目前 SKILL.md 所在目錄>/scripts/build_notes.py" "<notes_path 的�
 
 ---
 
-<!-- BEGIN:SHARED-CONTRACT（由 scripts/manage.py sync 注入，請勿手改） -->
+<!-- BEGIN:SHARED-CONTRACT（由治理工具自動注入，請勿手改） -->
 
 # 共用行為準則（所有 mySkill 技能一體適用）
 

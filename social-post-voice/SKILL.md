@@ -60,7 +60,7 @@ emoji 用於有意義的情緒或重點，不要求每段都放。依主題自�
 
 ---
 
-<!-- BEGIN:SHARED-CONTRACT（由 scripts/manage.py sync 注入，請勿手改） -->
+<!-- BEGIN:SHARED-CONTRACT（由治理工具自動注入，請勿手改） -->
 
 # 共用行為準則（所有 mySkill 技能一體適用）
 

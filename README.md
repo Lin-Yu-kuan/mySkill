@@ -175,17 +175,17 @@ Agent 會先讀取 `skills.json` 比對版本：相同就回報「已是最新�
 
 ## 🛠️ 倉庫自動化維護與治理工具
 
-為解決技能數量持續增長帶來的維護負擔，本倉庫內建零依賴的自動化管理腳本 [`scripts/manage.py`](./scripts/manage.py)：
+為解決技能數量持續增長帶來的維護負擔，本倉庫的治理工具獨立放在同層的 `skillkit` 資料夾（另一個 repo），不隨本倉庫複製：
 
-```bash
-# 1. 檢查所有技能是否符合 GEMINI.md 規範（Frontmatter、版本、更新網址、安裝指令）
-python scripts/manage.py lint
+```powershell
+# 1. 檢查所有技能是否符合規範（Frontmatter、版本、更新網址、安裝指令）
+manage.cmd lint
 
 # 2. 一鍵同步：注入共用行為準則到各 SKILL.md、生成根目錄 README.md 與 skills.json
-python scripts/manage.py sync
+manage.cmd sync
 
 # 3. CI 用：只檢查 README 是否與技能元資料同步，不寫入檔案
-python scripts/manage.py sync --check
+manage.cmd sync --check
 ```
 
 ---
@@ -200,7 +200,8 @@ mySkill/
 ├── LICENSE                        # MIT 授權條款
 ├── skills.config.json             # 倉庫設定（repo URL、分支、站名、安裝路徑）
 ├── skills.json                    # 機器可讀索引（版本、SHA-256、觸發詞；由 sync 產生）
-├── README.md                      # 技能庫領域總覽首頁（由 scripts/manage.py 自動同步）
+├── README.md                      # 技能庫領域總覽首頁（由 skillkit 自動同步）
+├── manage.cmd                     # 治理工具入口（呼叫同層 skillkit）
 ├── .github/workflows/skills-ci.yml # 推送時自動執行 lint、sync --check 與測試
 ├── scripts/
 │   └── manage.py                  # 技能規範體檢 (lint) 與總目錄自動生成 (sync) 工具

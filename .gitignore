@@ -39,3 +39,5 @@ env/
 .DS_Store
 Thumbs.db
 Desktop.ini
+
+# --- 技能倉庫治理（由 manage.py init 加入） ---
