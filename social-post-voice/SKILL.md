@@ -1,5 +1,6 @@
 ---
 name: social-post-voice
+version: 1.0.0
 category: content
 category_label: 社群創作 / 語氣改寫
 summary: 臺灣繁體中文自然生活感社群貼文寫作與改稿專家，適度吐槽不浮誇，支援 Dcard、Facebook、Instagram、Threads 多平台語氣轉寫與嚴格事實邊界把關
@@ -60,14 +61,11 @@ emoji 用於有意義的情緒或重點，不要求每段都放。依主題自�
 
 ## 技能維護與自動更新指引
 
-當使用者要求「更新 social-post-voice 技能」或「檢查 social-post-voice 最新版本」時：
-1. **單檔快速更新**：讀取 Frontmatter 中的 `update_url`（`https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/social-post-voice/SKILL.md`）取得最新內容，確認有效後直接覆蓋本機 `SKILL.md`。
-2. **完整套件更新**（含 `references/` 語氣指南）：
-   - **Windows (PowerShell)**：
-     ```powershell
-     $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $t="$env:TEMP\myskill.zip"; $d="$HOME\.gemini\config\skills\social-post-voice"; if (!(Test-Path $d)) { New-Item -ItemType Directory -Path $d -Force }; Invoke-WebRequest $u -OutFile $t; Expand-Archive $t "$env:TEMP\myskill-temp" -Force; Copy-Item "$env:TEMP\myskill-temp\mySkill-main\social-post-voice\*" $d -Recurse -Force; Remove-Item $t,"$env:TEMP\myskill-temp" -Recurse -Force; Write-Host "✅ social-post-voice 技能套件已更新至最新版本！" -ForegroundColor Green
-     ```
-   - **macOS / Linux**：
-     ```bash
-     mkdir -p "$HOME/.gemini/config/skills/social-post-voice" && curl -sSL "https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.tar.gz" | tar -xz -C "$HOME/.gemini/config/skills/social-post-voice" --strip-components=2 "mySkill-main/social-post-voice/" && echo "✅ social-post-voice 技能套件已更新至最新版本！"
-     ```
+Frontmatter 的 `version` 是本機版本，`update_url` 指向雲端最新版。當使用者要求「更新 social-post-voice 技能」或「檢查 social-post-voice 最新版本」時：
+
+1. **比對版本**：讀取 `update_url`，解析遠端 Frontmatter 的 `version`。與本機相同時，回報「已是最新版本（vX.Y.Z）」即結束，不覆寫任何檔案。
+2. **先備份**：版本不同時，先將本機 `SKILL.md` 複製為 `SKILL.md.bak`；若要做完整套件更新，另將整個技能資料夾改名為 `social-post-voice.bak-<yyyyMMdd-HHmmss>`。
+3. **再更新**：以 `update_url` 內容覆寫 `SKILL.md`。使用者要求完整套件更新（`references/` 語氣指南）時，重跑本技能 `README.md`「🚀 Antigravity 一鍵安裝方式」中的指令取得整包最新版。
+4. **驗證與還原**：確認新檔案齊全且 `name`、`version` 正確後才刪除備份；下載失敗或內容不完整時，立即中止並還原備份。
+5. **回報差異**：只回報「v舊 → v新」與變更章節摘要，不逐字貼出全文；版本號未變但內容有差異時，如實告知「版本號未更新」。
+6. **不靜默覆寫**：使用者未明確要求更新時，先確認再動作。

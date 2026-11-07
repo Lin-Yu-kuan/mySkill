@@ -11,10 +11,11 @@ mySkill 技能庫自動化治理與目錄同步工具 (Skill Governance & Catalo
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import sys
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 REPO_URL = "https://github.com/Lin-Yu-kuan/mySkill"
 RAW_BASE_URL = "https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main"
@@ -62,6 +63,7 @@ CATEGORY_DEFINITIONS: Dict[str, Dict[str, str]] = {
 
 REQUIRED_FRONTMATTER_KEYS = [
     "name",
+    "version",
     "category",
     "category_label",
     "summary",
@@ -69,6 +71,20 @@ REQUIRED_FRONTMATTER_KEYS = [
     "repository",
     "update_url",
 ]
+
+# 安裝與更新指令的共用常數（GitHub README 徽章 anchor 亦依賴此處）
+SKILLS_DIR_PS = r"$HOME\.gemini\config\skills"
+SKILLS_DIR_SH = "$HOME/.gemini/config/skills"
+SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+$")
+NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+
+# 舊版安裝指令特徵：會寫入 BOM、使用固定暫存路徑或經手轉碼，lint 一律視為錯誤
+LEGACY_INSTALL_PATTERNS = (
+    "Out-File -Encoding utf8",
+    "Invoke-RestMethod",
+    r"$env:TEMP\myskill.zip",
+    r"$env:TEMP\myskill-temp",
+)
 
 
 def parse_frontmatter(content: str) -> Tuple[Dict[str, str], str]:
@@ -134,12 +150,26 @@ class SkillInfo:
         self.body: str = ""
         self.has_subdirs: bool = False
         self.sub_items: List[str] = []
+        self.has_bom: bool = False
+        self.plugin: Dict[str, Any] = {}
+        self.plugin_error: Optional[str] = None
         self._load()
 
     def _load(self) -> None:
         if self.skill_md.exists():
-            content = self.skill_md.read_text(encoding="utf-8-sig")
-            self.frontmatter, self.body = parse_frontmatter(content)
+            raw = self.skill_md.read_bytes()
+            self.has_bom = raw.startswith(b"\xef\xbb\xbf")
+            self.frontmatter, self.body = parse_frontmatter(
+                raw.decode("utf-8-sig")
+            )
+
+        plugin_file = self.path / "plugin.json"
+        if plugin_file.exists():
+            try:
+                self.plugin = json.loads(plugin_file.read_text(encoding="utf-8-sig"))
+            except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+                self.plugin_error = str(exc)
+                self.plugin = {}
 
         for item in sorted(self.path.iterdir()):
             if item.name.startswith(".") or item.name == "__pycache__":
@@ -153,6 +183,10 @@ class SkillInfo:
     @property
     def name(self) -> str:
         return self.frontmatter.get("name", self.dir_name)
+
+    @property
+    def version(self) -> str:
+        return self.frontmatter.get("version", "")
 
     @property
     def category(self) -> str:
@@ -187,6 +221,17 @@ def discover_skills(root: Path) -> List[SkillInfo]:
     return skills
 
 
+def find_orphan_dirs(root: Path) -> List[str]:
+    """找出放在根目錄、看起來像技能卻缺少 SKILL.md 的資料夾。"""
+    orphans: List[str] = []
+    for item in sorted(root.iterdir()):
+        if not item.is_dir() or item.name in IGNORE_DIRS or item.name.startswith("."):
+            continue
+        if not (item / "SKILL.md").exists():
+            orphans.append(item.name)
+    return orphans
+
+
 def lint_skills(root: Path) -> int:
     skills = discover_skills(root)
     if not skills:
@@ -199,55 +244,109 @@ def lint_skills(root: Path) -> int:
 
     for s in skills:
         prefix = f"[{s.dir_name}]"
-        # 1. 檢查 Frontmatter 必填欄位
+        skill_errors: List[str] = []
+        skill_warnings: List[str] = []
+
+        def err(msg: str, _p: str = prefix, _e: List[str] = skill_errors) -> None:
+            _e.append(f"{_p} {msg}")
+
+        def warn(msg: str, _p: str = prefix, _w: List[str] = skill_warnings) -> None:
+            _w.append(f"{_p} {msg}")
+
+        # 1. 編碼與 Frontmatter 必填欄位
+        if s.has_bom:
+            err("SKILL.md 含 UTF-8 BOM，請存成「UTF-8 無 BOM」以免 frontmatter 解析失敗")
+        if not s.frontmatter:
+            err("SKILL.md 缺少 YAML Frontmatter（檔案開頭必須是 ---）")
         for key in REQUIRED_FRONTMATTER_KEYS:
             if not s.frontmatter.get(key):
-                errors.append(f"{prefix} SKILL.md 缺少必填 Frontmatter 欄位: `{key}`")
+                err(f"SKILL.md 缺少必填 Frontmatter 欄位: `{key}`")
 
-        # 2. 檢查名稱一致性
+        # 2. 名稱與版本格式
         if s.frontmatter.get("name") and s.frontmatter["name"] != s.dir_name:
-            errors.append(
-                f"{prefix} Frontmatter name (`{s.frontmatter['name']}`) 與資料夾名稱 (`{s.dir_name}`) 不一致"
+            err(
+                f"Frontmatter name (`{s.frontmatter['name']}`) 與資料夾名稱 (`{s.dir_name}`) 不一致"
             )
+        if s.frontmatter.get("name") and not NAME_RE.match(s.frontmatter["name"]):
+            warn("name 建議只使用小寫英數字與連字號")
+        if s.version and not SEMVER_RE.match(s.version):
+            err(f"version `{s.version}` 不是語意化版本（格式應如 1.2.0）")
 
-        # 3. 檢查 category 合法性
+        # 3. plugin.json（若存在）必須與 SKILL.md 一致
+        if s.plugin_error:
+            err(f"plugin.json 不是合法 JSON：{s.plugin_error}")
+        elif s.plugin:
+            if s.plugin.get("name") != s.dir_name:
+                err(f"plugin.json name (`{s.plugin.get('name')}`) 與資料夾名稱不一致")
+            if s.version and s.plugin.get("version") != s.version:
+                err(
+                    f"plugin.json version (`{s.plugin.get('version')}`) 與 SKILL.md version (`{s.version}`) 不一致"
+                )
+
+        # 4. 領域分類
         cat = s.frontmatter.get("category", "")
         if cat and cat not in CATEGORY_DEFINITIONS:
-            warnings.append(
-                f"{prefix} category `{cat}` 未定義於標準領域清單 ({', '.join(CATEGORY_DEFINITIONS.keys())})"
+            warn(
+                f"category `{cat}` 未定義於標準領域清單 ({', '.join(CATEGORY_DEFINITIONS.keys())})"
             )
 
-        # 4. 檢查 repository 與 update_url
+        # 5. repository 與 update_url
         expected_update_url = f"{RAW_BASE_URL}/{s.dir_name}/SKILL.md"
         if s.frontmatter.get("repository") != REPO_URL:
-            errors.append(f"{prefix} repository 欄位應為 `{REPO_URL}`")
+            err(f"repository 欄位應為 `{REPO_URL}`")
         if s.frontmatter.get("update_url") != expected_update_url:
-            errors.append(f"{prefix} update_url 應為 `{expected_update_url}`")
+            err(f"update_url 應為 `{expected_update_url}`")
 
-        # 5. 檢查更新觸發關鍵詞
+        # 6. 更新觸發關鍵詞與結尾更新指引章節
         desc = s.description
         if "更新" not in desc and "版本" not in desc:
-            warnings.append(f"{prefix} description 建議提及「更新」或「檢查版本」以支援無感更新喚醒")
+            warn("description 建議提及「更新」或「檢查版本」以支援無感更新喚醒")
+        if "技能維護與自動更新指引" not in s.body:
+            err("SKILL.md 結尾缺少「技能維護與自動更新指引」章節")
 
-        # 6. 檢查 README.md
+        # 7. summary 會寫入 Markdown 表格，不可含管線符號
+        if "|" in s.summary:
+            err("summary 含 `|`，會破壞根目錄 README 的表格")
+
+        # 8. 安裝與更新指令不可使用會寫入 BOM 或共用暫存路徑的舊寫法
+        for legacy in LEGACY_INSTALL_PATTERNS:
+            if legacy in s.body:
+                err(f"SKILL.md 仍含舊版安裝指令片段 `{legacy}`")
+
+        # 9. README.md 與四種安裝管道
         if not s.readme_md.exists():
-            errors.append(f"{prefix} 缺少 `README.md` 說明文件")
+            err("缺少 `README.md` 說明文件")
         else:
             readme_text = s.readme_md.read_text(encoding="utf-8-sig")
             if "一鍵安裝" not in readme_text:
-                warnings.append(f"{prefix} README.md 缺少「🚀 Antigravity 一鍵安裝方式」章節")
+                err("README.md 缺少「🚀 Antigravity 一鍵安裝方式」章節")
             if ".gemini\\config\\skills" not in readme_text:
-                errors.append(f"{prefix} README.md 缺少 Windows PowerShell 安裝指令")
+                err("README.md 缺少 Windows PowerShell 安裝指令")
             if ".gemini/config/skills" not in readme_text:
-                errors.append(f"{prefix} README.md 缺少 macOS / Linux 安裝指令")
+                err("README.md 缺少 macOS / Linux 安裝指令")
+            if "自然語言" not in readme_text:
+                err("README.md 缺少「自然語言安裝」管道")
+            if "SymbolicLink" not in readme_text:
+                err("README.md 缺少本機維護者 Symlink 管道")
+            for legacy in LEGACY_INSTALL_PATTERNS:
+                if legacy in readme_text:
+                    err(f"README.md 仍含舊版安裝指令片段 `{legacy}`")
 
-        status = "✅ 通過" if not any(e.startswith(prefix) for e in errors) else "❌ 異常"
+        status = "❌ 異常" if skill_errors else "✅ 通過"
         pkg_type = "📦 套件型" if s.is_package else "📄 單檔型"
-        print(f"  {status} {s.dir_name:<26} | {pkg_type} | 領域: {s.category_label}")
+        version = f"v{s.version}" if s.version else "v?"
+        print(
+            f"  {status} {s.dir_name:<26} | {pkg_type} | {version:<7} | 領域: {s.category_label}"
+        )
+        errors.extend(skill_errors)
+        warnings.extend(skill_warnings)
+
+    for name in find_orphan_dirs(root):
+        errors.append(f"[{name}] 目錄下沒有 SKILL.md，不會被收錄（請補上或移出倉庫）")
 
     print("\n" + "=" * 65)
     if warnings:
-        print(f"⚠️  警告 ({len(warnings)} 項):")
+        print(f"⚠️  建議 ({len(warnings)} 項):")
         for w in warnings:
             print(f"  - {w}")
     if errors:
@@ -257,8 +356,39 @@ def lint_skills(root: Path) -> int:
         print("\n💡 請修正上述錯誤後再重新執行 `python scripts/manage.py lint`。")
         return 1
 
-    print(f"🎉 體檢完畢！共 {len(skills)} 個技能全數符合 GEMINI.md 規範標準。")
+    print(
+        f"🎉 體檢完畢！共 {len(skills)} 個技能通過必要檢查"
+        + (f"（另有 {len(warnings)} 項建議）" if warnings else "")
+        + "。"
+    )
     return 0
+
+
+def ps_bundle_install(names: List[str], success: str) -> str:
+    """Windows：下載 GitHub Archive 後一次複製多個技能（每次使用唯一暫存路徑）。"""
+    arr = ",".join(f'"{n}"' for n in names)
+    return (
+        f'$u="{REPO_URL}/archive/refs/heads/main.zip"; $b="{SKILLS_DIR_PS}"; '
+        f'$t=Join-Path $env:TEMP ("myskill-"+[guid]::NewGuid()); '
+        f'Invoke-WebRequest $u -OutFile "$t.zip" -ErrorAction Stop; '
+        f'Expand-Archive "$t.zip" $t -Force -ErrorAction Stop; '
+        f'@({arr}) | ForEach-Object {{ $d="$b\\$_"; '
+        f'New-Item -ItemType Directory -Path $d -Force | Out-Null; '
+        f'Copy-Item "$t\\mySkill-main\\$_\\*" $d -Recurse -Force -ErrorAction Stop }}; '
+        f'Remove-Item "$t.zip",$t -Recurse -Force -ErrorAction SilentlyContinue; '
+        f'Write-Host "✅ {success}" -ForegroundColor Green'
+    )
+
+
+def sh_bundle_install(names: List[str], success: str) -> str:
+    """macOS / Linux：以 curl + tar 串流一次提取多個技能目錄。"""
+    members = " ".join(f'"mySkill-main/{n}/"' for n in names)
+    return (
+        f'mkdir -p "{SKILLS_DIR_SH}" && '
+        f'curl -fsSL "{REPO_URL}/archive/refs/heads/main.tar.gz" | '
+        f'tar -xz -C "{SKILLS_DIR_SH}" --strip-components=1 {members} && '
+        f'echo "✅ {success}"'
+    )
 
 
 def generate_readme(skills: List[SkillInfo]) -> str:
@@ -280,10 +410,10 @@ def generate_readme(skills: List[SkillInfo]) -> str:
         "",
         "收錄高品質的 AI Agent 技能集合（Skills），遵循標準通用 Agent Skill 規範，專為 **Google Antigravity** 及支援 Agent Skill 規範的 AI 工具打造。",
         "",
-        f"[![Total Skills](https://img.shields.io/badge/Skills-{total_count}%20個專業技能-purple.svg)](#📦-領域分類目錄-skill-catalog)",
-        f"[![Domains](https://img.shields.io/badge/Domains-{cat_count}%20大領域體系-blue.svg)](#📦-領域分類目錄-skill-catalog)",
-        "[![Zero Download](https://img.shields.io/badge/Install-零下載雲端一行直裝-brightgreen.svg)](#🎁-領域全家桶一鍵安裝-domain-bundles)",
-        "[![Auto Update](https://img.shields.io/badge/Update-自然語言無感更新-orange.svg)](#🔄-智慧無感自動更新已安裝者)",
+        f"[![Total Skills](https://img.shields.io/badge/Skills-{total_count}%20個專業技能-purple.svg)](#-領域分類目錄-skill-catalog)",
+        f"[![Domains](https://img.shields.io/badge/Domains-{cat_count}%20大領域體系-blue.svg)](#-領域分類目錄-skill-catalog)",
+        "[![Zero Download](https://img.shields.io/badge/Install-零下載雲端一行直裝-brightgreen.svg)](#-領域全家桶一鍵安裝-domain-bundles)",
+        "[![Auto Update](https://img.shields.io/badge/Update-自然語言無感更新-orange.svg)](#-智慧無感自動更新已安裝者)",
         "",
         "---",
         "",
@@ -316,13 +446,13 @@ def generate_readme(skills: List[SkillInfo]) -> str:
             f"### {meta['title']}",
             f"> {meta['desc']}",
             "",
-            "| 技能名稱 | 核心功能簡介 | 子類別 | 類型 | 說明文件 |",
-            "|---|---|---|---|---|",
+            "| 技能名稱 | 版本 | 核心功能簡介 | 子類別 | 類型 | 說明文件 |",
+            "|---|---|---|---|---|---|",
         ])
         for s in cat_skills:
             pkg_badge = "📦 套件" if s.is_package else "📄 單檔"
             lines.append(
-                f"| [**{s.name}**](./{s.dir_name}) | {s.summary} | `{s.category_label}` | {pkg_badge} | [查看說明](./{s.dir_name}/README.md) |"
+                f"| [**{s.name}**](./{s.dir_name}) | `v{s.version}` | {s.summary} | `{s.category_label}` | {pkg_badge} | [查看說明](./{s.dir_name}/README.md) |"
             )
         lines.append("")
 
@@ -330,19 +460,19 @@ def generate_readme(skills: List[SkillInfo]) -> str:
         lines.extend([
             "### 🧩 其他擴充技能",
             "",
-            "| 技能名稱 | 核心功能簡介 | 子類別 | 類型 | 說明文件 |",
-            "|---|---|---|---|---|",
+            "| 技能名稱 | 版本 | 核心功能簡介 | 子類別 | 類型 | 說明文件 |",
+            "|---|---|---|---|---|---|",
         ])
         for s in other_skills:
             pkg_badge = "📦 套件" if s.is_package else "📄 單檔"
             lines.append(
-                f"| [**{s.name}**](./{s.dir_name}) | {s.summary} | `{s.category_label}` | {pkg_badge} | [查看說明](./{s.dir_name}/README.md) |"
+                f"| [**{s.name}**](./{s.dir_name}) | `v{s.version}` | {s.summary} | `{s.category_label}` | {pkg_badge} | [查看說明](./{s.dir_name}/README.md) |"
             )
         lines.append("")
 
     # 領域全家桶一鍵安裝區
-    all_names_ps = ",".join([f'"{s.dir_name}"' for s in skills])
-    all_names_bash = " ".join([f'"mySkill-main/{s.dir_name}/"' for s in skills])
+    all_names = [s.dir_name for s in skills]
+    all_success = f"mySkill 全庫 ({total_count} 個技能) 已成功安裝！"
 
     lines.extend([
         "---",
@@ -354,11 +484,11 @@ def generate_readme(skills: List[SkillInfo]) -> str:
         "### 🌟 方案 A：全庫技能一鍵全裝（一次擁有全部技能）",
         "- **Windows (PowerShell)**：",
         "  ```powershell",
-        f'  $u="{REPO_URL}/archive/refs/heads/main.zip"; $t="$env:TEMP\\myskill.zip"; $b="$HOME\\.gemini\\config\\skills"; Invoke-WebRequest $u -OutFile $t; Expand-Archive $t "$env:TEMP\\myskill-temp" -Force; @({all_names_ps}) | ForEach-Object {{ $d="$b\\$_"; if (!(Test-Path $d)) {{ New-Item -ItemType Directory -Path $d -Force | Out-Null }}; Copy-Item "$env:TEMP\\myskill-temp\\mySkill-main\\$_\\*" $d -Recurse -Force }}; Remove-Item $t,"$env:TEMP\\myskill-temp" -Recurse -Force; Write-Host "✅ mySkill 全庫 ({total_count} 個技能) 已成功安裝！" -ForegroundColor Green',
+        f"  {ps_bundle_install(all_names, all_success)}",
         "  ```",
         "- **macOS / Linux**：",
         "  ```bash",
-        f'  mkdir -p "$HOME/.gemini/config/skills" && curl -sSL "{REPO_URL}/archive/refs/heads/main.tar.gz" | tar -xz -C "$HOME/.gemini/config/skills" --strip-components=1 {all_names_bash} && echo "✅ mySkill 全庫 ({total_count} 個技能) 已成功安裝！"',
+        f"  {sh_bundle_install(all_names, all_success)}",
         "  ```",
         "",
         "### 📚 方案 B：按領域全家桶安裝",
@@ -371,18 +501,18 @@ def generate_readme(skills: List[SkillInfo]) -> str:
         cat_skills = grouped.get(cat_key, [])
         if not cat_skills:
             continue
-        ps_list = ",".join([f'"{s.dir_name}"' for s in cat_skills])
-        bash_list = " ".join([f'"mySkill-main/{s.dir_name}/"' for s in cat_skills])
-        names_str = " + ".join([f"`{s.dir_name}`" for s in cat_skills])
+        names = [s.dir_name for s in cat_skills]
+        names_str = " + ".join([f"`{n}`" for n in names])
+        success = f"{meta['badge']} 全家桶已安裝完成！"
         lines.extend([
             f"#### {meta['title']}（含 {names_str}）",
             "- **Windows (PowerShell)**：",
             "  ```powershell",
-            f'  $u="{REPO_URL}/archive/refs/heads/main.zip"; $t="$env:TEMP\\myskill.zip"; $b="$HOME\\.gemini\\config\\skills"; Invoke-WebRequest $u -OutFile $t; Expand-Archive $t "$env:TEMP\\myskill-temp" -Force; @({ps_list}) | ForEach-Object {{ $d="$b\\$_"; if (!(Test-Path $d)) {{ New-Item -ItemType Directory -Path $d -Force | Out-Null }}; Copy-Item "$env:TEMP\\myskill-temp\\mySkill-main\\$_\\*" $d -Recurse -Force }}; Remove-Item $t,"$env:TEMP\\myskill-temp" -Recurse -Force; Write-Host "✅ {meta["badge"]} 全家桶已安裝完成！" -ForegroundColor Green',
+            f"  {ps_bundle_install(names, success)}",
             "  ```",
             "- **macOS / Linux**：",
             "  ```bash",
-            f'  mkdir -p "$HOME/.gemini/config/skills" && curl -sSL "{REPO_URL}/archive/refs/heads/main.tar.gz" | tar -xz -C "$HOME/.gemini/config/skills" --strip-components=1 {bash_list} && echo "✅ {meta["badge"]} 全家桶已安裝完成！"',
+            f"  {sh_bundle_install(names, success)}",
             "  ```",
             "",
         ])
@@ -411,13 +541,13 @@ def generate_readme(skills: List[SkillInfo]) -> str:
         "",
         "## 🔄 智慧無感自動更新（已安裝者）",
         "",
-        "本倉庫所有技能的 `SKILL.md` 均內建 GitHub 來源網址標註（`repository` 與 `update_url`）及自動更新指引。",
+        "本倉庫所有技能的 `SKILL.md` 均內建 `version`、`repository`、`update_url` 與自動更新指引，安裝後即可比對版本。",
         "",
         "一旦您安裝過任何技能，若想取得 GitHub 上的最新版本，**不需要手動重新下載或尋找目錄**！  ",
         "只要在 Antigravity 對話框中說：",
         "> 「幫我更新 [技能名稱]」或「檢查 [技能名稱] 最新版本」",
         "",
-        "Antigravity 會自動讀取本機技能設定，連線至 GitHub 下載最新版覆蓋更新，一句話無感完成！",
+        "Agent 會先讀取雲端 `version` 與本機比對：相同就回報「已是最新」，不同才備份原檔、覆蓋更新並回報版本差異，不會無條件靜默覆寫。",
         "",
         "---",
         "",
@@ -426,11 +556,14 @@ def generate_readme(skills: List[SkillInfo]) -> str:
         "為解決技能數量持續增長帶來的維護負擔，本倉庫內建零依賴的自動化管理腳本 [`scripts/manage.py`](./scripts/manage.py)：",
         "",
         "```bash",
-        "# 1. 檢查所有技能是否符合 GEMINI.md 規範（Frontmatter、更新網址、README 安裝指令）",
+        "# 1. 檢查所有技能是否符合 GEMINI.md 規範（Frontmatter、版本、更新網址、安裝指令）",
         "python scripts/manage.py lint",
         "",
         "# 2. 新增或修改技能後，一鍵自動同步生成根目錄 README.md（領域表格、全家桶指令、目錄樹）",
         "python scripts/manage.py sync",
+        "",
+        "# 3. CI 用：只檢查 README 是否與技能元資料同步，不寫入檔案",
+        "python scripts/manage.py sync --check",
         "```",
         "",
         "---",
@@ -442,7 +575,9 @@ def generate_readme(skills: List[SkillInfo]) -> str:
         "```text",
         "mySkill/",
         "├── GEMINI.md                      # 本倉庫專屬開發規範（含領域分類、零下載安裝與自動更新標準）",
+        "├── LICENSE                        # MIT 授權條款",
         "├── README.md                      # 技能庫領域總覽首頁（由 scripts/manage.py 自動同步）",
+        "├── .github/workflows/skills-ci.yml # 推送時自動執行 lint、sync --check 與測試",
         "├── scripts/",
         "│   └── manage.py                  # 技能規範體檢 (lint) 與總目錄自動生成 (sync) 工具",
     ])

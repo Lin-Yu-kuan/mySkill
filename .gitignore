@@ -5,16 +5,15 @@ learning-notes/
 *-Interactive-Notes.html
 *.tmp
 *.bak
+*.bak-*
 *.swp
 
 # ==========================================
-# 2. 本地測試腳本與測試暫存目錄
+# 2. 測試暫存目錄與覆蓋率報告
+#    （正式測試檔如 scripts/test_*.py 必須進版控，CI 才能執行）
 # ==========================================
-test_*.py
-*_test.py
-**/scripts/test_*.py
 **/scripts/tmp*/
-tmp*/
+**/tmp/
 .pytest_cache/
 .coverage
 

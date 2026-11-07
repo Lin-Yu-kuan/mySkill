@@ -202,7 +202,7 @@ knowledge-map-learning/
 開啟 PowerShell，複製貼上以下單行指令並按 Enter，即可直接從 GitHub 雲端安裝本技能及其 Python 編譯腳本至 Antigravity 全域目錄：
 
 ```powershell
-$u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $t="$env:TEMP\myskill.zip"; $d="$HOME\.gemini\config\skills\knowledge-map-learning"; if (!(Test-Path $d)) { New-Item -ItemType Directory -Path $d -Force }; Invoke-WebRequest $u -OutFile $t; Expand-Archive $t "$env:TEMP\myskill-temp" -Force; Copy-Item "$env:TEMP\myskill-temp\mySkill-main\knowledge-map-learning\*" $d -Recurse -Force; Remove-Item $t,"$env:TEMP\myskill-temp" -Recurse -Force; Write-Host "✅ knowledge-map-learning 技能套件已成功安裝至 Antigravity！" -ForegroundColor Green
+$u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $d="$HOME\.gemini\config\skills\knowledge-map-learning"; $t=Join-Path $env:TEMP ("myskill-"+[guid]::NewGuid()); Invoke-WebRequest $u -OutFile "$t.zip" -ErrorAction Stop; Expand-Archive "$t.zip" $t -Force -ErrorAction Stop; New-Item -ItemType Directory -Path $d -Force | Out-Null; Copy-Item "$t\mySkill-main\knowledge-map-learning\*" $d -Recurse -Force -ErrorAction Stop; Remove-Item "$t.zip",$t -Recurse -Force -ErrorAction SilentlyContinue; Write-Host "✅ knowledge-map-learning 技能套件已成功安裝至 Antigravity！" -ForegroundColor Green
 ```
 
 ---
@@ -211,7 +211,7 @@ $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $t="$en
 開啟終端機（Terminal），貼上以下指令直接提取安裝：
 
 ```bash
-mkdir -p "$HOME/.gemini/config/skills/knowledge-map-learning" && curl -sSL "https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.tar.gz" | tar -xz -C "$HOME/.gemini/config/skills/knowledge-map-learning" --strip-components=2 "mySkill-main/knowledge-map-learning/" && echo "✅ knowledge-map-learning 技能套件已成功安裝！"
+mkdir -p "$HOME/.gemini/config/skills" && curl -fsSL "https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.tar.gz" | tar -xz -C "$HOME/.gemini/config/skills" --strip-components=1 "mySkill-main/knowledge-map-learning/" && echo "✅ knowledge-map-learning 技能套件已成功安裝！"
 ```
 
 ---

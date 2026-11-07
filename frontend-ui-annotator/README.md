@@ -33,7 +33,7 @@
 開啟 PowerShell，複製貼上以下單行指令並按 Enter，即可直接從 GitHub 雲端安裝本技能及其標註器腳本資源至 Antigravity 全域目錄：
 
 ```powershell
-$u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $t="$env:TEMP\myskill.zip"; $d="$HOME\.gemini\config\skills\frontend-ui-annotator"; if (!(Test-Path $d)) { New-Item -ItemType Directory -Path $d -Force }; Invoke-WebRequest $u -OutFile $t; Expand-Archive $t "$env:TEMP\myskill-temp" -Force; Copy-Item "$env:TEMP\myskill-temp\mySkill-main\frontend-ui-annotator\*" $d -Recurse -Force; Remove-Item $t,"$env:TEMP\myskill-temp" -Recurse -Force; Write-Host "✅ frontend-ui-annotator 技能套件已成功安裝至 Antigravity！" -ForegroundColor Green
+$u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $d="$HOME\.gemini\config\skills\frontend-ui-annotator"; $t=Join-Path $env:TEMP ("myskill-"+[guid]::NewGuid()); Invoke-WebRequest $u -OutFile "$t.zip" -ErrorAction Stop; Expand-Archive "$t.zip" $t -Force -ErrorAction Stop; New-Item -ItemType Directory -Path $d -Force | Out-Null; Copy-Item "$t\mySkill-main\frontend-ui-annotator\*" $d -Recurse -Force -ErrorAction Stop; Remove-Item "$t.zip",$t -Recurse -Force -ErrorAction SilentlyContinue; Write-Host "✅ frontend-ui-annotator 技能套件已成功安裝至 Antigravity！" -ForegroundColor Green
 ```
 
 ---
@@ -42,7 +42,7 @@ $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $t="$en
 開啟終端機（Terminal），貼上以下指令直接提取安裝：
 
 ```bash
-mkdir -p "$HOME/.gemini/config/skills/frontend-ui-annotator" && curl -sSL "https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.tar.gz" | tar -xz -C "$HOME/.gemini/config/skills/frontend-ui-annotator" --strip-components=2 "mySkill-main/frontend-ui-annotator/" && echo "✅ frontend-ui-annotator 技能套件已成功安裝！"
+mkdir -p "$HOME/.gemini/config/skills" && curl -fsSL "https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.tar.gz" | tar -xz -C "$HOME/.gemini/config/skills" --strip-components=1 "mySkill-main/frontend-ui-annotator/" && echo "✅ frontend-ui-annotator 技能套件已成功安裝！"
 ```
 
 ---

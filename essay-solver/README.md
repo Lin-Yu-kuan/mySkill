@@ -30,7 +30,7 @@
 在電腦上打開 PowerShell，貼上以下單行指令並按 Enter，即可直接從 GitHub 雲端安裝至 Antigravity 全域技能庫：
 
 ```powershell
-$dir = "$HOME\.gemini\config\skills\essay-solver"; if (!(Test-Path $dir)) { New-Item -ItemType Directory -Path $dir -Force }; Invoke-RestMethod -Uri "https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/essay-solver/SKILL.md" | Out-File -FilePath "$dir\SKILL.md" -Encoding utf8; Write-Host "✅ essay-solver 技能已成功從 GitHub 雲端直裝至 Antigravity！" -ForegroundColor Green
+$d="$HOME\.gemini\config\skills\essay-solver"; New-Item -ItemType Directory -Path $d -Force | Out-Null; Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/essay-solver/SKILL.md" -OutFile "$d\SKILL.md.new"; Move-Item "$d\SKILL.md.new" "$d\SKILL.md" -Force; Write-Host "✅ essay-solver 技能已成功從 GitHub 雲端直裝至 Antigravity！" -ForegroundColor Green
 ```
 
 ---
@@ -39,7 +39,7 @@ $dir = "$HOME\.gemini\config\skills\essay-solver"; if (!(Test-Path $dir)) { New-
 開啟終端機（Terminal），貼上以下指令直接下載安裝：
 
 ```bash
-mkdir -p "$HOME/.gemini/config/skills/essay-solver" && curl -sSL "https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/essay-solver/SKILL.md" -o "$HOME/.gemini/config/skills/essay-solver/SKILL.md" && echo "✅ essay-solver 技能已成功安裝！"
+mkdir -p "$HOME/.gemini/config/skills/essay-solver" && curl -fsSL "https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/essay-solver/SKILL.md" -o "$HOME/.gemini/config/skills/essay-solver/SKILL.md.new" && mv "$HOME/.gemini/config/skills/essay-solver/SKILL.md.new" "$HOME/.gemini/config/skills/essay-solver/SKILL.md" && echo "✅ essay-solver 技能已成功安裝！"
 ```
 
 ---

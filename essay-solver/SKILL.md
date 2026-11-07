@@ -1,5 +1,6 @@
 ---
 name: essay-solver
+version: 1.0.0
 category: exam
 category_label: 公職 / 考試
 summary: 臺灣國家考試、國營事業與專技申論題擬答，考場手寫實戰架構、標準四板塊輸出與嚴謹法條裁判查證
@@ -118,7 +119,10 @@ update_url: https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/essay-sol
 
 # 技能維護與自動更新指引 (Skill Maintenance & Auto-Update)
 
-當使用者要求「更新此技能」或「檢查最新版本」（例如：「幫我更新 essay-solver 技能」或「更新申論解題技能」）時：
-1. **讀取雲端最新版本**：使用可用之網路連線工具或命令讀取上方 `update_url` 的最新內容。
-2. **覆蓋本機檔案**：將目前本機的 `SKILL.md` 覆蓋更新為最新下載的內容。
-3. **回報完成**：簡短向使用者回報已成功更新至 GitHub 最新版本。
+Frontmatter 的 `version` 是本機版本，`update_url` 指向雲端最新版。當使用者要求「更新此技能」或「檢查最新版本」（例如：「幫我更新 essay-solver 技能」或「更新申論解題技能」）時：
+
+1. **比對版本**：讀取 `update_url`，解析遠端 Frontmatter 的 `version`。與本機相同時，回報「已是最新版本（vX.Y.Z）」即結束，不覆寫檔案。
+2. **先備份**：版本不同時，先將本機 `SKILL.md` 複製為 `SKILL.md.bak`。
+3. **再覆寫**：以 `update_url` 的最新內容覆寫 `SKILL.md`。若下載失敗、內容缺少 Frontmatter，或 `name` 與本技能不符，立即中止並保留原檔。
+4. **回報差異**：只回報「v舊 → v新」與變更章節摘要，不逐字貼出全文；版本號未變但內容有差異時，如實告知「版本號未更新」。
+5. **不靜默覆寫**：使用者未明確要求更新時，先確認再動作。

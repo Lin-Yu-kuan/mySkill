@@ -36,11 +36,11 @@
 - **特徵**：僅由 `SKILL.md` 組成，無附屬的 `scripts/` 或 `resources/` 資料夾（如 `essay-solver`）。
 - **PowerShell 語法**：
   ```powershell
-  $dir = "$HOME\.gemini\config\skills\<skill-name>"; if (!(Test-Path $dir)) { New-Item -ItemType Directory -Path $dir -Force }; Invoke-RestMethod -Uri "https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/<skill-name>/SKILL.md" | Out-File -FilePath "$dir\SKILL.md" -Encoding utf8; Write-Host "✅ <skill-name> 技能已成功安裝！" -ForegroundColor Green
+  $d="$HOME\.gemini\config\skills\<skill-name>"; New-Item -ItemType Directory -Path $d -Force | Out-Null; Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/<skill-name>/SKILL.md" -OutFile "$d\SKILL.md.new"; Move-Item "$d\SKILL.md.new" "$d\SKILL.md" -Force; Write-Host "✅ <skill-name> 技能已成功安裝！" -ForegroundColor Green
   ```
 - **macOS / Linux 語法**：
   ```bash
-  mkdir -p "$HOME/.gemini/config/skills/<skill-name>" && curl -sSL "https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/<skill-name>/SKILL.md" -o "$HOME/.gemini/config/skills/<skill-name>/SKILL.md" && echo "✅ <skill-name> 技能已成功安裝！"
+  mkdir -p "$HOME/.gemini/config/skills/<skill-name>" && curl -fsSL "https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/<skill-name>/SKILL.md" -o "$HOME/.gemini/config/skills/<skill-name>/SKILL.md.new" && mv "$HOME/.gemini/config/skills/<skill-name>/SKILL.md.new" "$HOME/.gemini/config/skills/<skill-name>/SKILL.md" && echo "✅ <skill-name> 技能已成功安裝！"
   ```
 
 ---
@@ -48,20 +48,20 @@
 ### 類型 2：目錄套件型技能（Multi-File / Package Skill）
 - **特徵**：包含 `scripts/`、`references/`、`resources/` 或 `plugin.json` 等附屬檔案（如 `knowledge-map-learning`、`frontend-ui-annotator`）。
 - **PowerShell 語法（純原生、免 Git、免第三方工具）**：
-  利用 GitHub Archive Zip 串流解壓單一子目錄並自動清除暫存檔：
+  利用 GitHub Archive Zip 串流解壓單一子目錄，並使用**每次唯一的暫存路徑**避免殘留與競態：
   ```powershell
-  $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $t="$env:TEMP\myskill.zip"; $d="$HOME\.gemini\config\skills\<skill-name>"; if (!(Test-Path $d)) { New-Item -ItemType Directory -Path $d -Force }; Invoke-WebRequest $u -OutFile $t; Expand-Archive $t "$env:TEMP\myskill-temp" -Force; Copy-Item "$env:TEMP\myskill-temp\mySkill-main\<skill-name>\*" $d -Recurse -Force; Remove-Item $t,"$env:TEMP\myskill-temp" -Recurse -Force; Write-Host "✅ <skill-name> 技能套件已成功安裝！" -ForegroundColor Green
+  $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $d="$HOME\.gemini\config\skills\<skill-name>"; $t=Join-Path $env:TEMP ("myskill-"+[guid]::NewGuid()); Invoke-WebRequest $u -OutFile "$t.zip" -ErrorAction Stop; Expand-Archive "$t.zip" $t -Force -ErrorAction Stop; New-Item -ItemType Directory -Path $d -Force | Out-Null; Copy-Item "$t\mySkill-main\<skill-name>\*" $d -Recurse -Force -ErrorAction Stop; Remove-Item "$t.zip",$t -Recurse -Force -ErrorAction SilentlyContinue; Write-Host "✅ <skill-name> 技能套件已成功安裝！" -ForegroundColor Green
   ```
 - **macOS / Linux 語法（原生 curl + tar 串流提取特定目錄）**：
   ```bash
-  mkdir -p "$HOME/.gemini/config/skills/<skill-name>" && curl -sSL "https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.tar.gz" | tar -xz -C "$HOME/.gemini/config/skills/<skill-name>" --strip-components=2 "mySkill-main/<skill-name>/" && echo "✅ <skill-name> 技能套件已成功安裝！"
+  mkdir -p "$HOME/.gemini/config/skills" && curl -fsSL "https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.tar.gz" | tar -xz -C "$HOME/.gemini/config/skills" --strip-components=1 "mySkill-main/<skill-name>/" && echo "✅ <skill-name> 技能套件已成功安裝！"
   ```
 
 ---
 
-## 三、四大標配安裝管道（每個 Skill README 必備）
+## 三、安裝管道標配（每個 Skill README 必備：四項標配 + 一項選配）
 
-每個技能的安裝章節必須同時具備以下四種情境說明：
+每個技能的安裝章節必須同時具備以下四種情境說明，並可選配第五項：
 1. **🌐 免下載！Windows (PowerShell) 雲端直裝**
 2. **🍎 免下載！macOS / Linux 雲端直裝**
 3. **💬 免開終端機！Antigravity 聊天框「自然語言安裝」**（提供一段讓使用者直接貼給 Agent 的安裝提示詞）
@@ -78,12 +78,17 @@
 每當專案內新增、刪除或修改任何 Skill 時，**嚴禁僅靠人工手改根目錄 `README.md`**，必須執行內建管理腳本 [`scripts/manage.py`](./scripts/manage.py)：
 
 ```bash
-# 步驟 1：執行規範體檢（檢查所有技能的 Frontmatter、更新網址與安裝指令）
+# 步驟 1：執行規範體檢（Frontmatter、版本、更新網址、安裝指令與結尾更新章節）
 python scripts/manage.py lint
 
 # 步驟 2：自動同步生成根目錄 README.md（包含領域分類表格、全家桶安裝指令、專案結構目錄樹）
 python scripts/manage.py sync
+
+# 步驟 3（CI 用）：只檢查 README 是否與技能元資料同步，不寫入檔案
+python scripts/manage.py sync --check
 ```
+
+`lint` 與 `sync --check` 已由 [`.github/workflows/skills-ci.yml`](./.github/workflows/skills-ci.yml) 在 push 與 PR 時自動執行；維護者仍應在本機先跑過再推送，避免 CI 紅燈。
 
 ---
 
@@ -95,6 +100,7 @@ python scripts/manage.py sync
 ```yaml
 ---
 name: <skill-name>
+version: <x.y.z>
 category: <exam|learning|frontend|content|dev-tools>
 category_label: <子類別標籤，如：公職 / 考試>
 summary: <供根目錄 README 表格顯示的一句話核心功能簡介>
@@ -105,12 +111,23 @@ repository: https://github.com/Lin-Yu-kuan/mySkill
 update_url: https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/<skill-name>/SKILL.md
 ---
 ```
-- **`category` & `category_label` & `summary`**：供 `scripts/manage.py` 自動彙整領域分類目錄與全家桶安裝包使用。
+- **`version`**：語意化版本（`MAJOR.MINOR.PATCH`），是自動更新「先比對、後覆寫」的依據；有 `plugin.json` 的技能，兩者版本號必須一致（`lint` 會檢查）。
+- **`category` & `category_label` & `summary`**：供 `scripts/manage.py` 自動彙整領域分類目錄與全家桶安裝包使用；`summary` 不可含 `|`，以免破壞 Markdown 表格。
 - **`repository`**：統一指向 GitHub 倉庫根目錄。
 - **`update_url`**：指向該技能在 `main` 分支上的 Raw `SKILL.md` 連結。
 - **`description`**：必須提及更新觸發字眼，確保 Antigravity 在使用者發出更新請求時能依據 Progressive Disclosure 機制正確喚醒本技能。
 
 ### 2. 結尾必備「技能維護與自動更新指引」章節
-在 `SKILL.md` 最末尾必須包含統一的更新指引：
-- **單檔案技能**：讀取 `update_url` 內容並直接覆蓋本地 `SKILL.md`。
-- **目錄套件型技能**：提供快速單檔覆蓋（`SKILL.md`）與全套件串流解壓更新指令雙軌機制。
+在 `SKILL.md` 最末尾必須包含統一的更新指引，且必須是**「先比對、再備份、後覆寫」**，禁止無條件直接覆蓋：
+
+1. 讀取 `update_url`，比對遠端與本機 `version`；相同時回報「已是最新版本」並結束，不寫入任何檔案。
+2. 版本不同時，先將本機 `SKILL.md` 備份為 `SKILL.md.bak`；套件型技能另將整個資料夾改名為 `<skill-name>.bak-<yyyyMMdd-HHmmss>`。
+3. 覆寫後驗證 Frontmatter 完整、`name` 正確；驗證失敗立即還原備份。
+4. 只回報「舊版 → 新版」與變更章節摘要，不逐字貼出全文；使用者未明確要求更新時先確認再動作。
+5. 套件型技能的「完整套件更新」直接重跑該技能 `README.md` 的安裝指令，不另外維護第二份指令。
+
+### 3. 安裝與更新指令的硬性限制
+- **禁止** `Invoke-RestMethod ... | Out-File -Encoding utf8`：Windows PowerShell 5.1 會寫入 UTF-8 BOM 並改寫行尾，可能導致 frontmatter 解析失敗。一律改用 `Invoke-WebRequest -OutFile` 讓檔案位元組原樣落地。
+- **禁止**共用固定暫存路徑（如 `$env:TEMP\myskill.zip`、`$env:TEMP\myskill-temp`）：併發或中斷會造成舊檔殘留。一律使用 `[guid]::NewGuid()` 產生唯一暫存路徑。
+- **禁止**在更新流程中直接覆蓋：必須先備份，且版本未變時不得寫入。
+- 上述限制由 `python scripts/manage.py lint` 強制檢查，違反即視為錯誤。

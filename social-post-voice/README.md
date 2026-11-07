@@ -28,7 +28,7 @@
 開啟 PowerShell，複製貼上以下單行指令並按 Enter，即可直接從 GitHub 雲端安裝本技能及其語氣指南至 Antigravity 全域目錄：
 
 ```powershell
-$u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $t="$env:TEMP\myskill.zip"; $d="$HOME\.gemini\config\skills\social-post-voice"; if (!(Test-Path $d)) { New-Item -ItemType Directory -Path $d -Force }; Invoke-WebRequest $u -OutFile $t; Expand-Archive $t "$env:TEMP\myskill-temp" -Force; Copy-Item "$env:TEMP\myskill-temp\mySkill-main\social-post-voice\*" $d -Recurse -Force; Remove-Item $t,"$env:TEMP\myskill-temp" -Recurse -Force; Write-Host "✅ social-post-voice 技能套件已成功安裝！" -ForegroundColor Green
+$u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $d="$HOME\.gemini\config\skills\social-post-voice"; $t=Join-Path $env:TEMP ("myskill-"+[guid]::NewGuid()); Invoke-WebRequest $u -OutFile "$t.zip" -ErrorAction Stop; Expand-Archive "$t.zip" $t -Force -ErrorAction Stop; New-Item -ItemType Directory -Path $d -Force | Out-Null; Copy-Item "$t\mySkill-main\social-post-voice\*" $d -Recurse -Force -ErrorAction Stop; Remove-Item "$t.zip",$t -Recurse -Force -ErrorAction SilentlyContinue; Write-Host "✅ social-post-voice 技能套件已成功安裝！" -ForegroundColor Green
 ```
 
 ---
@@ -37,7 +37,7 @@ $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $t="$en
 開啟終端機（Terminal），貼上以下指令直接串流提取安裝：
 
 ```bash
-mkdir -p "$HOME/.gemini/config/skills/social-post-voice" && curl -sSL "https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.tar.gz" | tar -xz -C "$HOME/.gemini/config/skills/social-post-voice" --strip-components=2 "mySkill-main/social-post-voice/" && echo "✅ social-post-voice 技能套件已成功安裝！"
+mkdir -p "$HOME/.gemini/config/skills" && curl -fsSL "https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.tar.gz" | tar -xz -C "$HOME/.gemini/config/skills" --strip-components=1 "mySkill-main/social-post-voice/" && echo "✅ social-post-voice 技能套件已成功安裝！"
 ```
 
 ---
