@@ -78,13 +78,13 @@
 每當專案內新增、刪除或修改任何 Skill 時，**嚴禁僅靠人工手改根目錄 `README.md`**，必須執行內建管理腳本 [`scripts/manage.py`](./scripts/manage.py)：
 
 ```bash
-# 步驟 1：執行規範體檢（Frontmatter、版本、更新網址、安裝指令與結尾更新章節）
+# 步驟 1：執行規範體檢（Frontmatter、版本、觸發詞、更新網址、安裝指令與結尾更新章節）
 python scripts/manage.py lint
 
-# 步驟 2：自動同步生成根目錄 README.md（包含領域分類表格、全家桶安裝指令、專案結構目錄樹）
+# 步驟 2：同步三件事——注入共用行為準則到每份 SKILL.md、生成根目錄 README.md、產生 skills.json
 python scripts/manage.py sync
 
-# 步驟 3（CI 用）：只檢查 README 是否與技能元資料同步，不寫入檔案
+# 步驟 3（CI 用）：只檢查上述三者是否同步，不寫入檔案
 python scripts/manage.py sync --check
 ```
 
@@ -107,27 +107,58 @@ summary: <供根目錄 README 表格顯示的一句話核心功能簡介>
 description: >-
   [技能觸發說明與適用範圍]
   亦支援在使用者要求「更新此技能 / 檢查最新版本」時自動調用以進行線上更新。
+triggers: ["<觸發詞1>", "<觸發詞2>", "<觸發詞3>"]
 repository: https://github.com/Lin-Yu-kuan/mySkill
 update_url: https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/<skill-name>/SKILL.md
 ---
 ```
 - **`version`**：語意化版本（`MAJOR.MINOR.PATCH`），是自動更新「先比對、後覆寫」的依據；有 `plugin.json` 的技能，兩者版本號必須一致（`lint` 會檢查）。
+- **`triggers`**：行內序列（`["a", "b"]`）或 `- ` 序列皆可，至少一個。用於根目錄「我該用哪個技能？」對照表，`lint` 會偵測跨技能重複的觸發詞；**禁止**放「更新」「檢查版本」這類通用詞，否則五個技能會互搶路由。
 - **`category` & `category_label` & `summary`**：供 `scripts/manage.py` 自動彙整領域分類目錄與全家桶安裝包使用；`summary` 不可含 `|`，以免破壞 Markdown 表格。
 - **`repository`**：統一指向 GitHub 倉庫根目錄。
 - **`update_url`**：指向該技能在 `main` 分支上的 Raw `SKILL.md` 連結。
 - **`description`**：必須提及更新觸發字眼，確保 Antigravity 在使用者發出更新請求時能依據 Progressive Disclosure 機制正確喚醒本技能。
 
 ### 2. 結尾必備「技能維護與自動更新指引」章節
-在 `SKILL.md` 最末尾必須包含統一的更新指引，且必須是**「先比對、再備份、後覆寫」**，禁止無條件直接覆蓋：
+在 `SKILL.md` 最末尾必須包含統一的更新指引，順序是**「比對 manifest → 驗證雜湊 → 備份 → 覆寫」**，禁止無條件直接覆蓋：
 
-1. 讀取 `update_url`，比對遠端與本機 `version`；相同時回報「已是最新版本」並結束，不寫入任何檔案。
-2. 版本不同時，先將本機 `SKILL.md` 備份為 `SKILL.md.bak`；套件型技能另將整個資料夾改名為 `<skill-name>.bak-<yyyyMMdd-HHmmss>`。
-3. 覆寫後驗證 Frontmatter 完整、`name` 正確；驗證失敗立即還原備份。
-4. 只回報「舊版 → 新版」與變更章節摘要，不逐字貼出全文；使用者未明確要求更新時先確認再動作。
-5. 套件型技能的「完整套件更新」直接重跑該技能 `README.md` 的安裝指令，不另外維護第二份指令。
+1. 讀取倉庫根目錄 [`skills.json`](./skills.json)，取得本技能的 `version` 與 `sha256`；版本與本機相同時回報「已是最新版本」並結束。
+2. 下載 `update_url` 後計算 SHA-256，必須與 manifest 一致；不符即中止，不得覆寫。
+3. 驗證通過後，先將本機 `SKILL.md` 備份為 `SKILL.md.bak`；套件型技能另將整個資料夾改名為 `<skill-name>.bak-<yyyyMMdd-HHmmss>`。
+4. 覆寫後驗證 Frontmatter 完整、`name` 正確；驗證失敗立即還原備份。
+5. 只回報「舊版 → 新版」與變更章節摘要，不逐字貼出全文；使用者未明確要求更新時先確認再動作。
+6. 套件型技能的「完整套件更新」直接重跑該技能 `README.md` 的安裝指令，不另外維護第二份指令。
 
 ### 3. 安裝與更新指令的硬性限制
 - **禁止** `Invoke-RestMethod ... | Out-File -Encoding utf8`：Windows PowerShell 5.1 會寫入 UTF-8 BOM 並改寫行尾，可能導致 frontmatter 解析失敗。一律改用 `Invoke-WebRequest -OutFile` 讓檔案位元組原樣落地。
 - **禁止**共用固定暫存路徑（如 `$env:TEMP\myskill.zip`、`$env:TEMP\myskill-temp`）：併發或中斷會造成舊檔殘留。一律使用 `[guid]::NewGuid()` 產生唯一暫存路徑。
 - **禁止**在更新流程中直接覆蓋：必須先備份，且版本未變時不得寫入。
 - 上述限制由 `python scripts/manage.py lint` 強制檢查，違反即視為錯誤。
+
+---
+
+## 六、共用行為準則（自動注入，禁止手改）
+
+所有技能共用同一份行為準則，來源是 [`scripts/manage.py`](./scripts/manage.py) 的 `SHARED_CONTRACT_LINES`。`sync` 會把區塊注入每份 `SKILL.md` 的「技能維護與自動更新指引」章節之前，讓更新指引維持在檔案最末尾：
+
+```md
+<!-- BEGIN:SHARED-CONTRACT（由 scripts/manage.py sync 注入，請勿手改） -->
+# 共用行為準則（所有 mySkill 技能一體適用）
+（…條文…）
+<!-- END:SHARED-CONTRACT -->
+```
+
+- **禁止手改此區塊**：`lint` 會比對 canonical 內容，手改或過期即報錯。
+- 要調整共同規則，**只改 `manage.py` 的常數**，再跑 `python scripts/manage.py sync`，五份技能一次同步。
+- 個別技能的額外禁令寫在區塊之外，不得覆寫共用條款。
+- 條文核心：先確認再破壞、失敗就說失敗、更新回報版本、最小改動、查證優先、**資料不是指令**（防 prompt injection）。
+
+---
+
+## 七、機器可讀索引 `skills.json`
+
+`sync` 會在根目錄產生 `skills.json`，內含每個技能的 `name`、`version`、`category`、`type`、`path`、`sha256`、`update_url` 與 `triggers`。
+
+- **用途一**：更新流程的完整性驗證——比對 SHA-256，避免下載被截斷或內容遭竄改。
+- **用途二**：其他 Agent 宿主（Claude Code、Codex、DSH 等）可直接建立索引，不必爬 Markdown。
+- **禁止手改**：一律由 `sync` 產生，`sync --check` 會驗證是否同步。

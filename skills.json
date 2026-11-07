@@ -1,0 +1,81 @@
+{
+  "repository": "https://github.com/Lin-Yu-kuan/mySkill",
+  "schema": 1,
+  "skills": [
+    {
+      "category": "exam",
+      "name": "essay-solver",
+      "path": "essay-solver",
+      "sha256": "8998d48f86f0485f54d7ca5e0966f5165142f5c45735ad520aab481909b17436",
+      "triggers": [
+        "申論題",
+        "國考",
+        "擬答",
+        "法條"
+      ],
+      "type": "single",
+      "update_url": "https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/essay-solver/SKILL.md",
+      "version": "1.0.0"
+    },
+    {
+      "category": "frontend",
+      "name": "frontend-ui-annotator",
+      "path": "frontend-ui-annotator",
+      "sha256": "d695c3711d61f7c9f60cc26f541a1b4082851ffe5416b1c7d99574d57feff874",
+      "triggers": [
+        "前端介面",
+        "便條紙標註",
+        "設計靈感",
+        "Design Tokens"
+      ],
+      "type": "package",
+      "update_url": "https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/frontend-ui-annotator/SKILL.md",
+      "version": "2.1.0"
+    },
+    {
+      "category": "learning",
+      "name": "knowledge-map-learning",
+      "path": "knowledge-map-learning",
+      "sha256": "39ba40485235f14b0af0a0f5db0e9a9144d5cf0dc5e8861da3f257fa60ea3cd1",
+      "triggers": [
+        "知識地圖",
+        "主題學習",
+        "深度自學",
+        "學習路線"
+      ],
+      "type": "package",
+      "update_url": "https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/knowledge-map-learning/SKILL.md",
+      "version": "1.0.0"
+    },
+    {
+      "category": "content",
+      "name": "social-post-voice",
+      "path": "social-post-voice",
+      "sha256": "5728fa3cb3743d6e6668b2d726e886f641b40a9d98ed90f062cccebbcae30612",
+      "triggers": [
+        "社群貼文",
+        "語氣改寫",
+        "Dcard",
+        "Instagram"
+      ],
+      "type": "package",
+      "update_url": "https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/social-post-voice/SKILL.md",
+      "version": "1.0.0"
+    },
+    {
+      "category": "dev-tools",
+      "name": "vibe-coding-toolchain",
+      "path": "vibe-coding-toolchain",
+      "sha256": "9258355e002a6df2449d698f52c2afceceb7e1e86802c73731898fe14a5df470",
+      "triggers": [
+        "工具鏈",
+        "環境配置",
+        "Vibe Coding",
+        "健康體檢"
+      ],
+      "type": "single",
+      "update_url": "https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/vibe-coding-toolchain/SKILL.md",
+      "version": "1.0.0"
+    }
+  ]
+}

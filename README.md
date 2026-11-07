@@ -19,6 +19,18 @@
 
 ---
 
+## 🎯 我該用哪個技能？（觸發詞對照）
+
+| 技能 | 版本 | 觸發詞 |
+|---|---|---|
+| [`essay-solver`](./essay-solver) | v1.0.0 | `申論題`、`國考`、`擬答`、`法條` |
+| [`frontend-ui-annotator`](./frontend-ui-annotator) | v2.1.0 | `前端介面`、`便條紙標註`、`設計靈感`、`Design Tokens` |
+| [`knowledge-map-learning`](./knowledge-map-learning) | v1.0.0 | `知識地圖`、`主題學習`、`深度自學`、`學習路線` |
+| [`social-post-voice`](./social-post-voice) | v1.0.0 | `社群貼文`、`語氣改寫`、`Dcard`、`Instagram` |
+| [`vibe-coding-toolchain`](./vibe-coding-toolchain) | v1.0.0 | `工具鏈`、`環境配置`、`Vibe Coding`、`健康體檢` |
+
+---
+
 ## 📦 領域分類目錄 (Skill Catalog)
 
 點擊下方各領域表格中的**技能名稱**或**詳細說明**即可查看完整文件與單獨一鍵安裝指令：
@@ -151,13 +163,13 @@
 
 ## 🔄 智慧無感自動更新（已安裝者）
 
-本倉庫所有技能的 `SKILL.md` 均內建 `version`、`repository`、`update_url` 與自動更新指引，安裝後即可比對版本。
+本倉庫所有技能的 `SKILL.md` 均內建 `version`、`repository`、`update_url` 與自動更新指引；更新來源的版本與 SHA-256 統一記在根目錄 [`skills.json`](./skills.json)。
 
 一旦您安裝過任何技能，若想取得 GitHub 上的最新版本，**不需要手動重新下載或尋找目錄**！  
 只要在 Antigravity 對話框中說：
 > 「幫我更新 [技能名稱]」或「檢查 [技能名稱] 最新版本」
 
-Agent 會先讀取雲端 `version` 與本機比對：相同就回報「已是最新」，不同才備份原檔、覆蓋更新並回報版本差異，不會無條件靜默覆寫。
+Agent 會先讀取 `skills.json` 比對版本：相同就回報「已是最新」；不同才下載並驗證 SHA-256、備份原檔、覆寫更新，最後回報版本差異。校驗不符或下載失敗一律中止，不會無條件靜默覆寫。
 
 ---
 
@@ -169,7 +181,7 @@ Agent 會先讀取雲端 `version` 與本機比對：相同就回報「已是最
 # 1. 檢查所有技能是否符合 GEMINI.md 規範（Frontmatter、版本、更新網址、安裝指令）
 python scripts/manage.py lint
 
-# 2. 新增或修改技能後，一鍵自動同步生成根目錄 README.md（領域表格、全家桶指令、目錄樹）
+# 2. 一鍵同步：注入共用行為準則到各 SKILL.md、生成根目錄 README.md 與 skills.json
 python scripts/manage.py sync
 
 # 3. CI 用：只檢查 README 是否與技能元資料同步，不寫入檔案
@@ -186,6 +198,7 @@ python scripts/manage.py sync --check
 mySkill/
 ├── GEMINI.md                      # 本倉庫專屬開發規範（含領域分類、零下載安裝與自動更新標準）
 ├── LICENSE                        # MIT 授權條款
+├── skills.json                    # 機器可讀索引（版本、SHA-256、觸發詞；由 sync 產生）
 ├── README.md                      # 技能庫領域總覽首頁（由 scripts/manage.py 自動同步）
 ├── .github/workflows/skills-ci.yml # 推送時自動執行 lint、sync --check 與測試
 ├── scripts/
