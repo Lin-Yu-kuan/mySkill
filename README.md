@@ -163,13 +163,13 @@
 
 ## 🔄 智慧無感自動更新（已安裝者）
 
-本倉庫所有技能的 `SKILL.md` 均內建 `version`、`repository`、`update_url` 與自動更新指引；更新來源的版本與 SHA-256 統一記在根目錄 [`skills.json`](./skills.json)。
+本倉庫所有技能的 `SKILL.md` 均內建 `version`、`repository`、`update_url` 與自動更新指引；更新來源的版本與 SHA-256 統一記在 `.skillkit/skills.json`。
 
 一旦您安裝過任何技能，若想取得 GitHub 上的最新版本，**不需要手動重新下載或尋找目錄**！  
 只要在 Antigravity 對話框中說：
 > 「幫我更新 [技能名稱]」或「檢查 [技能名稱] 最新版本」
 
-Agent 會先讀取 `skills.json` 比對版本：相同就回報「已是最新」；不同才下載並驗證 SHA-256、備份原檔、覆寫更新，最後回報版本差異。校驗不符或下載失敗一律中止，不會無條件靜默覆寫。
+Agent 會先讀取 `.skillkit/skills.json` 比對版本：相同就回報「已是最新」；不同才下載並驗證 SHA-256、備份原檔、覆寫更新，最後回報版本差異。校驗不符或下載失敗一律中止，不會無條件靜默覆寫。
 
 ---
 
@@ -179,13 +179,13 @@ Agent 會先讀取 `skills.json` 比對版本：相同就回報「已是最新�
 
 ```powershell
 # 1. 檢查所有技能是否符合規範（Frontmatter、版本、更新網址、安裝指令）
-manage.cmd lint
+.skillkit/manage.cmd lint
 
-# 2. 一鍵同步：注入共用行為準則到各 SKILL.md、生成根目錄 README.md 與 skills.json
-manage.cmd sync
+# 2. 一鍵同步：注入共用行為準則到各 SKILL.md、生成根目錄 README.md 與 .skillkit/skills.json
+.skillkit/manage.cmd sync
 
 # 3. CI 用：只檢查 README 是否與技能元資料同步，不寫入檔案
-manage.cmd sync --check
+.skillkit/manage.cmd sync --check
 ```
 
 ---
@@ -198,10 +198,8 @@ manage.cmd sync --check
 mySkill/
 ├── GEMINI.md                      # 本倉庫專屬開發規範（含領域分類、零下載安裝與自動更新標準）
 ├── LICENSE                        # MIT 授權條款
-├── skills.config.json             # 倉庫設定（repo URL、分支、站名、安裝路徑）
-├── skills.json                    # 機器可讀索引（版本、SHA-256、觸發詞；由 sync 產生）
+├── .skillkit/                     # 治理設定與索引（config.json、skills.json、manage.cmd）
 ├── README.md                      # 技能庫領域總覽首頁（由 skillkit 自動同步）
-├── manage.cmd                     # 治理工具入口（呼叫同層 skillkit）
 ├── .github/workflows/skills-ci.yml # 推送時自動執行 lint、sync --check 與測試
 ├── scripts/
 │   └── manage.py                  # 技能規範體檢 (lint) 與總目錄自動生成 (sync) 工具

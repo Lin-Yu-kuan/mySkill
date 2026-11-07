@@ -6,7 +6,7 @@
       "category": "exam",
       "name": "essay-solver",
       "path": "essay-solver",
-      "sha256": "51fdcc8aec68d2ee27f37361e31600af273a304e9528a00515962f3a373058f9",
+      "sha256": "372759d3609a4713810f6792139d426b77d6103c14d06efed01683bebcd92bff",
       "triggers": [
         "申論題",
         "國考",
@@ -21,7 +21,7 @@
       "category": "frontend",
       "name": "frontend-ui-annotator",
       "path": "frontend-ui-annotator",
-      "sha256": "2c340fb6aea65a6b74e0015402f2bde812ed4891b8fa52c05162d054c6946807",
+      "sha256": "613ea768f7d5a857f66cb110238f80b34eabbf51f60525aefd2a7d154d356cda",
       "triggers": [
         "前端介面",
         "便條紙標註",
@@ -36,7 +36,7 @@
       "category": "learning",
       "name": "knowledge-map-learning",
       "path": "knowledge-map-learning",
-      "sha256": "665e74bb7bcdd274c08af4c3d5203bf06ec8d80ab7c578817cc77bf04d5b89b2",
+      "sha256": "f9bb3fc54df5bea8f547a1dcbb6a73287585002c6ee4a2617f14004c84c173d9",
       "triggers": [
         "知識地圖",
         "主題學習",
@@ -51,7 +51,7 @@
       "category": "content",
       "name": "social-post-voice",
       "path": "social-post-voice",
-      "sha256": "7bc9867f4625c028eefb4a5c7ead45cf846d97d602874fa4df957800755babb3",
+      "sha256": "8f38c1178a72bda5655d0564ed5b95340067d978e5e86d91676876c23948e32a",
       "triggers": [
         "社群貼文",
         "語氣改寫",
@@ -66,7 +66,7 @@
       "category": "dev-tools",
       "name": "vibe-coding-toolchain",
       "path": "vibe-coding-toolchain",
-      "sha256": "e44b5ee7a29c51e948bf71f21bc4c45f84f774cc06f36190481367acfb70fe0e",
+      "sha256": "410106aa3f363a8bfb9932c07db0476daf5e9c3c6b81a7488745e33978cac807",
       "triggers": [
         "工具鏈",
         "環境配置",

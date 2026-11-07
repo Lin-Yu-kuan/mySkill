@@ -201,7 +201,7 @@ trigger: always_on
 
 # 技能維護與自動更新指引 (Skill Maintenance & Auto-Update)
 
-`version` 是本機版本；更新來源的版本與 SHA-256 記在倉庫根目錄的 `skills.json`（`https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/skills.json`）。當使用者要求「更新此技能」或「檢查最新版本」（例如：「幫我更新 vibe-coding-toolchain 技能」或「更新黃金工具鏈技能」）時：
+`version` 是本機版本；更新來源的版本與 SHA-256 記在 `.skillkit/skills.json`（`https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/.skillkit/skills.json`）。當使用者要求「更新此技能」或「檢查最新版本」（例如：「幫我更新 vibe-coding-toolchain 技能」或「更新黃金工具鏈技能」）時：
 
 1. **比對版本**：讀取 `skills.json` 中本技能的 `version`，與本機相同時回報「已是最新版本（vX.Y.Z）」即結束，不寫入任何檔案。
 2. **下載並驗證**：版本不同時下載 `update_url` 內容，計算 SHA-256，必須與 manifest 的 `sha256` 一致；不符即中止，不得覆寫。
