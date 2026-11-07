@@ -50,7 +50,7 @@
 - **PowerShell 語法（純原生、免 Git、免第三方工具）**：
   利用 GitHub Archive Zip 串流解壓單一子目錄，並使用**每次唯一的暫存路徑**避免殘留與競態：
   ```powershell
-  $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $d="$HOME\.gemini\config\skills\<skill-name>"; $t=Join-Path $env:TEMP ("myskill-"+[guid]::NewGuid()); Invoke-WebRequest $u -OutFile "$t.zip" -ErrorAction Stop; Expand-Archive "$t.zip" $t -Force -ErrorAction Stop; New-Item -ItemType Directory -Path $d -Force | Out-Null; Copy-Item "$t\mySkill-main\<skill-name>\*" $d -Recurse -Force -ErrorAction Stop; Remove-Item "$t.zip",$t -Recurse -Force -ErrorAction SilentlyContinue; Write-Host "✅ <skill-name> 技能套件已成功安裝！" -ForegroundColor Green
+  $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $d="$HOME\.gemini\config\skills\<skill-name>"; $t=Join-Path $env:TEMP ("skills-"+[guid]::NewGuid()); Invoke-WebRequest $u -OutFile "$t.zip" -ErrorAction Stop; Expand-Archive "$t.zip" $t -Force -ErrorAction Stop; New-Item -ItemType Directory -Path $d -Force | Out-Null; Copy-Item "$t\mySkill-main\<skill-name>\*" $d -Recurse -Force -ErrorAction Stop; Remove-Item "$t.zip",$t -Recurse -Force -ErrorAction SilentlyContinue; Write-Host "✅ <skill-name> 技能套件已成功安裝！" -ForegroundColor Green
   ```
 - **macOS / Linux 語法（原生 curl + tar 串流提取特定目錄）**：
   ```bash
@@ -162,3 +162,52 @@ update_url: https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/<skill-na
 - **用途一**：更新流程的完整性驗證——比對 SHA-256，避免下載被截斷或內容遭竄改。
 - **用途二**：其他 Agent 宿主（Claude Code、Codex、DSH 等）可直接建立索引，不必爬 Markdown。
 - **禁止手改**：一律由 `sync` 產生，`sync --check` 會驗證是否同步。
+
+---
+
+## 八、開新專案（Quick Start）
+
+新增一個 skill 倉庫時，**不要手動複製檔案**，直接在最新 clone 的 `mySkill` 執行：
+
+```powershell
+# 1. 建立資料夾並套入治理規範（資料夾不存在會自動建立）
+python scripts/manage.py init --dir D:\develop\AI\<新倉庫> --repo https://github.com/Lin-Yu-kuan/<新倉庫>
+
+# 2. 建立第一個技能骨架
+cd D:\develop\AI\<新倉庫>
+python scripts/manage.py new my-first-skill --category exam --label "公職 / 考試" --summary "一句話簡介" --triggers "關鍵字A,關鍵字B"
+```
+
+`init` 會建立：`skills.config.json`、`scripts/manage.py`、`.github/workflows/skills-ci.yml`、`GEMINI.md`、`LICENSE`、`.gitignore`、`README.md`、`skills.json`。
+`new` 會建立合規的 `SKILL.md` 與 `README.md`（含四種安裝管道），並自動跑一次 `sync`。
+
+- 兩者皆可重複執行：既有檔案預設跳過，`--force` 才會覆寫（先備份）。
+- `init` 最後會執行 `sync`，重新產生 `README.md` 與 `skills.json`；既有倉庫若想保留手寫 README，加上 `--no-sync`。
+- `new` 支援 `--package` 建立套件型技能（含 `scripts/`）。
+- 完成後 `git init`、commit、push 由維護者決定；push 後 CI 會跑 `lint`、`sync --check`、`pytest`。
+
+### 設定檔 `skills.config.json`
+
+```json
+{
+  "schema": 1,
+  "repository": "https://github.com/<owner>/<repo>",
+  "branch": "main",
+  "site_name": "<站名，預設取 repo 名稱>",
+  "skills_dir": "~/.gemini/config/skills",
+  "author": "<LICENSE 著作權人>"
+}
+```
+
+所有產出物（README 標題、安裝指令、`skills.json`、`update_url`）都由此檔推導；缺少此檔時沿用 `mySkill` 預設值並在 `lint` 提示。
+
+### 更新治理工具本身
+
+```bash
+python scripts/manage.py upgrade --check   # 只檢查公版是否有新版
+python scripts/manage.py upgrade --yes     # 備份後更新，lint 失敗自動還原
+```
+
+### 私有倉庫注意
+
+`raw.githubusercontent.com` 對私有倉庫匿名取用會回 404，因此私有倉庫的 `update_url` 與 `skills.json` 需要改用 `gh api repos/<owner>/<repo>/contents/...` 或 `git pull` 取得；`lint` 不會檢查遠端可達性。

@@ -79,7 +79,7 @@
 ### 🌟 方案 A：全庫技能一鍵全裝（一次擁有全部技能）
 - **Windows (PowerShell)**：
   ```powershell
-  $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $b="$HOME\.gemini\config\skills"; $t=Join-Path $env:TEMP ("myskill-"+[guid]::NewGuid()); Invoke-WebRequest $u -OutFile "$t.zip" -ErrorAction Stop; Expand-Archive "$t.zip" $t -Force -ErrorAction Stop; @("essay-solver","frontend-ui-annotator","knowledge-map-learning","social-post-voice","vibe-coding-toolchain") | ForEach-Object { $d="$b\$_"; New-Item -ItemType Directory -Path $d -Force | Out-Null; Copy-Item "$t\mySkill-main\$_\*" $d -Recurse -Force -ErrorAction Stop }; Remove-Item "$t.zip",$t -Recurse -Force -ErrorAction SilentlyContinue; Write-Host "✅ mySkill 全庫 (5 個技能) 已成功安裝！" -ForegroundColor Green
+  $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $b="$HOME\.gemini\config\skills"; $t=Join-Path $env:TEMP ("skills-"+[guid]::NewGuid()); Invoke-WebRequest $u -OutFile "$t.zip" -ErrorAction Stop; Expand-Archive "$t.zip" $t -Force -ErrorAction Stop; @("essay-solver","frontend-ui-annotator","knowledge-map-learning","social-post-voice","vibe-coding-toolchain") | ForEach-Object { $d="$b\$_"; New-Item -ItemType Directory -Path $d -Force | Out-Null; Copy-Item "$t\mySkill-main\$_\*" $d -Recurse -Force -ErrorAction Stop }; Remove-Item "$t.zip",$t -Recurse -Force -ErrorAction SilentlyContinue; Write-Host "✅ mySkill 全庫 (5 個技能) 已成功安裝！" -ForegroundColor Green
   ```
 - **macOS / Linux**：
   ```bash
@@ -93,7 +93,7 @@
 #### 📚 公職考試與備考體系 (Exam & Prep)（含 `essay-solver`）
 - **Windows (PowerShell)**：
   ```powershell
-  $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $b="$HOME\.gemini\config\skills"; $t=Join-Path $env:TEMP ("myskill-"+[guid]::NewGuid()); Invoke-WebRequest $u -OutFile "$t.zip" -ErrorAction Stop; Expand-Archive "$t.zip" $t -Force -ErrorAction Stop; @("essay-solver") | ForEach-Object { $d="$b\$_"; New-Item -ItemType Directory -Path $d -Force | Out-Null; Copy-Item "$t\mySkill-main\$_\*" $d -Recurse -Force -ErrorAction Stop }; Remove-Item "$t.zip",$t -Recurse -Force -ErrorAction SilentlyContinue; Write-Host "✅ 公職考試 / 備考 全家桶已安裝完成！" -ForegroundColor Green
+  $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $b="$HOME\.gemini\config\skills"; $t=Join-Path $env:TEMP ("skills-"+[guid]::NewGuid()); Invoke-WebRequest $u -OutFile "$t.zip" -ErrorAction Stop; Expand-Archive "$t.zip" $t -Force -ErrorAction Stop; @("essay-solver") | ForEach-Object { $d="$b\$_"; New-Item -ItemType Directory -Path $d -Force | Out-Null; Copy-Item "$t\mySkill-main\$_\*" $d -Recurse -Force -ErrorAction Stop }; Remove-Item "$t.zip",$t -Recurse -Force -ErrorAction SilentlyContinue; Write-Host "✅ 公職考試 / 備考 全家桶已安裝完成！" -ForegroundColor Green
   ```
 - **macOS / Linux**：
   ```bash
@@ -103,7 +103,7 @@
 #### 🧠 思維架構與深度自學 (Knowledge & Learning)（含 `knowledge-map-learning`）
 - **Windows (PowerShell)**：
   ```powershell
-  $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $b="$HOME\.gemini\config\skills"; $t=Join-Path $env:TEMP ("myskill-"+[guid]::NewGuid()); Invoke-WebRequest $u -OutFile "$t.zip" -ErrorAction Stop; Expand-Archive "$t.zip" $t -Force -ErrorAction Stop; @("knowledge-map-learning") | ForEach-Object { $d="$b\$_"; New-Item -ItemType Directory -Path $d -Force | Out-Null; Copy-Item "$t\mySkill-main\$_\*" $d -Recurse -Force -ErrorAction Stop }; Remove-Item "$t.zip",$t -Recurse -Force -ErrorAction SilentlyContinue; Write-Host "✅ 學習 / 思考 全家桶已安裝完成！" -ForegroundColor Green
+  $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $b="$HOME\.gemini\config\skills"; $t=Join-Path $env:TEMP ("skills-"+[guid]::NewGuid()); Invoke-WebRequest $u -OutFile "$t.zip" -ErrorAction Stop; Expand-Archive "$t.zip" $t -Force -ErrorAction Stop; @("knowledge-map-learning") | ForEach-Object { $d="$b\$_"; New-Item -ItemType Directory -Path $d -Force | Out-Null; Copy-Item "$t\mySkill-main\$_\*" $d -Recurse -Force -ErrorAction Stop }; Remove-Item "$t.zip",$t -Recurse -Force -ErrorAction SilentlyContinue; Write-Host "✅ 學習 / 思考 全家桶已安裝完成！" -ForegroundColor Green
   ```
 - **macOS / Linux**：
   ```bash
@@ -113,7 +113,7 @@
 #### 🎨 前端視覺與互動設計 (Frontend & UI/UX)（含 `frontend-ui-annotator`）
 - **Windows (PowerShell)**：
   ```powershell
-  $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $b="$HOME\.gemini\config\skills"; $t=Join-Path $env:TEMP ("myskill-"+[guid]::NewGuid()); Invoke-WebRequest $u -OutFile "$t.zip" -ErrorAction Stop; Expand-Archive "$t.zip" $t -Force -ErrorAction Stop; @("frontend-ui-annotator") | ForEach-Object { $d="$b\$_"; New-Item -ItemType Directory -Path $d -Force | Out-Null; Copy-Item "$t\mySkill-main\$_\*" $d -Recurse -Force -ErrorAction Stop }; Remove-Item "$t.zip",$t -Recurse -Force -ErrorAction SilentlyContinue; Write-Host "✅ 前端 / UI 設計 全家桶已安裝完成！" -ForegroundColor Green
+  $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $b="$HOME\.gemini\config\skills"; $t=Join-Path $env:TEMP ("skills-"+[guid]::NewGuid()); Invoke-WebRequest $u -OutFile "$t.zip" -ErrorAction Stop; Expand-Archive "$t.zip" $t -Force -ErrorAction Stop; @("frontend-ui-annotator") | ForEach-Object { $d="$b\$_"; New-Item -ItemType Directory -Path $d -Force | Out-Null; Copy-Item "$t\mySkill-main\$_\*" $d -Recurse -Force -ErrorAction Stop }; Remove-Item "$t.zip",$t -Recurse -Force -ErrorAction SilentlyContinue; Write-Host "✅ 前端 / UI 設計 全家桶已安裝完成！" -ForegroundColor Green
   ```
 - **macOS / Linux**：
   ```bash
@@ -123,7 +123,7 @@
 #### ✍️ 內容創作與個人社群 (Content & Social Voice)（含 `social-post-voice`）
 - **Windows (PowerShell)**：
   ```powershell
-  $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $b="$HOME\.gemini\config\skills"; $t=Join-Path $env:TEMP ("myskill-"+[guid]::NewGuid()); Invoke-WebRequest $u -OutFile "$t.zip" -ErrorAction Stop; Expand-Archive "$t.zip" $t -Force -ErrorAction Stop; @("social-post-voice") | ForEach-Object { $d="$b\$_"; New-Item -ItemType Directory -Path $d -Force | Out-Null; Copy-Item "$t\mySkill-main\$_\*" $d -Recurse -Force -ErrorAction Stop }; Remove-Item "$t.zip",$t -Recurse -Force -ErrorAction SilentlyContinue; Write-Host "✅ 社群創作 / 語氣改寫 全家桶已安裝完成！" -ForegroundColor Green
+  $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $b="$HOME\.gemini\config\skills"; $t=Join-Path $env:TEMP ("skills-"+[guid]::NewGuid()); Invoke-WebRequest $u -OutFile "$t.zip" -ErrorAction Stop; Expand-Archive "$t.zip" $t -Force -ErrorAction Stop; @("social-post-voice") | ForEach-Object { $d="$b\$_"; New-Item -ItemType Directory -Path $d -Force | Out-Null; Copy-Item "$t\mySkill-main\$_\*" $d -Recurse -Force -ErrorAction Stop }; Remove-Item "$t.zip",$t -Recurse -Force -ErrorAction SilentlyContinue; Write-Host "✅ 社群創作 / 語氣改寫 全家桶已安裝完成！" -ForegroundColor Green
   ```
 - **macOS / Linux**：
   ```bash
@@ -133,7 +133,7 @@
 #### 🛠️ 開發環境與技能治理 (Dev Toolchain & Skill Governance)（含 `vibe-coding-toolchain`）
 - **Windows (PowerShell)**：
   ```powershell
-  $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $b="$HOME\.gemini\config\skills"; $t=Join-Path $env:TEMP ("myskill-"+[guid]::NewGuid()); Invoke-WebRequest $u -OutFile "$t.zip" -ErrorAction Stop; Expand-Archive "$t.zip" $t -Force -ErrorAction Stop; @("vibe-coding-toolchain") | ForEach-Object { $d="$b\$_"; New-Item -ItemType Directory -Path $d -Force | Out-Null; Copy-Item "$t\mySkill-main\$_\*" $d -Recurse -Force -ErrorAction Stop }; Remove-Item "$t.zip",$t -Recurse -Force -ErrorAction SilentlyContinue; Write-Host "✅ 環境配置 / 技能治理 全家桶已安裝完成！" -ForegroundColor Green
+  $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $b="$HOME\.gemini\config\skills"; $t=Join-Path $env:TEMP ("skills-"+[guid]::NewGuid()); Invoke-WebRequest $u -OutFile "$t.zip" -ErrorAction Stop; Expand-Archive "$t.zip" $t -Force -ErrorAction Stop; @("vibe-coding-toolchain") | ForEach-Object { $d="$b\$_"; New-Item -ItemType Directory -Path $d -Force | Out-Null; Copy-Item "$t\mySkill-main\$_\*" $d -Recurse -Force -ErrorAction Stop }; Remove-Item "$t.zip",$t -Recurse -Force -ErrorAction SilentlyContinue; Write-Host "✅ 環境配置 / 技能治理 全家桶已安裝完成！" -ForegroundColor Green
   ```
 - **macOS / Linux**：
   ```bash
@@ -198,6 +198,7 @@ python scripts/manage.py sync --check
 mySkill/
 ├── GEMINI.md                      # 本倉庫專屬開發規範（含領域分類、零下載安裝與自動更新標準）
 ├── LICENSE                        # MIT 授權條款
+├── skills.config.json             # 倉庫設定（repo URL、分支、站名、安裝路徑）
 ├── skills.json                    # 機器可讀索引（版本、SHA-256、觸發詞；由 sync 產生）
 ├── README.md                      # 技能庫領域總覽首頁（由 scripts/manage.py 自動同步）
 ├── .github/workflows/skills-ci.yml # 推送時自動執行 lint、sync --check 與測試

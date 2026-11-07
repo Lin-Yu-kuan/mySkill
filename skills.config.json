@@ -1,0 +1,8 @@
+{
+  "schema": 1,
+  "repository": "https://github.com/Lin-Yu-kuan/mySkill",
+  "branch": "main",
+  "site_name": "mySkill",
+  "skills_dir": "~/.gemini/config/skills",
+  "author": "Lin-Yu-kuan"
+}
