@@ -24,8 +24,8 @@
 | 技能 | 版本 | 觸發詞 |
 |---|---|---|
 | [`essay-solver`](./essay-solver) | v1.0.0 | `申論題`、`國考`、`擬答`、`法條` |
-| [`frontend-ui-annotator`](./frontend-ui-annotator) | v2.1.0 | `前端介面`、`便條紙標註`、`設計靈感`、`Design Tokens` |
-| [`knowledge-map-learning`](./knowledge-map-learning) | v1.0.0 | `知識地圖`、`主題學習`、`深度自學`、`學習路線` |
+| [`frontend-ui-annotator`](./frontend-ui-annotator) | v3.2.0 | `前端介面`、`便條紙標註`、`設計靈感`、`Design Tokens` |
+| [`knowledge-map-learning`](./knowledge-map-learning) | v1.1.0 | `知識地圖`、`主題學習`、`深度自學`、`學習路線` |
 | [`social-post-voice`](./social-post-voice) | v1.0.0 | `社群貼文`、`語氣改寫`、`Dcard`、`Instagram` |
 | [`vibe-coding-toolchain`](./vibe-coding-toolchain) | v1.0.0 | `工具鏈`、`環境配置`、`Vibe Coding`、`健康體檢` |
 
@@ -47,14 +47,14 @@
 
 | 技能名稱 | 版本 | 核心功能簡介 | 子類別 | 類型 | 說明文件 |
 |---|---|---|---|---|---|
-| [**knowledge-map-learning**](./knowledge-map-learning) | `v1.0.0` | 由上而下脈絡全景圖、四層認識論深度精講、逐回合即時落盤與自包含 HTML 互動手冊匯出 | `學習 / 思考` | 📦 套件 | [查看說明](./knowledge-map-learning/README.md) |
+| [**knowledge-map-learning**](./knowledge-map-learning) | `v1.1.0` | 由上而下脈絡全景圖、四層認識論深度精講、逐回合即時落盤與自包含 HTML 互動手冊匯出 | `學習 / 思考` | 📦 套件 | [查看說明](./knowledge-map-learning/README.md) |
 
 ### 🎨 前端視覺與互動設計 (Frontend & UI/UX)
 > 結合瀏覽器自由便條紙標註、全站 Design Tokens 萃取與高質感 UI 生成工作流。
 
 | 技能名稱 | 版本 | 核心功能簡介 | 子類別 | 類型 | 說明文件 |
 |---|---|---|---|---|---|
-| [**frontend-ui-annotator**](./frontend-ui-annotator) | `v2.1.0` | 前端介面生成、全域自由便條紙標註與全頁風格萃取專家，支援任意位置隨手貼紙、外站全頁 Design Tokens 萃取、雙軌環境智慧辨識與一鍵迭代 | `前端 / UI 設計` | 📦 套件 | [查看說明](./frontend-ui-annotator/README.md) |
+| [**frontend-ui-annotator**](./frontend-ui-annotator) | `v3.2.0` | 網頁便條紙、草稿恢復、元素定位與 AI 回饋包 | `前端 / UI 設計` | 📦 套件 | [查看說明](./frontend-ui-annotator/README.md) |
 
 ### ✍️ 內容創作與個人社群 (Content & Social Voice)
 > 具備個人真實語氣、適度吐槽且嚴守事實邊界的跨平台社群貼文寫作與改稿。
@@ -209,8 +209,12 @@ mySkill/
 ├── frontend-ui-annotator/         # [前端 / UI 設計]
 │   ├── SKILL.md
 │   ├── README.md
+│   ├── extension/
 │   ├── plugin.json
-│   └── resources/
+│   ├── resources/
+│   ├── scripts/
+│   ├── test-results/
+│   └── tests/
 ├── knowledge-map-learning/        # [學習 / 思考]
 │   ├── SKILL.md
 │   ├── README.md
