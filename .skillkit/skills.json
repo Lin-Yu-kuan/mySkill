@@ -48,6 +48,20 @@
       "version": "1.1.0"
     },
     {
+      "category": "dev-tools",
+      "name": "skill-evolution",
+      "path": "skill-evolution",
+      "sha256": "0a7a56375bab56ed821a39c7ce7144d385c81ad28ffe128e9c86c28980516c99",
+      "triggers": [
+        "技能診斷",
+        "Skill 優化",
+        "技能演進"
+      ],
+      "type": "package",
+      "update_url": "https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/skill-evolution/SKILL.md",
+      "version": "1.0.0"
+    },
+    {
       "category": "content",
       "name": "social-post-voice",
       "path": "social-post-voice",

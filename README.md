@@ -2,7 +2,7 @@
 
 收錄高品質的 AI Agent 技能集合（Skills），遵循標準通用 Agent Skill 規範，專為 **Google Antigravity** 及支援 Agent Skill 規範的 AI 工具打造。
 
-[![Total Skills](https://img.shields.io/badge/Skills-5%20個專業技能-purple.svg)](#-領域分類目錄-skill-catalog)
+[![Total Skills](https://img.shields.io/badge/Skills-6%20個專業技能-purple.svg)](#-領域分類目錄-skill-catalog)
 [![Domains](https://img.shields.io/badge/Domains-5%20大領域體系-blue.svg)](#-領域分類目錄-skill-catalog)
 [![Zero Download](https://img.shields.io/badge/Install-零下載雲端一行直裝-brightgreen.svg)](#-領域全家桶一鍵安裝-domain-bundles)
 [![Auto Update](https://img.shields.io/badge/Update-自然語言無感更新-orange.svg)](#-智慧無感自動更新已安裝者)
@@ -15,7 +15,7 @@
 - **🧠 思維架構與深度自學 (Knowledge & Learning)**（1）：[`knowledge-map-learning`](./knowledge-map-learning)
 - **🎨 前端視覺與互動設計 (Frontend & UI/UX)**（1）：[`frontend-ui-annotator`](./frontend-ui-annotator)
 - **✍️ 內容創作與個人社群 (Content & Social Voice)**（1）：[`social-post-voice`](./social-post-voice)
-- **🛠️ 開發環境與技能治理 (Dev Toolchain & Skill Governance)**（1）：[`vibe-coding-toolchain`](./vibe-coding-toolchain)
+- **🛠️ 開發環境與技能治理 (Dev Toolchain & Skill Governance)**（2）：[`skill-evolution`](./skill-evolution) 、 [`vibe-coding-toolchain`](./vibe-coding-toolchain)
 
 ---
 
@@ -26,6 +26,7 @@
 | [`essay-solver`](./essay-solver) | v1.0.0 | `申論題`、`國考`、`擬答`、`法條` |
 | [`frontend-ui-annotator`](./frontend-ui-annotator) | v3.2.0 | `前端介面`、`便條紙標註`、`設計靈感`、`Design Tokens` |
 | [`knowledge-map-learning`](./knowledge-map-learning) | v1.1.0 | `知識地圖`、`主題學習`、`深度自學`、`學習路線` |
+| [`skill-evolution`](./skill-evolution) | v1.0.0 | `技能診斷`、`Skill 優化`、`技能演進` |
 | [`social-post-voice`](./social-post-voice) | v1.0.0 | `社群貼文`、`語氣改寫`、`Dcard`、`Instagram` |
 | [`vibe-coding-toolchain`](./vibe-coding-toolchain) | v1.0.0 | `工具鏈`、`環境配置`、`Vibe Coding`、`健康體檢` |
 
@@ -68,6 +69,7 @@
 
 | 技能名稱 | 版本 | 核心功能簡介 | 子類別 | 類型 | 說明文件 |
 |---|---|---|---|---|---|
+| [**skill-evolution**](./skill-evolution) | `v1.0.0` | 既有 Skill 診斷、根因修正與獨立工作流轉換，保留原契約並以證據驗收 | `技能治理 / 診斷優化` | 📦 套件 | [查看說明](./skill-evolution/README.md) |
 | [**vibe-coding-toolchain**](./vibe-coding-toolchain) | `v1.0.0` | Antigravity IDE「Vibe Coding 黃金工具鏈」一鍵配置與健康體檢專家，自動安裝與掛載 RTK、ast-grep、CodeGraph、repomix、Context7 MCP、Chrome DevTools，並以冪等方式寫入全域與專案局域規則 | `環境配置 / 開發工具鏈` | 📄 單檔 | [查看說明](./vibe-coding-toolchain/README.md) |
 
 ---
@@ -79,11 +81,11 @@
 ### 🌟 方案 A：全庫技能一鍵全裝（一次擁有全部技能）
 - **Windows (PowerShell)**：
   ```powershell
-  $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $b="$HOME\.gemini\config\skills"; $t=Join-Path $env:TEMP ("skills-"+[guid]::NewGuid()); Invoke-WebRequest $u -OutFile "$t.zip" -ErrorAction Stop; Expand-Archive "$t.zip" $t -Force -ErrorAction Stop; @("essay-solver","frontend-ui-annotator","knowledge-map-learning","social-post-voice","vibe-coding-toolchain") | ForEach-Object { $d="$b\$_"; New-Item -ItemType Directory -Path $d -Force | Out-Null; Copy-Item "$t\mySkill-main\$_\*" $d -Recurse -Force -ErrorAction Stop }; Remove-Item "$t.zip",$t -Recurse -Force -ErrorAction SilentlyContinue; Write-Host "✅ mySkill 全庫 (5 個技能) 已成功安裝！" -ForegroundColor Green
+  $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $b="$HOME\.gemini\config\skills"; $t=Join-Path $env:TEMP ("skills-"+[guid]::NewGuid()); Invoke-WebRequest $u -OutFile "$t.zip" -ErrorAction Stop; Expand-Archive "$t.zip" $t -Force -ErrorAction Stop; @("essay-solver","frontend-ui-annotator","knowledge-map-learning","skill-evolution","social-post-voice","vibe-coding-toolchain") | ForEach-Object { $d="$b\$_"; New-Item -ItemType Directory -Path $d -Force | Out-Null; Copy-Item "$t\mySkill-main\$_\*" $d -Recurse -Force -ErrorAction Stop }; Remove-Item "$t.zip",$t -Recurse -Force -ErrorAction SilentlyContinue; Write-Host "✅ mySkill 全庫 (6 個技能) 已成功安裝！" -ForegroundColor Green
   ```
 - **macOS / Linux**：
   ```bash
-  mkdir -p "$HOME/.gemini/config/skills" && curl -fsSL "https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.tar.gz" | tar -xz -C "$HOME/.gemini/config/skills" --strip-components=1 "mySkill-main/essay-solver/" "mySkill-main/frontend-ui-annotator/" "mySkill-main/knowledge-map-learning/" "mySkill-main/social-post-voice/" "mySkill-main/vibe-coding-toolchain/" && echo "✅ mySkill 全庫 (5 個技能) 已成功安裝！"
+  mkdir -p "$HOME/.gemini/config/skills" && curl -fsSL "https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.tar.gz" | tar -xz -C "$HOME/.gemini/config/skills" --strip-components=1 "mySkill-main/essay-solver/" "mySkill-main/frontend-ui-annotator/" "mySkill-main/knowledge-map-learning/" "mySkill-main/skill-evolution/" "mySkill-main/social-post-voice/" "mySkill-main/vibe-coding-toolchain/" && echo "✅ mySkill 全庫 (6 個技能) 已成功安裝！"
   ```
 
 ### 📚 方案 B：按領域全家桶安裝
@@ -130,14 +132,14 @@
   mkdir -p "$HOME/.gemini/config/skills" && curl -fsSL "https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.tar.gz" | tar -xz -C "$HOME/.gemini/config/skills" --strip-components=1 "mySkill-main/social-post-voice/" && echo "✅ 社群創作 / 語氣改寫 全家桶已安裝完成！"
   ```
 
-#### 🛠️ 開發環境與技能治理 (Dev Toolchain & Skill Governance)（含 `vibe-coding-toolchain`）
+#### 🛠️ 開發環境與技能治理 (Dev Toolchain & Skill Governance)（含 `skill-evolution` + `vibe-coding-toolchain`）
 - **Windows (PowerShell)**：
   ```powershell
-  $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $b="$HOME\.gemini\config\skills"; $t=Join-Path $env:TEMP ("skills-"+[guid]::NewGuid()); Invoke-WebRequest $u -OutFile "$t.zip" -ErrorAction Stop; Expand-Archive "$t.zip" $t -Force -ErrorAction Stop; @("vibe-coding-toolchain") | ForEach-Object { $d="$b\$_"; New-Item -ItemType Directory -Path $d -Force | Out-Null; Copy-Item "$t\mySkill-main\$_\*" $d -Recurse -Force -ErrorAction Stop }; Remove-Item "$t.zip",$t -Recurse -Force -ErrorAction SilentlyContinue; Write-Host "✅ 環境配置 / 技能治理 全家桶已安裝完成！" -ForegroundColor Green
+  $u="https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.zip"; $b="$HOME\.gemini\config\skills"; $t=Join-Path $env:TEMP ("skills-"+[guid]::NewGuid()); Invoke-WebRequest $u -OutFile "$t.zip" -ErrorAction Stop; Expand-Archive "$t.zip" $t -Force -ErrorAction Stop; @("skill-evolution","vibe-coding-toolchain") | ForEach-Object { $d="$b\$_"; New-Item -ItemType Directory -Path $d -Force | Out-Null; Copy-Item "$t\mySkill-main\$_\*" $d -Recurse -Force -ErrorAction Stop }; Remove-Item "$t.zip",$t -Recurse -Force -ErrorAction SilentlyContinue; Write-Host "✅ 環境配置 / 技能治理 全家桶已安裝完成！" -ForegroundColor Green
   ```
 - **macOS / Linux**：
   ```bash
-  mkdir -p "$HOME/.gemini/config/skills" && curl -fsSL "https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.tar.gz" | tar -xz -C "$HOME/.gemini/config/skills" --strip-components=1 "mySkill-main/vibe-coding-toolchain/" && echo "✅ 環境配置 / 技能治理 全家桶已安裝完成！"
+  mkdir -p "$HOME/.gemini/config/skills" && curl -fsSL "https://github.com/Lin-Yu-kuan/mySkill/archive/refs/heads/main.tar.gz" | tar -xz -C "$HOME/.gemini/config/skills" --strip-components=1 "mySkill-main/skill-evolution/" "mySkill-main/vibe-coding-toolchain/" && echo "✅ 環境配置 / 技能治理 全家桶已安裝完成！"
   ```
 
 </details>
@@ -220,6 +222,12 @@ mySkill/
 │   ├── README.md
 │   ├── plugin.json
 │   └── scripts/
+├── skill-evolution/               # [技能治理 / 診斷優化]
+│   ├── SKILL.md
+│   ├── README.md
+│   ├── references/
+│   ├── scripts/
+│   └── tests/
 ├── social-post-voice/             # [社群創作 / 語氣改寫]
 │   ├── SKILL.md
 │   ├── README.md
