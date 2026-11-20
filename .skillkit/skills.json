@@ -80,7 +80,7 @@
       "category": "dev-tools",
       "name": "vibe-coding-toolchain",
       "path": "vibe-coding-toolchain",
-      "sha256": "410106aa3f363a8bfb9932c07db0476daf5e9c3c6b81a7488745e33978cac807",
+      "sha256": "dd8b91020804028f4be7eabba3cc3a251b9092ad33cef5370e84e707935fc4f7",
       "triggers": [
         "工具鏈",
         "環境配置",
@@ -89,7 +89,7 @@
       ],
       "type": "single",
       "update_url": "https://raw.githubusercontent.com/Lin-Yu-kuan/mySkill/main/vibe-coding-toolchain/SKILL.md",
-      "version": "1.0.0"
+      "version": "2.0.0"
     }
   ]
 }

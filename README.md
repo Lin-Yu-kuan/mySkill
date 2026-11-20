@@ -28,7 +28,7 @@
 | [`knowledge-map-learning`](./knowledge-map-learning) | v1.1.0 | `知識地圖`、`主題學習`、`深度自學`、`學習路線` |
 | [`skill-evolution`](./skill-evolution) | v1.0.0 | `技能診斷`、`Skill 優化`、`技能演進` |
 | [`social-post-voice`](./social-post-voice) | v1.0.0 | `社群貼文`、`語氣改寫`、`Dcard`、`Instagram` |
-| [`vibe-coding-toolchain`](./vibe-coding-toolchain) | v1.0.0 | `工具鏈`、`環境配置`、`Vibe Coding`、`健康體檢` |
+| [`vibe-coding-toolchain`](./vibe-coding-toolchain) | v2.0.0 | `工具鏈`、`環境配置`、`Vibe Coding`、`健康體檢` |
 
 ---
 
@@ -70,7 +70,7 @@
 | 技能名稱 | 版本 | 核心功能簡介 | 子類別 | 類型 | 說明文件 |
 |---|---|---|---|---|---|
 | [**skill-evolution**](./skill-evolution) | `v1.0.0` | 既有 Skill 診斷、根因修正與獨立工作流轉換，保留原契約並以證據驗收 | `技能治理 / 診斷優化` | 📦 套件 | [查看說明](./skill-evolution/README.md) |
-| [**vibe-coding-toolchain**](./vibe-coding-toolchain) | `v1.0.0` | Antigravity IDE「Vibe Coding 黃金工具鏈」一鍵配置與健康體檢專家，自動安裝與掛載 RTK、ast-grep、CodeGraph、repomix、Context7 MCP、Chrome DevTools，並以冪等方式寫入全域與專案局域規則 | `環境配置 / 開發工具鏈` | 📄 單檔 | [查看說明](./vibe-coding-toolchain/README.md) |
+| [**vibe-coding-toolchain**](./vibe-coding-toolchain) | `v2.0.0` | Antigravity IDE「Vibe Coding 黃金工具鏈」三層分級配置與體檢專家，無衝突整合 Context7、Chrome DevTools、Google 原生 Agent Skills、ast-grep 與選配設計/分析工具，並依實裝動態寫入規則 | `環境配置 / 開發工具鏈` | 📄 單檔 | [查看說明](./vibe-coding-toolchain/README.md) |
 
 ---
 
