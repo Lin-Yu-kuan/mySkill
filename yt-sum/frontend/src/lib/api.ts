@@ -5,7 +5,13 @@ import {
   VideoAnalysisResponse,
 } from "@/types/knowledge";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000";
+function getApiBase(): string {
+  if (process.env.NEXT_PUBLIC_API_BASE) return process.env.NEXT_PUBLIC_API_BASE;
+  if (typeof window !== "undefined" && window.location.port === "3000") {
+    return `${window.location.protocol}//${window.location.hostname}:8000`;
+  }
+  return "";
+}
 
 async function parseError(res: Response): Promise<string> {
   try {
@@ -18,7 +24,7 @@ async function parseError(res: Response): Promise<string> {
 }
 
 export async function fetchHealth(): Promise<HealthStatus> {
-  const res = await fetch(`${API_BASE}/api/health`);
+  const res = await fetch(`${getApiBase()}/api/health`);
   if (!res.ok) throw new Error(await parseError(res));
   return res.json();
 }
@@ -28,7 +34,7 @@ export async function analyzeVideo(params: {
   level: UserLevel;
   apiKey?: string;
 }): Promise<VideoAnalysisResponse> {
-  const res = await fetch(`${API_BASE}/api/analyze`, {
+  const res = await fetch(`${getApiBase()}/api/analyze`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -48,7 +54,7 @@ export async function sendChatFollowUp(params: {
   question: string;
   apiKey?: string;
 }): Promise<string> {
-  const res = await fetch(`${API_BASE}/api/chat`, {
+  const res = await fetch(`${getApiBase()}/api/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -68,7 +74,7 @@ export async function downloadMediaFile(
   url: string,
   format: "mp4" | "mp3"
 ): Promise<{ blob: Blob; filename: string }> {
-  const res = await fetch(`${API_BASE}/api/download`, {
+  const res = await fetch(`${getApiBase()}/api/download`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ url, format }),

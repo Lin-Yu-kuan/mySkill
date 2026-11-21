@@ -42,7 +42,7 @@ def _get_client(api_key_override: str | None = None) -> genai.Client:
 
 
 def _get_model_name() -> str:
-    return os.getenv("GEMINI_MODEL", "gemini-2.5-flash").strip() or "gemini-2.5-flash"
+    return os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite").strip() or "gemini-3.5-flash-lite"
 
 
 def analyze_transcript_with_gemini(

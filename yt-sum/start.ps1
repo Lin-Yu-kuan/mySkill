@@ -22,7 +22,7 @@ if (-not (Test-Path $EnvFile)) {
 
 # 啟動 FastAPI 後端
 Write-Host "正在啟動 FastAPI 後端 (http://localhost:8000)..." -ForegroundColor Cyan
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$BackendDir'; .\.venv\Scripts\python.exe -m uvicorn main:app --reload --port 8000"
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$BackendDir'; .\.venv\Scripts\python.exe -m uvicorn main:app --reload --host 0.0.0.0 --port 8000"
 
 # 啟動 Next.js 前端
 Write-Host "正在啟動 Next.js 前端 (http://localhost:3000)..." -ForegroundColor Cyan

@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from schemas import (
     AnalyzeRequest,
@@ -37,8 +38,8 @@ app = FastAPI(title="YT-Sum Knowledge Navigator API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["Content-Disposition"],
@@ -53,7 +54,7 @@ def health_check():
         "status": "ok",
         "ffmpeg_available": has_ffmpeg(),
         "gemini_key_configured": has_api_key,
-        "model": os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
+        "model": os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite"),
     }
 
 
@@ -148,4 +149,13 @@ def download_video_or_audio(req: DownloadRequest):
         path=str(file_path),
         media_type=media_type,
         filename=file_path.name,
+    )
+
+
+FRONTEND_OUT_DIR = BASE_DIR.parent / "frontend" / "out"
+if FRONTEND_OUT_DIR.exists():
+    app.mount(
+        "/",
+        StaticFiles(directory=str(FRONTEND_OUT_DIR), html=True),
+        name="frontend",
     )
