@@ -45,7 +45,7 @@ export default function DependencyGraph({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-page)]">
         {/* Column 1: Prerequisites */}
         <div className="space-y-2">
-          <div className="text-xs font-semibold text-center text-rose-300 mb-2">
+          <div className="text-xs font-semibold text-center text-[var(--accent-rose)] mb-2">
             1. 前置觀念
           </div>
           {data.prerequisites.map((p) => (
@@ -73,7 +73,7 @@ export default function DependencyGraph({
 
         {/* Column 2: Core Concepts */}
         <div className="space-y-2 border-y md:border-y-0 md:border-x border-[var(--border-subtle)] py-3 md:py-0 md:px-4">
-          <div className="text-xs font-semibold text-center text-blue-300 mb-2">
+          <div className="text-xs font-semibold text-center text-[var(--accent-blue)] mb-2">
             2. 影片核心 ➔
           </div>
           {data.core_concepts.map((c) => (
@@ -100,7 +100,7 @@ export default function DependencyGraph({
 
         {/* Column 3: Extensions */}
         <div className="space-y-2">
-          <div className="text-xs font-semibold text-center text-emerald-300 mb-2">
+          <div className="text-xs font-semibold text-center text-[var(--accent-emerald)] mb-2">
             3. 延伸探索 ➔
           </div>
           {data.extensions.map((e) => (

@@ -7,6 +7,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 
 from schemas import (
     AnalyzeRequest,
@@ -19,6 +20,8 @@ from services.gemini_service import (
     analyze_audio_with_gemini,
     analyze_transcript_with_gemini,
     chat_follow_up,
+    has_configured_api_key,
+    save_local_api_key,
 )
 from services.youtube_service import (
     download_media,
@@ -46,16 +49,27 @@ app.add_middleware(
 )
 
 
+class SaveKeyRequest(BaseModel):
+    api_key: str
+
+
 @app.get("/api/health")
 def health_check():
-    api_key = (os.getenv("GEMINI_API_KEY") or "").strip()
-    has_api_key = bool(api_key and api_key != "your_gemini_api_key_here")
     return {
         "status": "ok",
         "ffmpeg_available": has_ffmpeg(),
-        "gemini_key_configured": has_api_key,
+        "gemini_key_configured": has_configured_api_key(),
         "model": os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite"),
     }
+
+
+@app.post("/api/config/key")
+def save_api_key(req: SaveKeyRequest):
+    try:
+        save_local_api_key(req.api_key)
+        return {"status": "ok", "gemini_key_configured": True}
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
 @app.post("/api/analyze", response_model=VideoAnalysisResponse)

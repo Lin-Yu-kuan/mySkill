@@ -3,6 +3,7 @@ import pytest
 
 from main import app
 from schemas import GeminiKnowledgeOutput
+from services import gemini_service
 from services.youtube_service import extract_video_id, format_timestamp
 
 
@@ -80,3 +81,15 @@ def test_knowledge_schema_validation():
     }
     parsed = GeminiKnowledgeOutput.model_validate(sample)
     assert parsed.core_concepts[0].seconds == 342
+
+
+def test_save_and_load_local_api_key(tmp_path, monkeypatch):
+    cfg_dir = tmp_path / ".yt-sum"
+    cfg_file = cfg_dir / "config.json"
+    monkeypatch.setattr(gemini_service, "USER_CONFIG_DIR", cfg_dir)
+    monkeypatch.setattr(gemini_service, "USER_CONFIG_FILE", cfg_file)
+
+    res = client.post("/api/config/key", json={"api_key": "test-key-123"})
+    assert res.status_code == 200
+    assert res.json()["gemini_key_configured"] is True
+    assert gemini_service.load_local_api_key() == "test-key-123"

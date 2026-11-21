@@ -1,3 +1,4 @@
+import json
 import os
 from pathlib import Path
 from typing import Literal
@@ -6,6 +7,9 @@ from google import genai
 from google.genai import types
 
 from schemas import ChatMessage, GeminiKnowledgeOutput
+
+USER_CONFIG_DIR = Path.home() / ".yt-sum"
+USER_CONFIG_FILE = USER_CONFIG_DIR / "config.json"
 
 
 LEVEL_INSTRUCTIONS = {
@@ -32,11 +36,54 @@ SYSTEM_PROMPT = """你是一位頂尖的知識架構師與學習導師，專門�
 """
 
 
+def load_local_api_key() -> str:
+    """從使用者本機資料夾 (~/.yt-sum/config.json) 讀取儲存的 API Key"""
+    try:
+        if USER_CONFIG_FILE.exists():
+            data = json.loads(USER_CONFIG_FILE.read_text(encoding="utf-8"))
+            key = str(data.get("gemini_api_key") or "").strip()
+            if key and key != "your_gemini_api_key_here":
+                return key
+    except Exception:
+        pass
+    return ""
+
+
+def save_local_api_key(api_key: str) -> None:
+    """將 Gemini API Key 永久儲存於使用者本機資料夾"""
+    cleaned = api_key.strip()
+    if not cleaned:
+        raise ValueError("API Key 不可為空")
+    USER_CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+    existing: dict = {}
+    if USER_CONFIG_FILE.exists():
+        try:
+            existing = json.loads(USER_CONFIG_FILE.read_text(encoding="utf-8"))
+        except Exception:
+            existing = {}
+    existing["gemini_api_key"] = cleaned
+    USER_CONFIG_FILE.write_text(
+        json.dumps(existing, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+
+
+def has_configured_api_key() -> bool:
+    env_key = (os.getenv("GEMINI_API_KEY") or "").strip()
+    if env_key and env_key != "your_gemini_api_key_here":
+        return True
+    return bool(load_local_api_key())
+
+
 def _get_client(api_key_override: str | None = None) -> genai.Client:
-    api_key = (api_key_override or os.getenv("GEMINI_API_KEY") or "").strip()
+    api_key = (
+        (api_key_override or "").strip()
+        or load_local_api_key()
+        or (os.getenv("GEMINI_API_KEY") or "").strip()
+    )
     if not api_key or api_key == "your_gemini_api_key_here":
         raise ValueError(
-            "尚未設定 GEMINI_API_KEY。請在 backend/.env 填入你的 Google Gemini API Key，或在頁面上輸入。"
+            "尚未設定 GEMINI_API_KEY。請在頁面上方 Key 設定並儲存，或於 backend/.env 填入。"
         )
     return genai.Client(api_key=api_key)
 

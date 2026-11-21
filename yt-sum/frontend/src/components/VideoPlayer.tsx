@@ -1,7 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Download, ExternalLink, Film, Music, Loader2 } from "lucide-react";
+import {
+  Download,
+  ExternalLink,
+  Film,
+  Loader2,
+  Maximize2,
+  Minimize2,
+  Music,
+  RectangleHorizontal,
+} from "lucide-react";
 import { downloadMediaFile } from "@/lib/api";
 
 interface YTPlayerInstance {
@@ -18,6 +27,9 @@ declare global {
         options: {
           videoId: string;
           playerVars?: Record<string, number | string>;
+          events?: {
+            onReady?: (event: { target: YTPlayerInstance }) => void;
+          };
         }
       ) => YTPlayerInstance;
     };
@@ -32,6 +44,8 @@ interface VideoPlayerProps {
   transcriptSource: string;
   seekTarget: { seconds: number; nonce: number } | null;
   ffmpegAvailable: boolean;
+  isTheater: boolean;
+  onToggleTheater: () => void;
   onNotify: (msg: string) => void;
 }
 
@@ -42,11 +56,23 @@ export default function VideoPlayer({
   transcriptSource,
   seekTarget,
   ffmpegAvailable,
+  isTheater,
+  onToggleTheater,
   onNotify,
 }: VideoPlayerProps) {
+  const playerBoxRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<YTPlayerInstance | null>(null);
   const [downloadingFmt, setDownloadingFmt] = useState<"mp4" | "mp3" | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const onFsChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement));
+    };
+    document.addEventListener("fullscreenchange", onFsChange);
+    return () => document.removeEventListener("fullscreenchange", onFsChange);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -66,6 +92,19 @@ export default function VideoPlayer({
         playerVars: {
           rel: 0,
           modestbranding: 1,
+          fs: 1,
+        },
+        events: {
+          onReady: () => {
+            const iframe = containerRef.current?.querySelector("iframe");
+            if (iframe) {
+              iframe.setAttribute("allowfullscreen", "true");
+              iframe.setAttribute(
+                "allow",
+                "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+              );
+            }
+          },
         },
       });
     };
@@ -104,6 +143,18 @@ export default function VideoPlayer({
     }
   }, [seekTarget]);
 
+  const handleToggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement && playerBoxRef.current) {
+        await playerBoxRef.current.requestFullscreen();
+      } else if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      }
+    } catch {
+      onNotify("請直接點擊播放器右下角全螢幕圖示");
+    }
+  };
+
   const handleDownload = async (fmt: "mp4" | "mp3") => {
     if (fmt === "mp3" && !ffmpegAvailable) {
       onNotify("本機尚未安裝 ffmpeg，請先執行 winget install Gyan.FFmpeg");
@@ -131,7 +182,16 @@ export default function VideoPlayer({
 
   return (
     <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] overflow-hidden">
-      <div className="aspect-video bg-black relative">
+      <div
+        ref={playerBoxRef}
+        className={`bg-black relative w-full ${
+          isFullscreen
+            ? "h-screen"
+            : isTheater
+              ? "aspect-video max-h-[72vh] mx-auto"
+              : "aspect-video"
+        }`}
+      >
         <div ref={containerRef} className="w-full h-full [&>iframe]:w-full [&>iframe]:h-full" />
       </div>
 
@@ -145,15 +205,43 @@ export default function VideoPlayer({
               {channel} · 來源：{transcriptSource}
             </p>
           </div>
-          <a
-            href={`https://www.youtube.com/watch?v=${videoId}`}
-            target="_blank"
-            rel="noreferrer"
-            className="shrink-0 inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-md border border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)] transition"
-          >
-            <ExternalLink className="w-3.5 h-3.5" />
-            YouTube
-          </a>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <button
+              type="button"
+              onClick={onToggleTheater}
+              title={isTheater ? "退出劇院模式（雙欄顯示）" : "劇院模式（橫向展開）"}
+              className={`inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-md border cursor-pointer transition ${
+                isTheater
+                  ? "border-blue-500/60 bg-blue-500/15 text-[var(--accent-blue)]"
+                  : "border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)]"
+              }`}
+            >
+              <RectangleHorizontal className="w-3.5 h-3.5" />
+              {isTheater ? "標準檢視" : "劇院展開"}
+            </button>
+            <button
+              type="button"
+              onClick={handleToggleFullscreen}
+              title="全螢幕播放"
+              className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md border border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)] cursor-pointer transition"
+            >
+              {isFullscreen ? (
+                <Minimize2 className="w-3.5 h-3.5" />
+              ) : (
+                <Maximize2 className="w-3.5 h-3.5" />
+              )}
+              全螢幕
+            </button>
+            <a
+              href={`https://www.youtube.com/watch?v=${videoId}`}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-md border border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)] transition"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              YouTube
+            </a>
+          </div>
         </div>
 
         {/* Download bar */}
@@ -162,7 +250,10 @@ export default function VideoPlayer({
             <Download className="w-3.5 h-3.5" />
             本機離線備份
             {!ffmpegAvailable && (
-              <span className="text-amber-400" title="未偵測到 ffmpeg，MP3 轉檔與高畫質合併將受限">
+              <span
+                className="text-[var(--accent-amber)]"
+                title="未偵測到 ffmpeg，MP3 轉檔與高畫質合併將受限"
+              >
                 （未偵測到 ffmpeg）
               </span>
             )}
@@ -176,7 +267,7 @@ export default function VideoPlayer({
               {downloadingFmt === "mp4" ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
               ) : (
-                <Film className="w-3.5 h-3.5 text-blue-400" />
+                <Film className="w-3.5 h-3.5 text-[var(--accent-blue)]" />
               )}
               {downloadingFmt === "mp4" ? "處理 MP4 中..." : "下載 MP4"}
             </button>
@@ -189,7 +280,7 @@ export default function VideoPlayer({
               {downloadingFmt === "mp3" ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
               ) : (
-                <Music className="w-3.5 h-3.5 text-emerald-400" />
+                <Music className="w-3.5 h-3.5 text-[var(--accent-emerald)]" />
               )}
               {downloadingFmt === "mp3" ? "轉檔 MP3 中..." : "下載 MP3"}
             </button>

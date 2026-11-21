@@ -29,6 +29,15 @@ export async function fetchHealth(): Promise<HealthStatus> {
   return res.json();
 }
 
+export async function saveApiKeyToLocal(apiKey: string): Promise<void> {
+  const res = await fetch(`${getApiBase()}/api/config/key`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ api_key: apiKey }),
+  });
+  if (!res.ok) throw new Error(await parseError(res));
+}
+
 export async function analyzeVideo(params: {
   url: string;
   level: UserLevel;

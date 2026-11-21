@@ -2,28 +2,28 @@
 chcp 65001 >nul
 cd /d "%~dp0backend"
 
-echo === YT-Sum 知識導航儀（家人免開發一鍵版）===
+echo === YT-Sum Knowledge Navigator ===
 
 if not exist ".venv\Scripts\python.exe" (
-    echo [1/3] 首次啟動，正在建立 Python 環境與安裝套件...
+    echo [1/3] First run: setting up Python environment...
     python -m venv .venv
     if errorlevel 1 (
-        echo [錯誤] 找不到 Python，請先安裝 Python 3.10 以上版本：https://www.python.org/downloads/
+        echo [Error] Python not found. Please install Python 3.10+ first.
         pause
         exit /b 1
     )
     .venv\Scripts\python.exe -m pip install -r requirements.txt
 ) else (
-    echo [1/3] Python 環境已就緒。
+    echo [1/3] Python environment ready.
 )
 
 if not exist ".env" (
     copy ".env.example" ".env" >nul
 )
 
-echo [2/3] 正在開啟瀏覽器 http://localhost:8000 ...
-start "" http://localhost:8000
+echo [2/3] Starting server on http://localhost:8000 ...
+start /b "" cmd /c "timeout /t 2 /nobreak >nul & start http://localhost:8000"
 
-echo [3/3] 啟動服務中（使用期間請勿關閉此視窗）...
+echo [3/3] Server running. Keep this window open while using the app.
 .venv\Scripts\python.exe -m uvicorn main:app --host 0.0.0.0 --port 8000
 pause

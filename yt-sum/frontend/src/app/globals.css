@@ -8,10 +8,31 @@
   --text-main: #f1f5f9;
   --text-muted: #94a3b8;
   --accent-primary: #3b82f6;
+  --accent-blue: #93c5fd;
+  --accent-rose: #fda4af;
+  --accent-emerald: #6ee7b7;
+  --accent-purple: #d8b4fe;
+  --accent-amber: #fcd34d;
+}
+
+:root.light {
+  --bg-page: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-elevated: #f1f5f9;
+  --border-subtle: #cbd5e1;
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --accent-primary: #2563eb;
+  --accent-blue: #1d4ed8;
+  --accent-rose: #be123c;
+  --accent-emerald: #047857;
+  --accent-purple: #6d28d9;
+  --accent-amber: #b45309;
 }
 
 body {
   background-color: var(--bg-page);
   color: var(--text-main);
   font-family: "Inter", "Noto Sans TC", system-ui, -apple-system, sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
