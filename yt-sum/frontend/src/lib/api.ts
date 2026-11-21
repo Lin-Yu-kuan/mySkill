@@ -1,6 +1,8 @@
 import {
   ChatMessage,
   HealthStatus,
+  HistorySummaryItem,
+  SavedHistoryRecord,
   UserLevel,
   VideoAnalysisResponse,
 } from "@/types/knowledge";
@@ -95,4 +97,64 @@ export async function downloadMediaFile(
   const filename = match ? decodeURIComponent(match[1]) : `video.${format}`;
   const blob = await res.blob();
   return { blob, filename };
+}
+
+export async function downloadTranscriptFile(params: {
+  url: string;
+  format: "txt" | "srt";
+  translateToZhTw: boolean;
+  apiKey?: string;
+}): Promise<{ blob: Blob; filename: string }> {
+  const res = await fetch(`${getApiBase()}/api/transcript/download`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      url: params.url,
+      format: params.format,
+      translate_to_zh_tw: params.translateToZhTw,
+      api_key: params.apiKey?.trim() || null,
+    }),
+  });
+  if (!res.ok) throw new Error(await parseError(res));
+
+  const disposition = res.headers.get("Content-Disposition") || "";
+  const match = disposition.match(/filename\*?=(?:UTF-8'')?"?([^";\n]+)"?/i);
+  const filename = match ? decodeURIComponent(match[1]) : `transcript.${params.format}`;
+  const blob = await res.blob();
+  return { blob, filename };
+}
+
+export async function fetchHistoryList(): Promise<HistorySummaryItem[]> {
+  const res = await fetch(`${getApiBase()}/api/history`);
+  if (!res.ok) throw new Error(await parseError(res));
+  const data = await res.json();
+  return (data.items || []) as HistorySummaryItem[];
+}
+
+export async function loadHistoryItem(videoId: string): Promise<SavedHistoryRecord> {
+  const res = await fetch(`${getApiBase()}/api/history/${videoId}`);
+  if (!res.ok) throw new Error(await parseError(res));
+  return res.json();
+}
+
+export async function updateHistoryState(
+  videoId: string,
+  masteredIds: string[],
+  chatMessages: ChatMessage[]
+): Promise<void> {
+  await fetch(`${getApiBase()}/api/history/${videoId}/state`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      mastered_ids: masteredIds,
+      chat_messages: chatMessages,
+    }),
+  });
+}
+
+export async function deleteHistoryItem(videoId: string): Promise<void> {
+  const res = await fetch(`${getApiBase()}/api/history/${videoId}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw new Error(await parseError(res));
 }

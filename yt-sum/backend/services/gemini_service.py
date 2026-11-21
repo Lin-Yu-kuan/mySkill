@@ -197,3 +197,27 @@ def chat_follow_up(
         ),
     )
     return response.text or "抱歉，暫時無法產生回覆，請再試一次。"
+
+
+def translate_transcript_to_zh_tw(
+    transcript_text: str,
+    api_key_override: str | None = None,
+) -> str:
+    """將逐字稿（保留時間戳記或 SRT 編號）翻譯／轉換為台灣繁體中文"""
+    client = _get_client(api_key_override)
+    model_name = _get_model_name()
+
+    prompt = (
+        "請將以下 YouTube 影片逐字稿完整翻譯並轉換為【台灣繁體中文】（使用台灣慣用詞彙，例如：伺服器、網域、軟體、影片）。\n"
+        "重要規則：\n"
+        "1. 必須嚴格保留原有的時間戳記（例如 `[01:23]` 或 SRT 時間軸 `00:01:23,000 --> ...`）與段落行數結構。\n"
+        "2. 只輸出轉換後的逐字稿內容，不要加上任何多餘的開場白或結語。\n\n"
+        f"{transcript_text[:120_000]}"
+    )
+
+    response = client.models.generate_content(
+        model=model_name,
+        contents=prompt,
+        config=types.GenerateContentConfig(temperature=0.2),
+    )
+    return (response.text or "").strip() or transcript_text

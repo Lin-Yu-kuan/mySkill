@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   Download,
   ExternalLink,
+  FileText,
   Film,
   Loader2,
   Maximize2,
@@ -11,7 +12,7 @@ import {
   Music,
   RectangleHorizontal,
 } from "lucide-react";
-import { downloadMediaFile } from "@/lib/api";
+import { downloadMediaFile, downloadTranscriptFile } from "@/lib/api";
 
 interface YTPlayerInstance {
   seekTo: (seconds: number, allowSeekAhead: boolean) => void;
@@ -45,6 +46,7 @@ interface VideoPlayerProps {
   seekTarget: { seconds: number; nonce: number } | null;
   ffmpegAvailable: boolean;
   isTheater: boolean;
+  apiKey?: string;
   onToggleTheater: () => void;
   onNotify: (msg: string) => void;
 }
@@ -57,13 +59,14 @@ export default function VideoPlayer({
   seekTarget,
   ffmpegAvailable,
   isTheater,
+  apiKey,
   onToggleTheater,
   onNotify,
 }: VideoPlayerProps) {
   const playerBoxRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<YTPlayerInstance | null>(null);
-  const [downloadingFmt, setDownloadingFmt] = useState<"mp4" | "mp3" | null>(null);
+  const [downloadingFmt, setDownloadingFmt] = useState<"mp4" | "mp3" | "txt" | "zh" | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
@@ -71,7 +74,33 @@ export default function VideoPlayer({
       setIsFullscreen(Boolean(document.fullscreenElement));
     };
     document.addEventListener("fullscreenchange", onFsChange);
-    return () => document.removeEventListener("fullscreenchange", onFsChange);
+    const handleDownloadTranscript = async (translateToZhTw: boolean) => {
+    setDownloadingFmt(translateToZhTw ? "zh" : "txt");
+    try {
+      const url = `https://www.youtube.com/watch?v=${videoId}`;
+      const { blob, filename } = await downloadTranscriptFile({
+        url,
+        format: "txt",
+        translateToZhTw,
+        apiKey,
+      });
+      const objectUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = objectUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(objectUrl);
+      onNotify(`已完成下載：${filename}`);
+    } catch (err) {
+      onNotify(err instanceof Error ? err.message : "逐字稿下載失敗");
+    } finally {
+      setDownloadingFmt(null);
+    }
+  };
+
+  return () => document.removeEventListener("fullscreenchange", onFsChange);
   }, []);
 
   useEffect(() => {
@@ -127,7 +156,33 @@ export default function VideoPlayer({
       };
     }
 
-    return () => {
+    const handleDownloadTranscript = async (translateToZhTw: boolean) => {
+    setDownloadingFmt(translateToZhTw ? "zh" : "txt");
+    try {
+      const url = `https://www.youtube.com/watch?v=${videoId}`;
+      const { blob, filename } = await downloadTranscriptFile({
+        url,
+        format: "txt",
+        translateToZhTw,
+        apiKey,
+      });
+      const objectUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = objectUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(objectUrl);
+      onNotify(`已完成下載：${filename}`);
+    } catch (err) {
+      onNotify(err instanceof Error ? err.message : "逐字稿下載失敗");
+    } finally {
+      setDownloadingFmt(null);
+    }
+  };
+
+  return () => {
       cancelled = true;
       if (playerRef.current) {
         playerRef.current.destroy();
@@ -175,6 +230,32 @@ export default function VideoPlayer({
       onNotify(`已完成下載：${filename}`);
     } catch (err) {
       onNotify(err instanceof Error ? err.message : "下載失敗");
+    } finally {
+      setDownloadingFmt(null);
+    }
+  };
+
+  const handleDownloadTranscript = async (translateToZhTw: boolean) => {
+    setDownloadingFmt(translateToZhTw ? "zh" : "txt");
+    try {
+      const url = `https://www.youtube.com/watch?v=${videoId}`;
+      const { blob, filename } = await downloadTranscriptFile({
+        url,
+        format: "txt",
+        translateToZhTw,
+        apiKey,
+      });
+      const objectUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = objectUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(objectUrl);
+      onNotify(`已完成下載：${filename}`);
+    } catch (err) {
+      onNotify(err instanceof Error ? err.message : "逐字稿下載失敗");
     } finally {
       setDownloadingFmt(null);
     }
@@ -258,7 +339,31 @@ export default function VideoPlayer({
               </span>
             )}
           </span>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <button
+              onClick={() => handleDownloadTranscript(false)}
+              disabled={downloadingFmt !== null}
+              className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-[var(--bg-elevated)] border border-[var(--border-subtle)] hover:border-blue-500/60 disabled:opacity-50 cursor-pointer transition"
+            >
+              {downloadingFmt === "txt" ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <FileText className="w-3.5 h-3.5 text-[var(--text-muted)]" />
+              )}
+              逐字稿
+            </button>
+            <button
+              onClick={() => handleDownloadTranscript(true)}
+              disabled={downloadingFmt !== null}
+              className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-[var(--bg-elevated)] border border-[var(--border-subtle)] hover:border-blue-500/60 disabled:opacity-50 cursor-pointer transition"
+            >
+              {downloadingFmt === "zh" ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <FileText className="w-3.5 h-3.5 text-[var(--accent-purple)]" />
+              )}
+              繁中逐字稿
+            </button>
             <button
               onClick={() => handleDownload("mp4")}
               disabled={downloadingFmt !== null}

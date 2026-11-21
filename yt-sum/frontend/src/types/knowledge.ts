@@ -57,3 +57,21 @@ export interface HealthStatus {
   gemini_key_configured: boolean;
   model: string;
 }
+
+export interface HistorySummaryItem {
+  video_id: string;
+  title: string;
+  channel: string;
+  level: UserLevel;
+  video_summary_one_liner: string;
+  saved_at: string;
+  mastered_count: number;
+  prereq_count: number;
+}
+
+export interface SavedHistoryRecord {
+  analysis: VideoAnalysisResponse;
+  mastered_ids: string[];
+  chat_messages: ChatMessage[];
+  saved_at: string;
+}

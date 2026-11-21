@@ -24,6 +24,8 @@ class VideoMetadata:
 class TranscriptResult:
     text: str
     source_label: str
+    language_code: str
+    snippets: list[dict]
 
 
 def has_ffmpeg() -> bool:
@@ -120,19 +122,49 @@ def get_transcript(video_id: str) -> TranscriptResult | None:
     except Exception:
         return None
 
-    lines = [
-        f"[{format_timestamp(snippet.start)}] {snippet.text.strip()}"
+    snippets = [
+        {
+            "start": float(snippet.start),
+            "duration": float(snippet.duration),
+            "text": snippet.text.strip(),
+        }
         for snippet in fetched
         if snippet.text and snippet.text.strip()
     ]
-    if not lines:
+    if not snippets:
         return None
 
+    lines = [
+        f"[{format_timestamp(s['start'])}] {s['text']}"
+        for s in snippets
+    ]
     kind = "自動字幕" if selected.is_generated else "人工字幕"
     return TranscriptResult(
         text="\n".join(lines),
         source_label=f"{selected.language} ({kind})",
+        language_code=selected.language_code,
+        snippets=snippets,
     )
+
+
+def _format_srt_time(seconds: float) -> str:
+    ms_total = max(0, int(round(seconds * 1000)))
+    hours, rem = divmod(ms_total, 3_600_000)
+    minutes, rem = divmod(rem, 60_000)
+    secs, ms = divmod(rem, 1000)
+    return f"{hours:02d}:{minutes:02d}:{secs:02d},{ms:03d}"
+
+
+def format_transcript_as_srt(snippets: list[dict]) -> str:
+    """將字幕片段轉成標準 SRT 字幕格式"""
+    blocks: list[str] = []
+    for idx, s in enumerate(snippets, start=1):
+        start = float(s["start"])
+        duration = max(0.5, float(s.get("duration") or 2.0))
+        start_str = _format_srt_time(start)
+        end_str = _format_srt_time(start + duration)
+        blocks.append(f"{idx}\n{start_str} --> {end_str}\n{s['text']}")
+    return "\n\n".join(blocks) + "\n"
 
 
 def extract_audio_for_gemini(url: str, temp_dir: Path) -> Path:

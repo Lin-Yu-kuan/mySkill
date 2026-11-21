@@ -1,13 +1,16 @@
 import os
+import re
 import tempfile
 from pathlib import Path
+from typing import Literal
+from urllib.parse import quote
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from schemas import (
     AnalyzeRequest,
@@ -22,11 +25,20 @@ from services.gemini_service import (
     chat_follow_up,
     has_configured_api_key,
     save_local_api_key,
+    translate_transcript_to_zh_tw,
+)
+from services.history_service import (
+    delete_history,
+    get_history,
+    list_history,
+    save_history,
+    update_history_state,
 )
 from services.youtube_service import (
     download_media,
     extract_audio_for_gemini,
     extract_video_id,
+    format_transcript_as_srt,
     get_transcript,
     get_video_metadata,
     has_ffmpeg,
@@ -110,7 +122,7 @@ def analyze_video(req: AnalyzeRequest):
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Gemini 分析失敗：{exc}") from exc
 
-    return VideoAnalysisResponse(
+    result = VideoAnalysisResponse(
         video_id=meta.video_id,
         title=meta.title,
         channel=meta.channel,
@@ -124,6 +136,8 @@ def analyze_video(req: AnalyzeRequest):
         graph_edges=knowledge.graph_edges,
         transcript_excerpt=excerpt,
     )
+    save_history(result.model_dump())
+    return result
 
 
 @app.post("/api/chat", response_model=ChatResponse)
@@ -164,6 +178,96 @@ def download_video_or_audio(req: DownloadRequest):
         media_type=media_type,
         filename=file_path.name,
     )
+
+
+class TranscriptDownloadRequest(BaseModel):
+    url: str
+    format: Literal["txt", "srt"] = "txt"
+    translate_to_zh_tw: bool = False
+    api_key: str | None = None
+
+
+@app.post("/api/transcript/download")
+def download_transcript(req: TranscriptDownloadRequest):
+    try:
+        video_id = extract_video_id(req.url)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    canonical_url = f"https://www.youtube.com/watch?v={video_id}"
+    meta = get_video_metadata(canonical_url, video_id)
+    transcript = get_transcript(video_id)
+    if transcript is None:
+        raise HTTPException(status_code=404, detail="此影片沒有提供任何文字字幕，無法下載逐字稿。")
+
+    content = (
+        format_transcript_as_srt(transcript.snippets)
+        if req.format == "srt"
+        else transcript.text + "\n"
+    )
+
+    is_already_zh_tw = transcript.language_code.lower() in {"zh-tw", "zh-hant"}
+    if req.translate_to_zh_tw and not is_already_zh_tw:
+        try:
+            content = translate_transcript_to_zh_tw(content, api_key_override=req.api_key)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=f"繁體中文轉換失敗：{exc}") from exc
+
+    safe_title = re.sub(r'[\\/:*?"<>|]+', "_", meta.title)[:60].strip() or video_id
+    suffix = "_zh-TW" if req.translate_to_zh_tw else ""
+    filename = f"{safe_title} [{video_id}]{suffix}.{req.format}"
+    encoded_name = quote(filename)
+
+    return Response(
+        content=content.encode("utf-8-sig"),
+        media_type="text/plain; charset=utf-8",
+        headers={"Content-Disposition": f"attachment; filename*=UTF-8''{encoded_name}"},
+    )
+
+
+class HistoryStateUpdateRequest(BaseModel):
+    mastered_ids: list[str] = Field(default_factory=list)
+    chat_messages: list[dict] = Field(default_factory=list)
+
+
+@app.get("/api/history")
+def get_history_list():
+    return {"items": list_history()}
+
+
+@app.get("/api/history/{video_id}")
+def get_history_detail(video_id: str):
+    try:
+        record = get_history(video_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    if record is None:
+        raise HTTPException(status_code=404, detail="找不到此影片的保存紀錄")
+    return record
+
+
+@app.put("/api/history/{video_id}/state")
+def save_history_state(video_id: str, req: HistoryStateUpdateRequest):
+    try:
+        updated = update_history_state(video_id, req.mastered_ids, req.chat_messages)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    if not updated:
+        raise HTTPException(status_code=404, detail="找不到此影片的保存紀錄")
+    return {"status": "ok"}
+
+
+@app.delete("/api/history/{video_id}")
+def remove_history_item(video_id: str):
+    try:
+        deleted = delete_history(video_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    if not deleted:
+        raise HTTPException(status_code=404, detail="找不到此影片的保存紀錄")
+    return {"status": "ok"}
 
 
 FRONTEND_OUT_DIR = BASE_DIR.parent / "frontend" / "out"

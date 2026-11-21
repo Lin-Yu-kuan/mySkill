@@ -2,17 +2,23 @@
 
 import { useEffect, useState } from "react";
 import {
+  ArrowLeft,
+  Clock,
   FileDown,
+  FileText,
+  Film,
   GitBranch,
   KeyRound,
   Layers,
   Loader2,
   MessageSquareText,
   Moon,
+  Music,
   PanelRightClose,
   PanelRightOpen,
   Sparkles,
   Sun,
+  Trash2,
   Youtube,
 } from "lucide-react";
 import DeepDiveChat from "@/components/DeepDiveChat";
@@ -21,19 +27,32 @@ import KnowledgeLayers from "@/components/KnowledgeLayers";
 import VideoPlayer from "@/components/VideoPlayer";
 import {
   analyzeVideo,
+  deleteHistoryItem,
+  downloadMediaFile,
+  downloadTranscriptFile,
   fetchHealth,
+  fetchHistoryList,
+  loadHistoryItem,
   saveApiKeyToLocal,
   sendChatFollowUp,
+  updateHistoryState,
 } from "@/lib/api";
 import { buildExternalGeminiPrompt, buildMarkdownNote } from "@/lib/exportMarkdown";
 import {
   ChatMessage,
   HealthStatus,
+  HistorySummaryItem,
   UserLevel,
   VideoAnalysisResponse,
 } from "@/types/knowledge";
 
 type RightTab = "graph" | "layers" | "chat";
+
+const LEVEL_LABELS: Record<UserLevel, string> = {
+  beginner: "初學者",
+  intermediate: "有基礎常識",
+  advanced: "領域進階",
+};
 
 export default function HomePage() {
   const [url, setUrl] = useState("");
@@ -47,6 +66,9 @@ export default function HomePage() {
   const [panelCollapsed, setPanelCollapsed] = useState(false);
 
   const [health, setHealth] = useState<HealthStatus | null>(null);
+  const [historyItems, setHistoryItems] = useState<HistorySummaryItem[]>([]);
+  const [quickDownloading, setQuickDownloading] = useState<string | null>(null);
+
   const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<VideoAnalysisResponse | null>(null);
@@ -61,6 +83,12 @@ export default function HomePage() {
   const [chatLoading, setChatLoading] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
+  const refreshHistory = () => {
+    fetchHistoryList()
+      .then(setHistoryItems)
+      .catch(() => {});
+  };
+
   useEffect(() => {
     const savedKey = localStorage.getItem("yt_sum_gemini_key");
     if (savedKey) setApiKey(savedKey);
@@ -74,6 +102,7 @@ export default function HomePage() {
     fetchHealth()
       .then(setHealth)
       .catch(() => setHealth(null));
+    refreshHistory();
   }, []);
 
   const showToast = (msg: string) => {
@@ -128,10 +157,97 @@ export default function HomePage() {
       setSeekTarget(null);
       setViewMode("layers");
       setPanelCollapsed(false);
+      refreshHistory();
+      showToast("分析完成，已自動保存至本機紀錄！");
     } catch (err) {
       setError(err instanceof Error ? err.message : "解析失敗，請稍後再試");
     } finally {
       setAnalyzing(false);
+    }
+  };
+
+  const handleOpenSaved = async (videoId: string) => {
+    setError(null);
+    try {
+      const record = await loadHistoryItem(videoId);
+      setAnalysis(record.analysis);
+      setMasteredIds(new Set(record.mastered_ids || []));
+      setChatMessages(record.chat_messages || []);
+      setUrl(`https://www.youtube.com/watch?v=${videoId}`);
+      setSeekTarget(null);
+      setViewMode("layers");
+      setPanelCollapsed(false);
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : "讀取保存紀錄失敗");
+    }
+  };
+
+  const handleDeleteSaved = async (e: React.MouseEvent, videoId: string) => {
+    e.stopPropagation();
+    try {
+      await deleteHistoryItem(videoId);
+      setHistoryItems((prev) => prev.filter((item) => item.video_id !== videoId));
+      showToast("已刪除保存紀錄");
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : "刪除失敗");
+    }
+  };
+
+  const triggerBlobDownload = (blob: Blob, filename: string) => {
+    const objectUrl = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = objectUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(objectUrl);
+  };
+
+  const handleQuickMedia = async (fmt: "mp4" | "mp3") => {
+    const targetUrl = url.trim();
+    if (!targetUrl) {
+      showToast("請先在上方貼上 YouTube 影片網址");
+      return;
+    }
+    setQuickDownloading(fmt);
+    setError(null);
+    try {
+      const { blob, filename } = await downloadMediaFile(targetUrl, fmt);
+      triggerBlobDownload(blob, filename);
+      showToast(`已完成下載：${filename}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "下載失敗");
+    } finally {
+      setQuickDownloading(null);
+    }
+  };
+
+  const handleQuickTranscript = async (
+    format: "txt" | "srt",
+    translateToZhTw: boolean
+  ) => {
+    const targetUrl = url.trim();
+    if (!targetUrl) {
+      showToast("請先在上方貼上 YouTube 影片網址");
+      return;
+    }
+    const key = `${format}-${translateToZhTw ? "zh" : "orig"}`;
+    setQuickDownloading(key);
+    setError(null);
+    try {
+      const { blob, filename } = await downloadTranscriptFile({
+        url: targetUrl,
+        format,
+        translateToZhTw,
+        apiKey,
+      });
+      triggerBlobDownload(blob, filename);
+      showToast(`已完成下載：${filename}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "逐字稿下載失敗");
+    } finally {
+      setQuickDownloading(null);
     }
   };
 
@@ -140,6 +256,9 @@ export default function HomePage() {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
+      if (analysis) {
+        updateHistoryState(analysis.video_id, Array.from(next), chatMessages).catch(() => {});
+      }
       return next;
     });
   };
@@ -164,7 +283,16 @@ export default function HomePage() {
         question: prompt,
         apiKey,
       });
-      setChatMessages([...nextHistory, { role: "assistant", content: answer }]);
+      const finalHistory: ChatMessage[] = [
+        ...nextHistory,
+        { role: "assistant", content: answer },
+      ];
+      setChatMessages(finalHistory);
+      updateHistoryState(
+        analysis.video_id,
+        Array.from(masteredIds),
+        finalHistory
+      ).catch(() => {});
     } catch (err) {
       setChatMessages([
         ...nextHistory,
@@ -199,15 +327,22 @@ export default function HomePage() {
     if (!analysis) return;
     const md = buildMarkdownNote(analysis);
     const blob = new Blob([md], { type: "text/markdown;charset=utf-8" });
-    const objectUrl = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = objectUrl;
-    a.download = `${analysis.video_id}-knowledge-notes.md`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(objectUrl);
+    triggerBlobDownload(blob, `${analysis.video_id}-knowledge-notes.md`);
     showToast("已匯出 Markdown 學習筆記！");
+  };
+
+  const formatSavedDate = (iso: string) => {
+    if (!iso) return "";
+    try {
+      return new Date(iso).toLocaleString("zh-TW", {
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch {
+      return "";
+    }
   };
 
   return (
@@ -215,17 +350,26 @@ export default function HomePage() {
       {/* Header */}
       <header className="border-b border-[var(--border-subtle)] bg-[var(--bg-card)] px-5 py-3">
         <div className="max-w-[1600px] mx-auto flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5">
+          <button
+            type="button"
+            onClick={() => {
+              setAnalysis(null);
+              setIsTheater(false);
+              refreshHistory();
+            }}
+            className="flex items-center gap-2.5 text-left cursor-pointer hover:opacity-85 transition"
+            title="回到首頁與已保存紀錄"
+          >
             <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
-              YT
+              {analysis ? <ArrowLeft className="w-4 h-4" /> : "YT"}
             </div>
             <div>
               <h1 className="text-sm font-semibold leading-tight">YT-Sum 知識導航儀</h1>
               <p className="text-xs text-[var(--text-muted)]">
-                前置掃雷 · 核心拆解 · 延伸研究
+                {analysis ? "點擊返回首頁・已保存檔案" : "前置掃雷 · 核心拆解 · 延伸研究"}
               </p>
             </div>
-          </div>
+          </button>
 
           <form onSubmit={handleAnalyze} className="flex-1 max-w-xl flex items-center gap-2">
             <input
@@ -344,32 +488,158 @@ export default function HomePage() {
 
       {/* Main Content */}
       {!analysis ? (
-        <main className="flex-1 flex items-center justify-center p-6">
-          <div className="max-w-lg w-full text-center space-y-4 p-8 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)]">
-            <div className="w-12 h-12 rounded-xl bg-blue-500/15 text-[var(--accent-blue)] flex items-center justify-center mx-auto">
-              <Youtube className="w-6 h-6" />
-            </div>
-            <h2 className="text-lg font-semibold">看懂每一部知識型 YouTube 影片</h2>
-            <p className="text-xs text-[var(--text-muted)] leading-relaxed">
-              貼上任何 YouTube 連結，系統會先幫你抓出<strong>前置必備觀念（沒先懂會看不懂的地方）</strong>，再拆解<strong>核心知識與時間軸</strong>，最後提供<strong>縱向深究與橫向延伸</strong>路線。
-            </p>
-            <div className="grid grid-cols-3 gap-2 pt-2 text-xs text-[var(--text-muted)]">
-              <div className="p-2.5 rounded-lg bg-[var(--bg-page)] border border-[var(--border-subtle)]">
-                1. 前置掃雷科普
+        <main className="flex-1 max-w-5xl w-full mx-auto p-6 space-y-6">
+          {/* Quick Pre-Analysis Download Toolbox */}
+          <section className="p-6 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] space-y-4">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-blue-500/15 text-[var(--accent-blue)] flex items-center justify-center shrink-0">
+                <Youtube className="w-5 h-5" />
               </div>
-              <div className="p-2.5 rounded-lg bg-[var(--bg-page)] border border-[var(--border-subtle)]">
-                2. 核心時間軸跳轉
-              </div>
-              <div className="p-2.5 rounded-lg bg-[var(--bg-page)] border border-[var(--border-subtle)]">
-                3. 延伸研究 + MP4/MP3
+              <div>
+                <h2 className="text-base font-semibold">免解析快捷下載工具箱</h2>
+                <p className="text-xs text-[var(--text-muted)] mt-0.5 leading-relaxed">
+                  只要在上方貼上 YouTube 網址，<strong>不用先執行 AI 解析</strong>，就能直接下載逐字稿（含轉換成台灣繁體中文）或 MP4 / MP3！
+                </p>
               </div>
             </div>
+
+            <div className="flex flex-wrap items-center gap-2 pt-1">
+              <button
+                type="button"
+                onClick={() => handleQuickTranscript("txt", false)}
+                disabled={quickDownloading !== null}
+                className="inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg bg-[var(--bg-page)] border border-[var(--border-subtle)] hover:border-blue-500/60 disabled:opacity-50 cursor-pointer transition"
+              >
+                {quickDownloading === "txt-orig" ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <FileText className="w-3.5 h-3.5 text-[var(--text-muted)]" />
+                )}
+                下載原文字幕 (.txt)
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleQuickTranscript("txt", true)}
+                disabled={quickDownloading !== null}
+                className="inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg bg-purple-500/10 border border-purple-500/35 text-[var(--accent-purple)] hover:bg-purple-500/20 disabled:opacity-50 cursor-pointer transition"
+              >
+                {quickDownloading === "txt-zh" ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <FileText className="w-3.5 h-3.5" />
+                )}
+                下載繁體中文逐字稿 (.txt)
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleQuickTranscript("srt", true)}
+                disabled={quickDownloading !== null}
+                className="inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg bg-[var(--bg-page)] border border-[var(--border-subtle)] hover:border-purple-500/60 disabled:opacity-50 cursor-pointer transition"
+              >
+                {quickDownloading === "srt-zh" ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <FileText className="w-3.5 h-3.5 text-[var(--accent-purple)]" />
+                )}
+                下載繁中字幕 (.srt)
+              </button>
+
+              <div className="h-5 w-px bg-[var(--border-subtle)] mx-1 hidden sm:block" />
+
+              <button
+                type="button"
+                onClick={() => handleQuickMedia("mp4")}
+                disabled={quickDownloading !== null}
+                className="inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg bg-[var(--bg-page)] border border-[var(--border-subtle)] hover:border-blue-500/60 disabled:opacity-50 cursor-pointer transition"
+              >
+                {quickDownloading === "mp4" ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Film className="w-3.5 h-3.5 text-[var(--accent-blue)]" />
+                )}
+                {quickDownloading === "mp4" ? "處理 MP4 中..." : "下載 MP4"}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleQuickMedia("mp3")}
+                disabled={quickDownloading !== null || (health !== null && !health.ffmpeg_available)}
+                className="inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg bg-[var(--bg-page)] border border-[var(--border-subtle)] hover:border-emerald-500/60 disabled:opacity-40 cursor-pointer transition"
+              >
+                {quickDownloading === "mp3" ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Music className="w-3.5 h-3.5 text-[var(--accent-emerald)]" />
+                )}
+                {quickDownloading === "mp3" ? "轉檔 MP3 中..." : "下載 MP3"}
+              </button>
+            </div>
+
             {health && !health.gemini_key_configured && !apiKey && (
-              <p className="text-xs text-[var(--accent-amber)] pt-1">
-                提示：尚未偵測到本機 GEMINI_API_KEY，請先點擊右上角「Key」填入並儲存。
+              <p className="text-xs text-[var(--accent-amber)]">
+                提示：尚未偵測到本機 GEMINI_API_KEY，若要使用「解析觀念」或「轉成繁體中文」，請先點右上角「Key」設定並儲存。
               </p>
             )}
-          </div>
+          </section>
+
+          {/* Saved History Library */}
+          <section className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-semibold flex items-center gap-2">
+                <Clock className="w-4 h-4 text-[var(--accent-blue)]" />
+                已保存的知識解析檔（{historyItems.length}）
+              </h2>
+              <span className="text-xs text-[var(--text-muted)]">
+                分析結果會自動保存於本機，點擊即可秒開，不用重新解析
+              </span>
+            </div>
+
+            {historyItems.length === 0 ? (
+              <div className="p-8 rounded-2xl border border-dashed border-[var(--border-subtle)] bg-[var(--bg-card)] text-center text-xs text-[var(--text-muted)]">
+                目前還沒有保存的解析檔。貼上 YouTube 網址並點擊「解析觀念」後，結果就會自動保存在這裡！
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {historyItems.map((item) => (
+                  <div
+                    key={item.video_id}
+                    onClick={() => handleOpenSaved(item.video_id)}
+                    className="p-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] hover:border-blue-500/60 cursor-pointer transition flex flex-col justify-between gap-2.5 group"
+                  >
+                    <div className="space-y-1.5">
+                      <div className="flex items-start justify-between gap-2">
+                        <h3 className="text-sm font-semibold text-[var(--text-main)] line-clamp-2 group-hover:text-[var(--accent-blue)] transition">
+                          {item.title}
+                        </h3>
+                        <button
+                          type="button"
+                          onClick={(e) => handleDeleteSaved(e, item.video_id)}
+                          title="刪除這筆紀錄"
+                          className="p-1 rounded text-[var(--text-muted)] hover:text-[var(--accent-rose)] hover:bg-rose-500/10 shrink-0 cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                      <p className="text-xs text-[var(--text-muted)] line-clamp-2 leading-relaxed">
+                        {item.video_summary_one_liner}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] text-[var(--text-muted)] pt-2 border-t border-[var(--border-subtle)]">
+                      <span>
+                        {item.channel} · {LEVEL_LABELS[item.level] || item.level}
+                      </span>
+                      <span className="font-mono">
+                        前置 {item.mastered_count}/{item.prereq_count} · {formatSavedDate(item.saved_at)}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
         </main>
       ) : (
         <main
@@ -377,7 +647,7 @@ export default function HomePage() {
             isTheater ? "" : "lg:flex-row lg:items-start"
           }`}
         >
-          {/* Video Column (expands automatically when theater mode or right panel collapsed) */}
+          {/* Video Column */}
           <div
             className={`w-full transition-all duration-200 ${
               isTheater
@@ -395,12 +665,13 @@ export default function HomePage() {
               seekTarget={seekTarget}
               ffmpegAvailable={health?.ffmpeg_available ?? true}
               isTheater={isTheater}
+              apiKey={apiKey}
               onToggleTheater={() => setIsTheater((v) => !v)}
               onNotify={showToast}
             />
           </div>
 
-          {/* Right Knowledge & Deep Dive Panel (collapsible to right edge in standard mode) */}
+          {/* Right Knowledge & Deep Dive Panel */}
           {!isTheater && panelCollapsed ? (
             <div className="lg:w-12 shrink-0 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] flex lg:flex-col items-center justify-between p-2 gap-3">
               <button
@@ -411,9 +682,7 @@ export default function HomePage() {
               >
                 <PanelRightOpen className="w-4 h-4" />
               </button>
-              <span
-                className="text-xs text-[var(--text-muted)] font-medium tracking-widest lg:[writing-mode:vertical-rl]"
-              >
+              <span className="text-xs text-[var(--text-muted)] font-medium tracking-widest lg:[writing-mode:vertical-rl]">
                 知識與追問面板
               </span>
               <span className="text-[11px] font-mono text-[var(--accent-blue)]">
@@ -426,7 +695,6 @@ export default function HomePage() {
                 isTheater ? "w-full" : "lg:flex-1"
               }`}
             >
-              {/* Panel Header: Graph on Left, 3-Layer on Right, Chat 3rd + Collapse button */}
               <div className="px-4 py-3 border-b border-[var(--border-subtle)] flex flex-wrap items-center justify-between gap-2">
                 <div className="flex flex-wrap items-center gap-1 p-1 rounded-lg bg-[var(--bg-page)] border border-[var(--border-subtle)]">
                   <button
@@ -511,7 +779,14 @@ export default function HomePage() {
                     messages={chatMessages}
                     isLoading={chatLoading}
                     onSendMessage={handleAskInApp}
-                    onClear={() => setChatMessages([])}
+                    onClear={() => {
+                      setChatMessages([]);
+                      updateHistoryState(
+                        analysis.video_id,
+                        Array.from(masteredIds),
+                        []
+                      ).catch(() => {});
+                    }}
                   />
                 )}
               </div>

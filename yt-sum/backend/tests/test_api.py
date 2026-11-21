@@ -3,8 +3,12 @@ import pytest
 
 from main import app
 from schemas import GeminiKnowledgeOutput
-from services import gemini_service
-from services.youtube_service import extract_video_id, format_timestamp
+from services import gemini_service, history_service
+from services.youtube_service import (
+    extract_video_id,
+    format_timestamp,
+    format_transcript_as_srt,
+)
 
 
 client = TestClient(app)
@@ -93,3 +97,50 @@ def test_save_and_load_local_api_key(tmp_path, monkeypatch):
     assert res.status_code == 200
     assert res.json()["gemini_key_configured"] is True
     assert gemini_service.load_local_api_key() == "test-key-123"
+
+
+def test_format_transcript_as_srt():
+    srt = format_transcript_as_srt(
+        [{"start": 1.5, "duration": 2.0, "text": "你好世界"}]
+    )
+    assert "1\n00:00:01,500 --> 00:00:03,500\n你好世界" in srt
+
+
+def test_history_crud(tmp_path, monkeypatch):
+    hist_dir = tmp_path / "history"
+    monkeypatch.setattr(history_service, "HISTORY_DIR", hist_dir)
+
+    sample_analysis = {
+        "video_id": "dQw4w9WgXcQ",
+        "title": "Test Video",
+        "channel": "Test Channel",
+        "duration_seconds": 120,
+        "transcript_source": "zh-TW",
+        "level": "intermediate",
+        "video_summary_one_liner": "測試總結",
+        "prerequisites": [{"id": "p1"}],
+        "core_concepts": [],
+        "extensions": [],
+        "graph_edges": [],
+        "transcript_excerpt": "excerpt",
+    }
+    history_service.save_history(sample_analysis)
+
+    listing = client.get("/api/history")
+    assert listing.status_code == 200
+    assert len(listing.json()["items"]) == 1
+    assert listing.json()["items"][0]["video_id"] == "dQw4w9WgXcQ"
+
+    upd = client.put(
+        "/api/history/dQw4w9WgXcQ/state",
+        json={"mastered_ids": ["p1"], "chat_messages": [{"role": "user", "content": "hi"}]},
+    )
+    assert upd.status_code == 200
+
+    detail = client.get("/api/history/dQw4w9WgXcQ")
+    assert detail.status_code == 200
+    assert detail.json()["mastered_ids"] == ["p1"]
+
+    dele = client.delete("/api/history/dQw4w9WgXcQ")
+    assert dele.status_code == 200
+    assert client.get("/api/history").json()["items"] == []
