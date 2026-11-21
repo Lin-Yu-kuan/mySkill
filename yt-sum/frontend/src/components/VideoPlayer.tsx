@@ -12,7 +12,15 @@ import {
   Music,
   RectangleHorizontal,
 } from "lucide-react";
-import { downloadMediaFile, downloadTranscriptFile } from "@/lib/api";
+import {
+  DownloadCancelledByUser,
+  cancelMediaDownload,
+  downloadMediaWithProgress,
+  downloadTranscriptFile,
+  pauseMediaDownload,
+  resumeMediaDownload,
+} from "@/lib/api";
+import DownloadProgressBar from "@/components/DownloadProgressBar";
 
 interface YTPlayerInstance {
   seekTo: (seconds: number, allowSeekAhead: boolean) => void;
@@ -48,6 +56,7 @@ interface VideoPlayerProps {
   isTheater: boolean;
   apiKey?: string;
   onToggleTheater: () => void;
+  onOpenInstallGuide: () => void;
   onNotify: (msg: string) => void;
 }
 
@@ -61,12 +70,21 @@ export default function VideoPlayer({
   isTheater,
   apiKey,
   onToggleTheater,
+  onOpenInstallGuide,
   onNotify,
 }: VideoPlayerProps) {
   const playerBoxRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<YTPlayerInstance | null>(null);
   const [downloadingFmt, setDownloadingFmt] = useState<"mp4" | "mp3" | "txt" | "zh" | null>(null);
+  const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
+  const [dlProgress, setDlProgress] = useState<{
+    label: string;
+    percent: number;
+    stage: string;
+    isPaused: boolean;
+    canControl: boolean;
+  } | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
@@ -212,13 +230,34 @@ export default function VideoPlayer({
 
   const handleDownload = async (fmt: "mp4" | "mp3") => {
     if (fmt === "mp3" && !ffmpegAvailable) {
-      onNotify("本機尚未安裝 ffmpeg，請先執行 winget install Gyan.FFmpeg");
+      onOpenInstallGuide();
       return;
     }
     setDownloadingFmt(fmt);
+    setActiveTaskId(null);
+    setDlProgress({
+      label: fmt === "mp3" ? "正在下載並轉檔 MP3" : "正在下載 MP4 影片",
+      percent: 5,
+      stage: "正在連線 YouTube...",
+      isPaused: false,
+      canControl: true,
+    });
     try {
       const url = `https://www.youtube.com/watch?v=${videoId}`;
-      const { blob, filename } = await downloadMediaFile(url, fmt);
+      const { blob, filename } = await downloadMediaWithProgress(
+        url,
+        fmt,
+        (percent, stage, isPaused) => {
+          setDlProgress({
+            label: fmt === "mp3" ? "正在下載並轉檔 MP3" : "正在下載 MP4 影片",
+            percent,
+            stage,
+            isPaused,
+            canControl: true,
+          });
+        },
+        (taskId) => setActiveTaskId(taskId)
+      );
       const objectUrl = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = objectUrl;
@@ -229,14 +268,29 @@ export default function VideoPlayer({
       URL.revokeObjectURL(objectUrl);
       onNotify(`已完成下載：${filename}`);
     } catch (err) {
-      onNotify(err instanceof Error ? err.message : "下載失敗");
+      if (err instanceof DownloadCancelledByUser) {
+        onNotify("已終止下載");
+      } else {
+        const msg = err instanceof Error ? err.message : "下載失敗";
+        if (msg.toLowerCase().includes("ffmpeg")) onOpenInstallGuide();
+        else onNotify(msg);
+      }
     } finally {
       setDownloadingFmt(null);
+      setActiveTaskId(null);
+      setDlProgress(null);
     }
   };
 
   const handleDownloadTranscript = async (translateToZhTw: boolean) => {
     setDownloadingFmt(translateToZhTw ? "zh" : "txt");
+    setDlProgress({
+      label: translateToZhTw ? "正在產生繁體中文逐字稿" : "正在擷取原文字幕",
+      percent: 45,
+      stage: translateToZhTw ? "擷取字幕並交由 Gemini 轉換成台灣繁體中文..." : "讀取 YouTube 字幕中...",
+      isPaused: false,
+      canControl: false,
+    });
     try {
       const url = `https://www.youtube.com/watch?v=${videoId}`;
       const { blob, filename } = await downloadTranscriptFile({
@@ -244,6 +298,13 @@ export default function VideoPlayer({
         format: "txt",
         translateToZhTw,
         apiKey,
+      });
+      setDlProgress({
+        label: "準備儲存檔案",
+        percent: 100,
+        stage: "完成！",
+        isPaused: false,
+        canControl: false,
       });
       const objectUrl = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -258,6 +319,7 @@ export default function VideoPlayer({
       onNotify(err instanceof Error ? err.message : "逐字稿下載失敗");
     } finally {
       setDownloadingFmt(null);
+      setDlProgress(null);
     }
   };
 
@@ -331,12 +393,13 @@ export default function VideoPlayer({
             <Download className="w-3.5 h-3.5" />
             本機離線備份
             {!ffmpegAvailable && (
-              <span
-                className="text-[var(--accent-amber)]"
-                title="未偵測到 ffmpeg，MP3 轉檔與高畫質合併將受限"
+              <button
+                type="button"
+                onClick={onOpenInstallGuide}
+                className="text-[var(--accent-amber)] underline cursor-pointer"
               >
-                （未偵測到 ffmpeg）
-              </span>
+                缺少 FFmpeg（點我看安裝位置）
+              </button>
             )}
           </span>
           <div className="flex flex-wrap items-center gap-1.5">
@@ -378,9 +441,11 @@ export default function VideoPlayer({
             </button>
             <button
               onClick={() => handleDownload("mp3")}
-              disabled={downloadingFmt !== null || !ffmpegAvailable}
-              title={ffmpegAvailable ? "擷取高音質 MP3" : "需要安裝 ffmpeg 才能轉檔 MP3"}
-              className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md bg-[var(--bg-elevated)] border border-[var(--border-subtle)] hover:border-emerald-500/60 disabled:opacity-40 cursor-pointer transition"
+              disabled={downloadingFmt !== null}
+              title={ffmpegAvailable ? "擷取高音質 MP3" : "缺少 FFmpeg，點擊查看安裝位置"}
+              className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md bg-[var(--bg-elevated)] border border-[var(--border-subtle)] hover:border-emerald-500/60 disabled:opacity-40 cursor-pointer transition ${
+                !ffmpegAvailable ? "opacity-75" : ""
+              }`}
             >
               {downloadingFmt === "mp3" ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -391,6 +456,35 @@ export default function VideoPlayer({
             </button>
           </div>
         </div>
+
+        {dlProgress && (
+          <DownloadProgressBar
+            label={dlProgress.label}
+            percent={dlProgress.percent}
+            stage={dlProgress.stage}
+            isPaused={dlProgress.isPaused}
+            canControl={dlProgress.canControl && activeTaskId !== null}
+            onPause={async () => {
+              if (!activeTaskId) return;
+              setDlProgress((p) => (p ? { ...p, isPaused: true, stage: "已暫停下載" } : p));
+              await pauseMediaDownload(activeTaskId);
+            }}
+            onResume={async () => {
+              if (!activeTaskId) return;
+              setDlProgress((p) => (p ? { ...p, isPaused: false, stage: "繼續下載中..." } : p));
+              await resumeMediaDownload(activeTaskId);
+            }}
+            onCancel={async () => {
+              if (!activeTaskId) return;
+              const id = activeTaskId;
+              setDlProgress(null);
+              setDownloadingFmt(null);
+              setActiveTaskId(null);
+              await cancelMediaDownload(id);
+              onNotify("已終止下載");
+            }}
+          />
+        )}
       </div>
     </div>
   );

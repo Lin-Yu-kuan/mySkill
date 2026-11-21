@@ -1,5 +1,9 @@
+import os
 import re
 import shutil
+import subprocess
+import sys
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
@@ -10,6 +14,14 @@ from youtube_transcript_api import YouTubeTranscriptApi
 
 
 PREFERRED_LANGS = ["zh-TW", "zh-Hant", "zh", "zh-Hans", "zh-CN", "en", "en-US", "ja"]
+
+
+class DownloadPausedError(Exception):
+    """使用者暫停下載"""
+
+
+class DownloadCancelledError(Exception):
+    """使用者終止下載"""
 
 
 @dataclass
@@ -196,8 +208,47 @@ def extract_audio_for_gemini(url: str, temp_dir: Path) -> Path:
     raise RuntimeError("無法擷取影片音訊以進行無字幕分析。")
 
 
-def download_media(url: str, fmt: Literal["mp4", "mp3"], output_dir: Path) -> Path:
-    """使用 yt-dlp + ffmpeg 下載為 MP4 或 MP3"""
+def cleanup_partial_files(output_dir: Path, video_id: str) -> None:
+    """終止下載時清理殘留的 .part / 暫存檔"""
+    if not output_dir.exists():
+        return
+    for p in output_dir.glob(f"*[{video_id}]*.part*"):
+        try:
+            p.unlink()
+        except Exception:
+            pass
+
+
+def terminate_process_tree(proc: subprocess.Popen | None) -> None:
+    """立即終止 yt-dlp 及其子行程 (ffmpeg)"""
+    if proc is None or proc.poll() is not None:
+        return
+    try:
+        if os.name == "nt":
+            subprocess.run(
+                ["taskkill", "/F", "/T", "/PID", str(proc.pid)],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                check=False,
+            )
+        else:
+            proc.terminate()
+    except Exception:
+        try:
+            proc.kill()
+        except Exception:
+            pass
+
+
+def download_media(
+    url: str,
+    fmt: Literal["mp4", "mp3"],
+    output_dir: Path,
+    progress_callback: Callable[[int, str], None] | None = None,
+    control_check: Callable[[], Literal["run", "pause", "cancel"]] | None = None,
+    process_callback: Callable[[subprocess.Popen], None] | None = None,
+) -> Path:
+    """使用 yt-dlp 子行程 + ffmpeg 下載為 MP4 或 MP3（支援即時暫停與終止）"""
     output_dir.mkdir(parents=True, exist_ok=True)
     ffmpeg_available = has_ffmpeg()
 
@@ -206,48 +257,94 @@ def download_media(url: str, fmt: Literal["mp4", "mp3"], output_dir: Path) -> Pa
             "本機尚未安裝 ffmpeg，無法轉檔為 MP3。請執行 `winget install Gyan.FFmpeg` 安裝後重試。"
         )
 
-    out_tmpl = str(output_dir / "%(title).80s [%(id)s].%(ext)s")
+    def _check_control() -> None:
+        if not control_check:
+            return
+        state = control_check()
+        if state == "pause":
+            raise DownloadPausedError("已暫停下載")
+        if state == "cancel":
+            raise DownloadCancelledError("已終止下載")
 
+    _check_control()
+    if progress_callback:
+        progress_callback(2, "正在連線 YouTube 取得串流資訊...")
+
+    video_id = extract_video_id(url)
+    out_tmpl = str(output_dir / "%(title).80s [%(id)s].%(ext)s")
+    target_ext = ".mp3" if fmt == "mp3" else ".mp4"
+
+    cmd = [
+        sys.executable,
+        "-m",
+        "yt_dlp",
+        "--newline",
+        "--continue",
+        "--no-warnings",
+        "--no-playlist",
+        "-o",
+        out_tmpl,
+    ]
     if fmt == "mp3":
-        ydl_opts = {
-            "format": "bestaudio/best",
-            "outtmpl": out_tmpl,
-            "quiet": True,
-            "no_warnings": True,
-            "postprocessors": [
-                {
-                    "key": "FFmpegExtractAudio",
-                    "preferredcodec": "mp3",
-                    "preferredquality": "192",
-                }
-            ],
-        }
+        cmd.extend(["-f", "bestaudio/best", "-x", "--audio-format", "mp3", "--audio-quality", "192K"])
     else:
-        # MP4：有 ffmpeg 時合併最高畫質影音；無 ffmpeg 時退回單檔 mp4 串流
         fmt_selector = (
             "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best"
             if ffmpeg_available
             else "best[ext=mp4]/best"
         )
-        ydl_opts = {
-            "format": fmt_selector,
-            "outtmpl": out_tmpl,
-            "merge_output_format": "mp4",
-            "quiet": True,
-            "no_warnings": True,
-        }
+        cmd.extend(["-f", fmt_selector, "--merge-output-format", "mp4"])
+    cmd.append(url)
 
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(url, download=True)
-        vid = info.get("id", "")
-        prepared = Path(ydl.prepare_filename(info))
-        target_ext = ".mp3" if fmt == "mp3" else ".mp4"
-        expected = prepared.with_suffix(target_ext)
-        if expected.exists():
-            return expected
+    proc = subprocess.Popen(
+        cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+    if process_callback:
+        process_callback(proc)
+
+    pct_re = re.compile(r"\[download\]\s+(\d+(?:\.\d+)?)%(?:.*?at\s+([^\s]+))?")
+    last_lines: list[str] = []
+
+    if proc.stdout:
+        for raw_line in proc.stdout:
+            _check_control()
+            line = raw_line.strip()
+            if not line:
+                continue
+            last_lines.append(line)
+            if len(last_lines) > 8:
+                last_lines.pop(0)
+
+            m = pct_re.search(line)
+            if m and progress_callback:
+                pct = float(m.group(1))
+                speed = m.group(2)
+                speed_str = f" · {speed}" if speed else ""
+                progress_callback(
+                    min(95, max(1, int(pct))),
+                    f"下載串流中 {pct:.1f}%{speed_str}",
+                )
+            elif (
+                "[Merger]" in line
+                or "[ExtractAudio]" in line
+                or "[ffmpeg]" in line
+            ) and progress_callback:
+                progress_callback(97, "FFmpeg 合併／轉檔中...")
+
+    returncode = proc.wait()
+    _check_control()
+
+    if returncode != 0:
+        detail = last_lines[-1] if last_lines else f"exit code {returncode}"
+        raise RuntimeError(f"下載失敗：{detail}")
 
     matches = sorted(
-        output_dir.glob(f"*[{vid}]*{target_ext}"),
+        output_dir.glob(f"*[{video_id}]*{target_ext}"),
         key=lambda p: p.stat().st_mtime,
         reverse=True,
     )

@@ -30,6 +30,14 @@
   --accent-amber: #b45309;
 }
 
+html.font-large {
+  font-size: 18px;
+}
+
+html.font-xlarge {
+  font-size: 20px;
+}
+
 body {
   background-color: var(--bg-page);
   color: var(--text-main);

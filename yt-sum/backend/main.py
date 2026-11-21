@@ -1,6 +1,8 @@
 import os
 import re
 import tempfile
+import threading
+import uuid
 from pathlib import Path
 from typing import Literal
 from urllib.parse import quote
@@ -35,6 +37,9 @@ from services.history_service import (
     update_history_state,
 )
 from services.youtube_service import (
+    DownloadCancelledError,
+    DownloadPausedError,
+    cleanup_partial_files,
     download_media,
     extract_audio_for_gemini,
     extract_video_id,
@@ -42,12 +47,14 @@ from services.youtube_service import (
     get_transcript,
     get_video_metadata,
     has_ffmpeg,
+    terminate_process_tree,
 )
 
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / ".env")
 
 DOWNLOADS_DIR = BASE_DIR / "downloads"
+DOWNLOAD_TASKS: dict[str, dict] = {}
 
 app = FastAPI(title="YT-Sum Knowledge Navigator API", version="1.0.0")
 
@@ -173,6 +180,150 @@ def download_video_or_audio(req: DownloadRequest):
         raise HTTPException(status_code=500, detail=f"下載失敗：{exc}") from exc
 
     media_type = "audio/mpeg" if req.format == "mp3" else "video/mp4"
+    return FileResponse(
+        path=str(file_path),
+        media_type=media_type,
+        filename=file_path.name,
+    )
+
+
+def _spawn_download_thread(task_id: str) -> None:
+    def _run():
+        task = DOWNLOAD_TASKS[task_id]
+
+        def _update(pct: int, stage: str):
+            # 暫停或終止後不再覆寫百分比
+            if task["control"] == "run":
+                task["percent"] = max(task["percent"], pct)
+                task["stage"] = stage
+
+        def _control():
+            return task["control"]
+
+        def _set_proc(proc):
+            task["proc"] = proc
+
+        try:
+            file_path = download_media(
+                task["url"],
+                task["format"],
+                DOWNLOADS_DIR,
+                progress_callback=_update,
+                control_check=_control,
+                process_callback=_set_proc,
+            )
+            task["status"] = "done"
+            task["percent"] = 100
+            task["stage"] = "處理完成，正在儲存檔案..."
+            task["filename"] = file_path.name
+            task["file_path"] = str(file_path)
+        except DownloadPausedError:
+            task["status"] = "paused"
+            task["stage"] = f"已暫停於 {task['percent']}%（可點繼續接續下載）"
+        except DownloadCancelledError:
+            task["status"] = "cancelled"
+            task["stage"] = "已終止下載"
+            cleanup_partial_files(DOWNLOADS_DIR, task["video_id"])
+        except Exception as exc:
+            task["status"] = "error"
+            task["error"] = str(exc)
+
+    threading.Thread(target=_run, daemon=True).start()
+
+
+@app.post("/api/download/start")
+def start_media_download(req: DownloadRequest):
+    try:
+        video_id = extract_video_id(req.url)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    if req.format == "mp3" and not has_ffmpeg():
+        raise HTTPException(
+            status_code=400,
+            detail="本機尚未安裝 ffmpeg，無法轉檔為 MP3。請先安裝 FFmpeg。",
+        )
+
+    canonical_url = f"https://www.youtube.com/watch?v={video_id}"
+    task_id = uuid.uuid4().hex
+    DOWNLOAD_TASKS[task_id] = {
+        "status": "running",
+        "control": "run",
+        "percent": 0,
+        "stage": "準備下載任務...",
+        "filename": None,
+        "file_path": None,
+        "format": req.format,
+        "url": canonical_url,
+        "video_id": video_id,
+        "error": None,
+    }
+    _spawn_download_thread(task_id)
+    return {"task_id": task_id}
+
+
+@app.post("/api/download/pause/{task_id}")
+def pause_media_download(task_id: str):
+    task = DOWNLOAD_TASKS.get(task_id)
+    if not task:
+        raise HTTPException(status_code=404, detail="找不到下載任務")
+    task["control"] = "pause"
+    task["status"] = "paused"
+    task["stage"] = f"已暫停於 {task['percent']}%（可點繼續接續下載）"
+    terminate_process_tree(task.get("proc"))
+    return {"status": "paused"}
+
+
+@app.post("/api/download/resume/{task_id}")
+def resume_media_download(task_id: str):
+    task = DOWNLOAD_TASKS.get(task_id)
+    if not task:
+        raise HTTPException(status_code=404, detail="找不到下載任務")
+    if task["status"] == "done":
+        return {"status": "done"}
+    task["control"] = "run"
+    task["status"] = "running"
+    task["stage"] = f"從 {task['percent']}% 繼續下載中..."
+    _spawn_download_thread(task_id)
+    return {"status": "running"}
+
+
+@app.post("/api/download/cancel/{task_id}")
+def cancel_media_download(task_id: str):
+    task = DOWNLOAD_TASKS.get(task_id)
+    if not task:
+        raise HTTPException(status_code=404, detail="找不到下載任務")
+    task["control"] = "cancel"
+    task["status"] = "cancelled"
+    task["stage"] = "已終止下載"
+    terminate_process_tree(task.get("proc"))
+    cleanup_partial_files(DOWNLOADS_DIR, task["video_id"])
+    return {"status": "cancelled"}
+
+
+@app.get("/api/download/status/{task_id}")
+def get_download_status(task_id: str):
+    task = DOWNLOAD_TASKS.get(task_id)
+    if not task:
+        raise HTTPException(status_code=404, detail="找不到下載任務")
+    return {
+        "status": task["status"],
+        "percent": task["percent"],
+        "stage": task["stage"],
+        "filename": task["filename"],
+        "error": task["error"],
+    }
+
+
+@app.get("/api/download/file/{task_id}")
+def get_download_file(task_id: str):
+    task = DOWNLOAD_TASKS.get(task_id)
+    if not task or task["status"] != "done" or not task["file_path"]:
+        raise HTTPException(status_code=404, detail="檔案尚未就緒或已過期")
+    file_path = Path(task["file_path"])
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="找不到輸出檔案")
+    media_type = "audio/mpeg" if task["format"] == "mp3" else "video/mp4"
     return FileResponse(
         path=str(file_path),
         media_type=media_type,

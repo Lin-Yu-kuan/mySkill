@@ -99,6 +99,67 @@ export async function downloadMediaFile(
   return { blob, filename };
 }
 
+export class DownloadCancelledByUser extends Error {
+  constructor() {
+    super("已終止下載");
+  }
+}
+
+export async function pauseMediaDownload(taskId: string): Promise<void> {
+  await fetch(`${getApiBase()}/api/download/pause/${taskId}`, { method: "POST" });
+}
+
+export async function resumeMediaDownload(taskId: string): Promise<void> {
+  await fetch(`${getApiBase()}/api/download/resume/${taskId}`, { method: "POST" });
+}
+
+export async function cancelMediaDownload(taskId: string): Promise<void> {
+  await fetch(`${getApiBase()}/api/download/cancel/${taskId}`, { method: "POST" });
+}
+
+export async function downloadMediaWithProgress(
+  url: string,
+  format: "mp4" | "mp3",
+  onProgress: (percent: number, stage: string, isPaused: boolean) => void,
+  onTaskCreated?: (taskId: string) => void
+): Promise<{ blob: Blob; filename: string }> {
+  const startRes = await fetch(`${getApiBase()}/api/download/start`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ url, format }),
+  });
+  if (!startRes.ok) throw new Error(await parseError(startRes));
+  const { task_id } = (await startRes.json()) as { task_id: string };
+  onTaskCreated?.(task_id);
+
+  while (true) {
+    await new Promise((r) => setTimeout(r, 450));
+    const stRes = await fetch(`${getApiBase()}/api/download/status/${task_id}`);
+    if (!stRes.ok) throw new Error(await parseError(stRes));
+    const st = (await stRes.json()) as {
+      status: "running" | "paused" | "done" | "cancelled" | "error";
+      percent: number;
+      stage: string;
+      filename?: string;
+      error?: string;
+    };
+
+    onProgress(st.percent, st.stage, st.status === "paused");
+    if (st.status === "cancelled") {
+      throw new DownloadCancelledByUser();
+    }
+    if (st.status === "error") {
+      throw new Error(st.error || "下載失敗");
+    }
+    if (st.status === "done") {
+      const fileRes = await fetch(`${getApiBase()}/api/download/file/${task_id}`);
+      if (!fileRes.ok) throw new Error(await parseError(fileRes));
+      const blob = await fileRes.blob();
+      return { blob, filename: st.filename || `video.${format}` };
+    }
+  }
+}
+
 export async function downloadTranscriptFile(params: {
   url: string;
   format: "txt" | "srt";

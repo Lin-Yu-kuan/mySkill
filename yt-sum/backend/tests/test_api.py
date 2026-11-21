@@ -144,3 +144,11 @@ def test_history_crud(tmp_path, monkeypatch):
     dele = client.delete("/api/history/dQw4w9WgXcQ")
     assert dele.status_code == 200
     assert client.get("/api/history").json()["items"] == []
+
+
+def test_download_status_not_found():
+    res = client.get("/api/download/status/nonexistent-task")
+    assert res.status_code == 404
+    assert client.post("/api/download/pause/nonexistent-task").status_code == 404
+    assert client.post("/api/download/resume/nonexistent-task").status_code == 404
+    assert client.post("/api/download/cancel/nonexistent-task").status_code == 404

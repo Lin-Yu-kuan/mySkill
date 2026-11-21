@@ -21,18 +21,25 @@ import {
   Trash2,
   Youtube,
 } from "lucide-react";
+import ConfirmModal from "@/components/ConfirmModal";
 import DeepDiveChat from "@/components/DeepDiveChat";
 import DependencyGraph from "@/components/DependencyGraph";
+import DownloadProgressBar from "@/components/DownloadProgressBar";
 import KnowledgeLayers from "@/components/KnowledgeLayers";
+import MissingComponentModal from "@/components/MissingComponentModal";
 import VideoPlayer from "@/components/VideoPlayer";
 import {
+  DownloadCancelledByUser,
   analyzeVideo,
+  cancelMediaDownload,
   deleteHistoryItem,
-  downloadMediaFile,
+  downloadMediaWithProgress,
   downloadTranscriptFile,
   fetchHealth,
   fetchHistoryList,
   loadHistoryItem,
+  pauseMediaDownload,
+  resumeMediaDownload,
   saveApiKeyToLocal,
   sendChatFollowUp,
   updateHistoryState,
@@ -62,12 +69,23 @@ export default function HomePage() {
   const [savingKey, setSavingKey] = useState(false);
 
   const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [fontScale, setFontScale] = useState<"normal" | "large" | "xlarge">("normal");
   const [isTheater, setIsTheater] = useState(false);
   const [panelCollapsed, setPanelCollapsed] = useState(false);
 
   const [health, setHealth] = useState<HealthStatus | null>(null);
   const [historyItems, setHistoryItems] = useState<HistorySummaryItem[]>([]);
   const [quickDownloading, setQuickDownloading] = useState<string | null>(null);
+  const [quickTaskId, setQuickTaskId] = useState<string | null>(null);
+  const [quickProgress, setQuickProgress] = useState<{
+    label: string;
+    percent: number;
+    stage: string;
+    isPaused: boolean;
+    canControl: boolean;
+  } | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<HistorySummaryItem | null>(null);
+  const [showInstallGuide, setShowInstallGuide] = useState(false);
 
   const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -99,6 +117,16 @@ export default function HomePage() {
       document.documentElement.classList.add("light");
     }
 
+    const savedFont = localStorage.getItem("yt_sum_font_scale") as
+      | "normal"
+      | "large"
+      | "xlarge"
+      | null;
+    if (savedFont === "large" || savedFont === "xlarge") {
+      setFontScale(savedFont);
+      document.documentElement.classList.add(`font-${savedFont}`);
+    }
+
     fetchHealth()
       .then(setHealth)
       .catch(() => setHealth(null));
@@ -117,6 +145,19 @@ export default function HomePage() {
     setTheme(next);
     document.documentElement.classList.toggle("light", next === "light");
     localStorage.setItem("yt_sum_theme", next);
+  };
+
+  const cycleFontScale = () => {
+    const order: ("normal" | "large" | "xlarge")[] = ["normal", "large", "xlarge"];
+    const next = order[(order.indexOf(fontScale) + 1) % order.length];
+    document.documentElement.classList.remove("font-large", "font-xlarge");
+    if (next !== "normal") {
+      document.documentElement.classList.add(`font-${next}`);
+    }
+    setFontScale(next);
+    localStorage.setItem("yt_sum_font_scale", next);
+    const label = next === "normal" ? "標準" : next === "large" ? "大字" : "特大";
+    showToast(`已切換文字大小：${label}`);
   };
 
   const handleSaveApiKey = async () => {
@@ -182,11 +223,18 @@ export default function HomePage() {
     }
   };
 
-  const handleDeleteSaved = async (e: React.MouseEvent, videoId: string) => {
+  const handleRequestDeleteSaved = (e: React.MouseEvent, item: HistorySummaryItem) => {
     e.stopPropagation();
+    setPendingDelete(item);
+  };
+
+  const handleConfirmDeleteSaved = async () => {
+    if (!pendingDelete) return;
+    const targetId = pendingDelete.video_id;
+    setPendingDelete(null);
     try {
-      await deleteHistoryItem(videoId);
-      setHistoryItems((prev) => prev.filter((item) => item.video_id !== videoId));
+      await deleteHistoryItem(targetId);
+      setHistoryItems((prev) => prev.filter((item) => item.video_id !== targetId));
       showToast("已刪除保存紀錄");
     } catch (err) {
       showToast(err instanceof Error ? err.message : "刪除失敗");
@@ -210,16 +258,52 @@ export default function HomePage() {
       showToast("請先在上方貼上 YouTube 影片網址");
       return;
     }
+    if (fmt === "mp3" && health && !health.ffmpeg_available) {
+      setShowInstallGuide(true);
+      return;
+    }
     setQuickDownloading(fmt);
+    setQuickTaskId(null);
     setError(null);
+    setQuickProgress({
+      label: fmt === "mp3" ? "正在下載並轉檔 MP3" : "正在下載 MP4 影片",
+      percent: 5,
+      stage: "正在連線 YouTube...",
+      isPaused: false,
+      canControl: true,
+    });
     try {
-      const { blob, filename } = await downloadMediaFile(targetUrl, fmt);
+      const { blob, filename } = await downloadMediaWithProgress(
+        targetUrl,
+        fmt,
+        (percent, stage, isPaused) => {
+          setQuickProgress({
+            label: fmt === "mp3" ? "正在下載並轉檔 MP3" : "正在下載 MP4 影片",
+            percent,
+            stage,
+            isPaused,
+            canControl: true,
+          });
+        },
+        (taskId) => setQuickTaskId(taskId)
+      );
       triggerBlobDownload(blob, filename);
       showToast(`已完成下載：${filename}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "下載失敗");
+      if (err instanceof DownloadCancelledByUser) {
+        showToast("已終止下載");
+      } else {
+        const msg = err instanceof Error ? err.message : "下載失敗";
+        if (msg.toLowerCase().includes("ffmpeg")) {
+          setShowInstallGuide(true);
+        } else {
+          setError(msg);
+        }
+      }
     } finally {
       setQuickDownloading(null);
+      setQuickTaskId(null);
+      setQuickProgress(null);
     }
   };
 
@@ -235,6 +319,17 @@ export default function HomePage() {
     const key = `${format}-${translateToZhTw ? "zh" : "orig"}`;
     setQuickDownloading(key);
     setError(null);
+    setQuickProgress({
+      label: translateToZhTw
+        ? `正在產生繁體中文 ${format.toUpperCase()}`
+        : `正在擷取原文 ${format.toUpperCase()}`,
+      percent: 45,
+      stage: translateToZhTw
+        ? "擷取字幕並交由 Gemini 轉換成台灣繁體中文..."
+        : "讀取 YouTube 字幕中...",
+      isPaused: false,
+      canControl: false,
+    });
     try {
       const { blob, filename } = await downloadTranscriptFile({
         url: targetUrl,
@@ -242,12 +337,20 @@ export default function HomePage() {
         translateToZhTw,
         apiKey,
       });
+      setQuickProgress({
+        label: "準備儲存檔案",
+        percent: 100,
+        stage: "完成！",
+        isPaused: false,
+        canControl: false,
+      });
       triggerBlobDownload(blob, filename);
       showToast(`已完成下載：${filename}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "逐字稿下載失敗");
     } finally {
       setQuickDownloading(null);
+      setQuickProgress(null);
     }
   };
 
@@ -411,6 +514,15 @@ export default function HomePage() {
 
             <button
               type="button"
+              onClick={cycleFontScale}
+              title="切換網頁文字大小（標準 / 大字 / 特大）"
+              className="text-xs px-2 py-1.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-page)] hover:bg-[var(--bg-elevated)] text-[var(--text-main)] cursor-pointer transition font-semibold"
+            >
+              {fontScale === "normal" ? "A" : fontScale === "large" ? "A+" : "A++"}
+            </button>
+
+            <button
+              type="button"
               onClick={toggleTheme}
               title={theme === "dark" ? "切換成亮白模式" : "切換成暗黑模式"}
               className="text-xs p-1.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-page)] hover:bg-[var(--bg-elevated)] text-[var(--text-main)] cursor-pointer transition"
@@ -565,8 +677,15 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={() => handleQuickMedia("mp3")}
-                disabled={quickDownloading !== null || (health !== null && !health.ffmpeg_available)}
-                className="inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg bg-[var(--bg-page)] border border-[var(--border-subtle)] hover:border-emerald-500/60 disabled:opacity-40 cursor-pointer transition"
+                disabled={quickDownloading !== null}
+                title={
+                  health && !health.ffmpeg_available
+                    ? "缺少 FFmpeg，點擊查看安裝位置"
+                    : "下載純音訊 MP3"
+                }
+                className={`inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg bg-[var(--bg-page)] border border-[var(--border-subtle)] hover:border-emerald-500/60 disabled:opacity-40 cursor-pointer transition ${
+                  health && !health.ffmpeg_available ? "opacity-75" : ""
+                }`}
               >
                 {quickDownloading === "mp3" ? (
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -576,6 +695,48 @@ export default function HomePage() {
                 {quickDownloading === "mp3" ? "轉檔 MP3 中..." : "下載 MP3"}
               </button>
             </div>
+
+            {quickProgress && (
+              <DownloadProgressBar
+                label={quickProgress.label}
+                percent={quickProgress.percent}
+                stage={quickProgress.stage}
+                isPaused={quickProgress.isPaused}
+                canControl={quickProgress.canControl && quickTaskId !== null}
+                onPause={async () => {
+                  if (!quickTaskId) return;
+                  setQuickProgress((p) => (p ? { ...p, isPaused: true, stage: "已暫停下載" } : p));
+                  await pauseMediaDownload(quickTaskId);
+                }}
+                onResume={async () => {
+                  if (!quickTaskId) return;
+                  setQuickProgress((p) => (p ? { ...p, isPaused: false, stage: "繼續下載中..." } : p));
+                  await resumeMediaDownload(quickTaskId);
+                }}
+                onCancel={async () => {
+                  if (!quickTaskId) return;
+                  const id = quickTaskId;
+                  setQuickProgress(null);
+                  setQuickDownloading(null);
+                  setQuickTaskId(null);
+                  await cancelMediaDownload(id);
+                  showToast("已終止下載");
+                }}
+              />
+            )}
+
+            {health && !health.ffmpeg_available && (
+              <p className="text-xs text-[var(--accent-amber)]">
+                ⚠️ 未偵測到 FFmpeg（無法轉檔 MP3）：
+                <button
+                  type="button"
+                  onClick={() => setShowInstallGuide(true)}
+                  className="underline ml-1 cursor-pointer font-medium"
+                >
+                  點我看安裝元件位置與一鍵指令
+                </button>
+              </p>
+            )}
 
             {health && !health.gemini_key_configured && !apiKey && (
               <p className="text-xs text-[var(--accent-amber)]">
@@ -615,7 +776,7 @@ export default function HomePage() {
                         </h3>
                         <button
                           type="button"
-                          onClick={(e) => handleDeleteSaved(e, item.video_id)}
+                          onClick={(e) => handleRequestDeleteSaved(e, item)}
                           title="刪除這筆紀錄"
                           className="p-1 rounded text-[var(--text-muted)] hover:text-[var(--accent-rose)] hover:bg-rose-500/10 shrink-0 cursor-pointer"
                         >
@@ -667,6 +828,7 @@ export default function HomePage() {
               isTheater={isTheater}
               apiKey={apiKey}
               onToggleTheater={() => setIsTheater((v) => !v)}
+              onOpenInstallGuide={() => setShowInstallGuide(true)}
               onNotify={showToast}
             />
           </div>
@@ -794,6 +956,33 @@ export default function HomePage() {
           )}
         </main>
       )}
+
+      {/* Modals */}
+      <ConfirmModal
+        open={pendingDelete !== null}
+        title="確認刪除保存的解析檔？"
+        message={
+          pendingDelete
+            ? `確定要刪除「${pendingDelete.title}」的解析紀錄嗎？刪除後若要再看需要重新分析。`
+            : ""
+        }
+        onConfirm={handleConfirmDeleteSaved}
+        onCancel={() => setPendingDelete(null)}
+      />
+
+      <MissingComponentModal
+        open={showInstallGuide}
+        onClose={() => setShowInstallGuide(false)}
+        onRecheck={async () => {
+          try {
+            const h = await fetchHealth();
+            setHealth(h);
+            return h.ffmpeg_available;
+          } catch {
+            return false;
+          }
+        }}
+      />
 
       {/* Toast */}
       {toast && (
